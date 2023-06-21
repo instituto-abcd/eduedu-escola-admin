@@ -1,19 +1,26 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { User } from "../api/user";
+import { LoginResponse } from "../api/auth";
+import { UserProfile } from "~/constants";
 
-type UserStore = User & {
-    isUserAuthenticated: () => boolean;
+type UserStore = LoginResponse & {
+  profile: UserProfile;
+  isUserAuthenticated: () => boolean;
 };
 
 export const useUserStore = create<UserStore>()(
-    persist(
-        (set, get) => ({
-            accessToken: null,
-            isUserAuthenticated: () => Boolean(get().accessToken),
-        }),
-        {
-            name: "user_state",
-        }
-    )
+  persist(
+    (_, get) => ({
+      accessToken: "",
+      document: "",
+      email: "",
+      id: "",
+      name: "",
+      profile: "" as UserProfile,
+      isUserAuthenticated: () => Boolean(get().accessToken),
+    }),
+    {
+      name: "user_state",
+    }
+  )
 );

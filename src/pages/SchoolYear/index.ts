@@ -1,0 +1,1 @@
+export { SchoolYearPage } from "./SchoolYear";

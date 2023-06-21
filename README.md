@@ -1,3 +1,7 @@
+[![CI Pipeline](https://github.com/instituto-abcd/eduedu-escola-admin/actions/workflows/ci-pipeline.yml/badge.svg)](https://github.com/instituto-abcd/eduedu-escola-admin/actions/workflows/ci-pipeline.yml)
+
+---
+
 ## Gestão de Branches
 
 Fluxo utilizado: **GitLab Flow**
