@@ -11,6 +11,8 @@ import {
 import { IconBell } from "@tabler/icons-react";
 import logo from "~/assets/logos/eduedu-azul.svg";
 import { UserDropdown } from "../UserDropdown";
+import { useUserStore } from "~/stores/user";
+import { PATH } from "~/constants/path";
 
 const useStyles = createStyles({
   anchor: {
@@ -33,6 +35,15 @@ const links = [
 
 export function Navbar() {
   const { classes } = useStyles();
+  const userProfile = useUserStore((u) => u.profile);
+
+  const usedLinks = links.filter((link) => {
+    const hiddenfromProfessor = [PATH.SETTINGS, PATH.USERS, PATH.SCHOOL_YEAR];
+
+    if (userProfile === "TEACHER") {
+      return !hiddenfromProfessor.includes(link.to);
+    } else return true;
+  });
 
   return (
     <MantineHeader
@@ -50,25 +61,31 @@ export function Navbar() {
         maw={1440}
         w="100%"
         spacing={64}
-        position="center"
+        position="apart"
         noWrap
         align="center"
         h="100%"
+        px={150}
       >
         <Image src={logo} alt="EduEdu Escola" width={50} mx={40} />
-        {links.map((link) => (
-          <Link key={link.label} to={link.to} className={classes.anchor}>
-            <Text color="dark.5" td="none" weight={600} size={14}>
-              {link.label}
-            </Text>
-          </Link>
-        ))}
-        <Divider orientation="vertical" />
+
         <Group noWrap>
-          <ActionIcon variant="subtle">
-            <IconBell height={20} color="#2C2E33" />
-          </ActionIcon>
-          <UserDropdown />
+          <Group spacing={16}>
+            {usedLinks.map((link) => (
+              <Link key={link.label} to={link.to} className={classes.anchor}>
+                <Text color="dark.5" td="none" weight={600} size={14}>
+                  {link.label}
+                </Text>
+              </Link>
+            ))}
+          </Group>
+          <Divider orientation="vertical" mx={30} />
+          <Group noWrap>
+            <ActionIcon variant="subtle">
+              <IconBell height={20} color="#2C2E33" />
+            </ActionIcon>
+            <UserDropdown />
+          </Group>
         </Group>
       </Group>
     </MantineHeader>

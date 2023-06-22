@@ -6,11 +6,12 @@ import { UserProfile } from "~/constants";
 type UserStore = LoginResponse & {
   profile: UserProfile;
   isUserAuthenticated: () => boolean;
+  signOut: () => void;
 };
 
 export const useUserStore = create<UserStore>()(
   persist(
-    (_, get) => ({
+    (set, get) => ({
       accessToken: "",
       document: "",
       email: "",
@@ -18,6 +19,15 @@ export const useUserStore = create<UserStore>()(
       name: "",
       profile: "" as UserProfile,
       isUserAuthenticated: () => Boolean(get().accessToken),
+      signOut: () =>
+        set({
+          accessToken: "",
+          document: "",
+          email: "",
+          id: "",
+          name: "",
+          profile: "" as UserProfile,
+        }),
     }),
     {
       name: "user_state",

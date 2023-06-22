@@ -21,6 +21,8 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { IconEdit } from "@tabler/icons-react";
+import { PATH } from "~/constants/path";
+import { TableLoader } from "~/components/TableLoader";
 
 export function UsersListPage() {
   const [selected, setSelected] = useState<string[]>([]);
@@ -34,9 +36,12 @@ export function UsersListPage() {
     }
   }
 
-  const pagination = usePagination()
-  const { data: users } = useUserGetAll({
-    search: { "page-number": pagination.page, "page-size": pagination.pageSize },
+  const pagination = usePagination();
+  const { data: users, isLoading: loadingUsers } = useUserGetAll({
+    search: {
+      "page-number": pagination.page,
+      "page-size": pagination.pageSize,
+    },
     onError: (error) => errorNotification("Erro", error.message),
   });
 
@@ -183,7 +188,18 @@ export function UsersListPage() {
         </tbody>
       </Table>
 
-      {users && <Pagination paginationApi={users.pagination} paginationHook={pagination} />}
+      <TableLoader
+        loading={loadingUsers}
+        empty={!users || users.items.length === 0}
+        link={PATH.NEW_USER}
+      />
+
+      {users && (
+        <Pagination
+          paginationApi={users.pagination}
+          paginationHook={pagination}
+        />
+      )}
     </>
   );
 }

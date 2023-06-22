@@ -3,6 +3,10 @@ import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
 import { z } from "zod";
 import { useForm, zodResolver } from "@mantine/form";
+import { useUserStore } from "~/stores/user";
+import { USER_PROFILE } from "~/constants";
+import { useGetAccessKey, useUpdateAccessKey } from "~/api/user";
+import { useState } from "react";
 import {
   Button,
   Stack,
@@ -11,29 +15,31 @@ import {
   Menu,
   Text,
   TextInput,
+  ActionIcon,
+  useMantineTheme,
 } from "@mantine/core";
-import { IconChevronDown } from "@tabler/icons-react";
+import { IconChevronDown, IconRefresh } from "@tabler/icons-react";
 import { modals } from "@mantine/modals";
-import { useUserStore } from "~/stores/user";
-import { PROFILE_SELECT, USER_PROFILE } from "~/constants";
+import { AccessKeyInput } from "../AccessKeyInput";
 
 export function UserDropdown() {
-  const { name: userName, profile } = useUserStore();
+  const theme = useMantineTheme();
 
+  const { name: userName, profile, id } = useUserStore();
+
+  // Password stuff:
   const { mutate: changePassword } = useUserChangePassword({
-    onError: (error) => {
-      errorNotification("Erro", `${error.message} (cod: ${error.code})`);
-    },
     onSuccess: () => {
       successNotification("Sucesso", "Usuário deletado com sucesso!");
     },
+    onError: (error) => {
+      errorNotification("Erro", `${error.message} (cod: ${error.code})`);
+    },
   });
-
   const formChangePasswordValidation = z.object({
     passwordConfirmation: z.string().min(1, { message: "Insira uma senha" }),
     password: z.string().min(1, { message: "Insira uma senha" }),
   });
-
   const formChangePassword = useForm<UserChangePassword>({
     initialValues: {
       password: "",
@@ -41,6 +47,8 @@ export function UserDropdown() {
     },
     validate: zodResolver(formChangePasswordValidation),
   });
+
+  const logout = useUserStore((u) => u.signOut);
 
   const openModalChangePassword = () =>
     modals.openConfirmModal({
@@ -68,7 +76,7 @@ export function UserDropdown() {
     <Menu position="bottom-end">
       <Menu.Target>
         <Button compact variant="white" color="dark">
-          <Group noWrap>
+          <Group noWrap align="baseline">
             <Group spacing={2} noWrap>
               <Text size="sm" weight={600}>
                 {userName}&nbsp;
@@ -84,17 +92,19 @@ export function UserDropdown() {
       <Menu.Dropdown p="md">
         <Stack spacing="md">
           <Text weight={700}>{userName}</Text>
-          <TextInput label="Código de acesso" value="AHDE29813" readOnly />
-          <Group style={{ marginTop: "10px" }}>
+          <AccessKeyInput styled />
+          <Stack spacing={12} mt={12}>
             <Button
               size="xs"
               variant="outline"
-              style={{ width: "100%" }}
               onClick={openModalChangePassword}
             >
               Alterar senha
             </Button>
-          </Group>
+            <Button size="xs" variant="outline" onClick={logout}>
+              Sair
+            </Button>
+          </Stack>
         </Stack>
       </Menu.Dropdown>
     </Menu>

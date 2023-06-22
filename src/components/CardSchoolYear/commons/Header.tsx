@@ -10,7 +10,7 @@ type componentProps = {
 export function Header({ year, status, children }: componentProps) {
 
     const theme = useMantineTheme();
-    var colorStatus = 'black'
+    let colorStatus = 'black'
 
     switch (status) {
         case 'Ativo':

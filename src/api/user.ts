@@ -70,7 +70,7 @@ class UserAPI extends API {
   }
 
   static async updateAccessKey(id: string) {
-    const { data } = await this.api.put<{ success: boolean }>(URL.UPDATE_ACCESS_KEY(id))
+    const { data } = await this.api.put<{ accessKey: string }>(URL.UPDATE_ACCESS_KEY(id))
     return data
   }
 
@@ -131,15 +131,15 @@ export function useUserUpdate(
 }
 
 export function useGetAccessKey(
-  options?: MutationOptions<string, { accessKey: string }>
+  id: string,
+  options?: QueryOptions<{ accessKey: string }, [string, string]>
 ) {
-  const queryClient = useQueryClient();
 
-  const handler = useCallback(function (id: string) {
+  const handler = useCallback(function () {
     return UserAPI.getAccessKey(id);
-  }, []);
+  }, [id]);
 
-  return useMutation(handler, options)
+  return useQuery(['accessKey', id], handler, options)
 }
 
 export function useUpdateAccessKey(
@@ -151,7 +151,13 @@ export function useUpdateAccessKey(
     return UserAPI.updateAccessKey(id);
   }, []);
 
-  return useMutation(handler, options)
+  return useMutation(handler, {
+    ...options,
+    onSuccess: (data, vars, ctx) => {
+      queryClient.setQueryData(['accessKey', vars], { accessKey: data.accessKey })
+      options?.onSuccess?.(data, vars, ctx);
+    }
+  })
 }
 
 export function useUserDelete(

@@ -26,7 +26,7 @@ export function AppRoutes() {
           <Route path={nested(PATH.SCHOOL_YEAR)} Component={SchoolYearRoutes} />
           <Route path={nested(PATH.CLASSES)} Component={ClassesRoutes} />
         </Route>
-        <Route path={PATH.LOGIN} Component={AuthRoutes} />
+        <Route path={nested(PATH.LOGIN)} Component={AuthRoutes} />
       </Routes>
     </BrowserRouter>
   );

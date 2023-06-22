@@ -77,7 +77,12 @@ export function ClassesPage() {
 
       {selected.length > 0 ? (
         <Group>
-          <Button size="xs" variant="outline" color="red" onClick={openModalDeleteClass}>
+          <Button
+            size="xs"
+            variant="outline"
+            color="red"
+            onClick={openModalDeleteClass}
+          >
             Excluir
           </Button>
         </Group>
@@ -90,9 +95,7 @@ export function ClassesPage() {
           <tr>
             <th>
               <Checkbox
-                onChange={() =>
-                  setSelected(data?.items.map((u) => u.id) ?? [])
-                }
+                onChange={() => setSelected(data?.items.map((u) => u.id) ?? [])}
               />
             </th>
             <th>
@@ -151,7 +154,7 @@ export function ClassesPage() {
         </tbody>
       </Table>
 
-      <Pagination totalPages={data ? data.pagination.totalPages : ""} />
+      {/* <Pagination paginationApi={} paginationHook={} /> */}
     </>
   );
 }

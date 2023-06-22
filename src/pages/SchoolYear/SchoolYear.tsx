@@ -11,7 +11,7 @@ export function SchoolYearPage() {
     const { data: schoolYears } = useSchoolYearGetAll({
         onError: (error) => errorNotification("Erro", error),
     });
-    var disabledNewSchoolYear
+    let disabledNewSchoolYear
 
     if (schoolYears) {
         schoolYears.forEach(element => {

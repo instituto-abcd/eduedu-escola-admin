@@ -54,7 +54,7 @@ export class API {
 
       // showErrorNotification(err.response.data.errors);
 
-      // eslint-disable-next-line @typescript-eslint/no-throw-literal
+       
       throw err.response.data;
     } else throw err;
   }

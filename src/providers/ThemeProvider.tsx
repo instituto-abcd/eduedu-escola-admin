@@ -27,14 +27,7 @@ const theme: MantineThemeOverride = {
   },
 
   globalStyles() {
-    if (window.location.pathname === "/login") return {};
-
-    return {
-      "#root": {
-        maxWidth: 1440,
-        marginInline: "auto",
-      },
-    };
+    return {};
   },
 };
 
