@@ -13,6 +13,7 @@ import logo from "~/assets/logos/eduedu-azul.svg";
 import { UserDropdown } from "../UserDropdown";
 import { useUserStore } from "~/stores/user";
 import { PATH } from "~/constants/path";
+import { Notifications } from "../Notifications";
 
 const useStyles = createStyles({
   anchor: {
@@ -79,11 +80,9 @@ export function Navbar() {
               </Link>
             ))}
           </Group>
-          <Divider orientation="vertical" mx={30} />
+          <Divider orientation="vertical" mx={30} variant="solid" />
           <Group noWrap>
-            <ActionIcon variant="subtle">
-              <IconBell height={20} color="#2C2E33" />
-            </ActionIcon>
+            <Notifications />
             <UserDropdown />
           </Group>
         </Group>

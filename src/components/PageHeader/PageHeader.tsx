@@ -1,35 +1,26 @@
-import { Box, Flex, Group, Title as MantineTitle, Text } from "@mantine/core";
+import { Group, Title as MantineTitle, Stack, Text } from "@mantine/core";
 
 type ComponentProps = {
   title: string;
   description?: string;
-  children?: any;
-  mbDescription?: string;
+  children?: React.ReactNode;
+  gap?: number;
 };
 
-export function PageHeader({ title, description, children, mbDescription }: ComponentProps) {
+export function PageHeader({
+  title,
+  gap = 30,
+  description,
+  children,
+}: ComponentProps) {
   return (
-    <Flex
-      direction={{ base: 'column', sm: 'row' }}
-      gap={{ base: 'sm', sm: 'sm' }}
-      justify={{ sm: 'center', md: 'space-between' }}
-      style={{ marginBottom: '10px' }}
-    >
-      <Box>
-        <MantineTitle
-          order={2}
-          style={{
-            marginBottom: mbDescription ? mbDescription : '25px'
-          }}
-        >
-          {title}
-        </MantineTitle>
+    <Group spacing={200} noWrap align="flex-start">
+      <Stack spacing={gap} w="100%">
+        <MantineTitle order={2}>{title}</MantineTitle>
         <Text size="sm">{description}</Text>
-      </Box>
+      </Stack>
 
-      <Group>
-        {children}
-      </Group>
-    </Flex>
-  )
+      <Group>{children}</Group>
+    </Group>
+  );
 }

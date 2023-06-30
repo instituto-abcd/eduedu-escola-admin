@@ -20,7 +20,7 @@ export function AccessKeyInput({
 
   const { mutate: updateAccessKey, isLoading: updating } = useUpdateAccessKey({
     onError: (error) => {
-      errorNotification("Erro", `${error.message} (cod: ${error.code})`);
+      errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
     },
   });
 
@@ -42,10 +42,10 @@ export function AccessKeyInput({
         },
         label: styled
           ? {
-              marginBottom: 12,
-              color: theme.colors.gray[9],
-              fontWeight: 600,
-            }
+            marginBottom: 12,
+            color: theme.colors.gray[9],
+            fontWeight: 600,
+          }
           : {},
       }}
       rightSection={

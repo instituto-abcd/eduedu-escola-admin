@@ -14,7 +14,7 @@ import {
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import {
   RequestPasswordResetInput,
@@ -24,17 +24,24 @@ import {
 } from "~/api/auth";
 import bg from "~/assets/backgrounds/login-1920w.png";
 import logo from "~/assets/logos/eduedu-branca.svg";
+import { ChangePasswordModal } from "~/components/ChangePasswordModal";
 import { PATH } from "~/constants/path";
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const [openedForgotPass, { open, close }] = useDisclosure(false);
+  const [query] = useSearchParams();
+  const token = query.get("token");
+  const [changePasswordModalOpen, changePasswordModalHandlers] = useDisclosure(
+    Boolean(token)
+  );
+  const [resetPasswordModalOpen, resetPasswordModalHandlers] =
+    useDisclosure(false);
 
   const formInputValidation = z.object({
-    email: z.string().email({ message: "Insira um e-mail válido" }),
-    password: z.string().min(1, { message: "Insira uma senha" }),
+    email: z.string().email({ message: "Email inválido" }),
+    password: z.string().min(1, { message: "Senha inválida" }),
   });
 
   const form = useForm<UserLogin>({
@@ -47,7 +54,7 @@ export function LoginPage() {
 
   const { mutate: login, isLoading: isAuthenticating } = useAuthLogin({
     onError: (error) => {
-      errorNotification("Erro", `${error.message} (cod: ${error.code})`);
+      errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
     },
     onSuccess: () => {
       navigate(PATH.DASHBOARD);
@@ -66,14 +73,14 @@ export function LoginPage() {
   });
 
   const { mutate: sendPasswordRecovery } = useRequestPasswordReset({
-    onError: (error) => {
-      errorNotification("Erro", `${error.message} (cod: ${error.code})`);
-    },
     onSuccess: () => {
       successNotification(
-        "Sucesso",
-        "Sua nova senha foi enviada para o email cadastrado."
+        "Operação realizada com sucesso",
+        "Enviamos um e-mail com as instruções para redefinir sua senha!"
       );
+    },
+    onError: (error) => {
+      errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
     },
   });
 
@@ -123,9 +130,9 @@ export function LoginPage() {
               <Group position="right">
                 <Anchor
                   component="button"
-                  onClick={open}
                   c="white"
                   disabled={disableActions}
+                  onClick={resetPasswordModalHandlers.open}
                 >
                   Esqueci a senha
                 </Anchor>
@@ -145,27 +152,38 @@ export function LoginPage() {
       </Center>
 
       <Modal
-        opened={openedForgotPass}
-        onClose={close}
+        opened={resetPasswordModalOpen}
+        onClose={resetPasswordModalHandlers.close}
         title="Esqueci a senha"
-        centered
+        radius="md"
       >
         <form
-          onSubmit={formRecovery.onSubmit((values) => {
-            sendPasswordRecovery(values);
-          })}
+          onSubmit={formRecovery.onSubmit((values) =>
+            sendPasswordRecovery(values)
+          )}
         >
-          <TextInput
-            label="Email de cadastro"
-            placeholder="Email"
-            {...formRecovery.getInputProps("email")}
-            mb={30}
-          />
-          <Button type="submit" variant="outline" fullWidth>
-            Enviar
-          </Button>
+          <Stack py={12} spacing="xl">
+            <TextInput
+              label="Email de cadastro"
+              placeholder="Email"
+              {...formRecovery.getInputProps("email")}
+            />
+            <Button
+              type="submit"
+              variant="outline"
+              fullWidth
+            >
+              Enviar
+            </Button>
+          </Stack>
         </form>
       </Modal>
+
+      <ChangePasswordModal
+        opened={changePasswordModalOpen}
+        onClose={changePasswordModalHandlers.close}
+        token={token ?? ""}
+      />
     </BackgroundImage>
   );
 }

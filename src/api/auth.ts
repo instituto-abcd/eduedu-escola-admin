@@ -45,7 +45,7 @@ class AuthAPI extends API {
     return data;
   }
 
-  static async changePassword(params?: UserAuth) {
+  static async changePassword(params?: UserChangePassword) {
     const { data } = await this.api.post(URL.CHANGE_PASSWORD, params);
     return data;
   }

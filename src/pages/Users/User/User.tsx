@@ -30,21 +30,21 @@ export function UserPage() {
   const editingUser = useLocation().state?.user as User | undefined;
 
   const { mutate: createUser, isLoading: isCreateLoading } = useUserCreate({
-    onError: (error) => {
-      errorNotification("Erro", `${error.message} (cod: ${error.code})`);
-    },
     onSuccess: () => {
-      successNotification("Sucesso", "Usuário criado com sucesso!");
+      successNotification("Operação realizada com sucesso", "Usuário criado com sucesso!");
       navigate(PATH.USERS);
+    },
+    onError: (error) => {
+      errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
     },
   });
 
   const { mutate: updateUser, isLoading: isUpdateLoading } = useUserUpdate({
-    onError: (error) => {
-      errorNotification("Erro", `${error.message} (cod: ${error.code})`);
-    },
     onSuccess: () => {
-      successNotification("Sucesso", "Usuário atualizado com sucesso!");
+      successNotification("Operação realizada com sucesso", "Usuário alterado com sucesso!");
+    },
+    onError: (error) => {
+      errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
     },
   });
 
@@ -60,11 +60,7 @@ export function UserPage() {
 
   return (
     <>
-      <PageHeader title={editingUser ? editingUser.name : "Novo usuário"}>
-        <Link to="/usuarios" style={{ textDecoration: "none" }}>
-          Retornar a página de Usuários
-        </Link>
-      </PageHeader>
+      <PageHeader title={editingUser ? editingUser.name : "Novo usuário"} />
 
       <form
         onSubmit={form.onSubmit((values) => {

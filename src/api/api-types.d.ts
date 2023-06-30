@@ -45,7 +45,7 @@ export type Paginated<T> = {
   pagination: PaginationOptions;
 };
 
-export type PageParams = {
-  TamanhoDaPagina?: number;
-  NumeroDaPagina?: number;
+export type PaginationParams = {
+  "page-number"?: number;
+  "page-size"?: number;
 };

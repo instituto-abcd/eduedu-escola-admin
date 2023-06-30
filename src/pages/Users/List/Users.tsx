@@ -12,6 +12,7 @@ import {
   ActionIcon,
   Button,
   Checkbox,
+  Divider,
   Group,
   Select,
   Space,
@@ -42,40 +43,45 @@ export function UsersListPage() {
       "page-number": pagination.page,
       "page-size": pagination.pageSize,
     },
-    onError: (error) => errorNotification("Erro", error.message),
+    onError: (error) => errorNotification("Erro durante a operação", error.message),
   });
 
   const { mutate: deleteUser, isLoading: isDeleting } = useUserDelete({
-    onError: (error) => {
-      errorNotification("Erro", `${error.message} (cod: ${error.code})`);
-    },
     onSuccess: () => {
       successNotification(
-        "Sucesso",
-        `${selected.length} Usuário(s) inativado(s) com sucesso!`
+        "Operação realizada com sucesso",
+        `${selected.length} Usuário(s) excluído(s)com sucesso!`
       );
       setSelected([]);
+    },
+    onError: (error) => {
+      errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
     },
   });
 
   const { mutate: inactivateUser, isLoading: isInactivating } =
     useUserInactivate({
-      onError: (error) => {
-        errorNotification("Erro", `${error.message} (cod: ${error.code})`);
-      },
       onSuccess: () => {
         successNotification(
-          "Sucesso",
+          "Operação realizada com sucesso",
           `${selected.length} Usuário(s) inativado(s) com sucesso!`
         );
         setSelected([]);
+      },
+      onError: (error) => {
+        errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
       },
     });
 
   const openModalDeleteUser = () =>
     modals.openConfirmModal({
       title: "Excluir",
-      children: <Text>Deseja excluir o(s) usuários(s) selecionado(s)?</Text>,
+      children: (
+        <>
+          <Text mb={20}>Deseja excluir o(s) usuários(s) selecionado(s)?</Text>
+          <Divider />
+        </>
+      ),
       labels: { confirm: "Sim", cancel: "Não" },
       onConfirm: () => {
         deleteUser(selected);
@@ -85,7 +91,12 @@ export function UsersListPage() {
   const openModalInactivateteUser = () =>
     modals.openConfirmModal({
       title: "Inativar",
-      children: <Text>Deseja Inativar o(s) usuários(s) selecionado(s)?</Text>,
+      children: (
+        <>
+          <Text mb={20}>Deseja Inativar o(s) usuários(s) selecionado(s)?</Text>
+          <Divider />
+        </>
+      ),
       labels: { confirm: "Sim", cancel: "Não" },
       onConfirm: () => inactivateUser(selected),
     });
@@ -132,8 +143,10 @@ export function UsersListPage() {
           <tr>
             <th>
               <Checkbox
-                onChange={() =>
-                  setSelected(users?.items.map((u) => u.id) ?? [])
+                onChange={(e) =>
+                  e.currentTarget.checked
+                    ? setSelected(users?.items.filter(u => !u.owner).map((u) => u.id) ?? [])
+                    : setSelected([])
                 }
               />
             </th>
@@ -165,6 +178,7 @@ export function UsersListPage() {
             <tr key={user.id}>
               <td>
                 <Checkbox
+                  disabled={user.owner == true ? true : false}
                   checked={selected.includes(user.id)}
                   onChange={() => toggleSelected(user.id)}
                 />
@@ -191,7 +205,7 @@ export function UsersListPage() {
       <TableLoader
         loading={loadingUsers}
         empty={!users || users.items.length === 0}
-        link={PATH.NEW_USER}
+        link={{ to: PATH.NEW_USER, label: "Cadastrar novo usuário" }}
       />
 
       {users && (

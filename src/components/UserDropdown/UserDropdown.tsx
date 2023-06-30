@@ -1,76 +1,51 @@
-import { useUserChangePassword, UserChangePassword } from "~/api/auth";
-import { errorNotification } from "~/utils/errorNotification";
-import { successNotification } from "~/utils/successNotification";
-import { z } from "zod";
-import { useForm, zodResolver } from "@mantine/form";
-import { useUserStore } from "~/stores/user";
+import { useDisclosure } from "@mantine/hooks";
+import { IconChevronDown } from "@tabler/icons-react";
 import { USER_PROFILE } from "~/constants";
-import { useGetAccessKey, useUpdateAccessKey } from "~/api/user";
-import { useState } from "react";
+import { useUserStore } from "~/stores/user";
+import { AccessKeyInput } from "../AccessKeyInput";
+import { useForm, zodResolver } from "@mantine/form";
+import { UpdatePasswordInput, useUserUpdatePassword } from "~/api/user";
+import { z } from "zod";
+import { successNotification } from "~/utils/successNotification";
 import {
   Button,
-  Stack,
-  Box,
+  Divider,
   Group,
+  LoadingOverlay,
   Menu,
+  Modal,
+  PasswordInput,
+  Stack,
   Text,
-  TextInput,
-  ActionIcon,
-  useMantineTheme,
 } from "@mantine/core";
-import { IconChevronDown, IconRefresh } from "@tabler/icons-react";
-import { modals } from "@mantine/modals";
-import { AccessKeyInput } from "../AccessKeyInput";
 
 export function UserDropdown() {
-  const theme = useMantineTheme();
-
-  const { name: userName, profile, id } = useUserStore();
-
-  // Password stuff:
-  const { mutate: changePassword } = useUserChangePassword({
-    onSuccess: () => {
-      successNotification("Sucesso", "Usuário deletado com sucesso!");
-    },
-    onError: (error) => {
-      errorNotification("Erro", `${error.message} (cod: ${error.code})`);
-    },
-  });
-  const formChangePasswordValidation = z.object({
-    passwordConfirmation: z.string().min(1, { message: "Insira uma senha" }),
-    password: z.string().min(1, { message: "Insira uma senha" }),
-  });
-  const formChangePassword = useForm<UserChangePassword>({
-    initialValues: {
-      password: "",
-      passwordConfirmation: "",
-    },
-    validate: zodResolver(formChangePasswordValidation),
-  });
-
+  const { name: userName, profile } = useUserStore();
   const logout = useUserStore((u) => u.signOut);
+  const [updatePwModalOpen, updatePwModalHandlers] = useDisclosure(false);
 
-  const openModalChangePassword = () =>
-    modals.openConfirmModal({
-      title: "Redefinir Senha",
-      children: (
-        <Box>
-          <TextInput
-            label="Senha Atual"
-            placeholder="Senha"
-            {...formChangePassword.getInputProps("password")}
-            style={{ marginBottom: "20px" }}
-          />
-          <TextInput
-            label="Nova Senha"
-            placeholder="Senha"
-            {...formChangePassword.getInputProps("passwordConfirmation")}
-          />
-        </Box>
-      ),
-      labels: { confirm: "Sim", cancel: "Cancelar" },
-      onConfirm: () => changePassword(formChangePassword.values),
-    });
+  const { mutate: updatePassword, isLoading } = useUserUpdatePassword({
+    onSuccess: () => {
+      updatePwModalHandlers.close();
+      successNotification("Operação realizada com sucesso", "Senha alterada com sucesso!");
+    },
+  });
+
+  const updatePwForm = useForm<UpdatePasswordInput>({
+    initialValues: {
+      newPassword: "",
+      oldPassword: "",
+    },
+
+    validate: zodResolver(
+      z.object({
+        newPassword: z
+          .string()
+          .min(5, { message: "Senha deve ter ao menos 5 caracteres" }),
+        oldPassword: z.string().min(1, { message: "Nova senha não pode ser igual a senha anterior" }),
+      })
+    ),
+  });
 
   return (
     <Menu position="bottom-end">
@@ -97,9 +72,9 @@ export function UserDropdown() {
             <Button
               size="xs"
               variant="outline"
-              onClick={openModalChangePassword}
+              onClick={updatePwModalHandlers.open}
             >
-              Alterar senha
+              Redefinir Senha
             </Button>
             <Button size="xs" variant="outline" onClick={logout}>
               Sair
@@ -107,6 +82,39 @@ export function UserDropdown() {
           </Stack>
         </Stack>
       </Menu.Dropdown>
+
+      <Modal
+        opened={updatePwModalOpen}
+        onClose={isLoading ? () => { } : updatePwModalHandlers.close}
+        title="Alterar senha"
+        size="sm"
+      >
+        <form
+          onSubmit={updatePwForm.onSubmit((values) => {
+            updatePassword(values);
+          })}
+        >
+          <LoadingOverlay visible={isLoading} m={5} />
+          <PasswordInput
+            label="Senha Atual"
+            placeholder="Senha"
+            {...updatePwForm.getInputProps("oldPassword")}
+            style={{ marginBottom: "20px" }}
+          />
+          <PasswordInput
+            label="Nova Senha"
+            placeholder="Senha"
+            {...updatePwForm.getInputProps("newPassword")}
+          />
+          <Divider my="xl" />
+          <Group position="right">
+            <Button variant="outline" onClick={updatePwModalHandlers.close}>
+              Cancelar
+            </Button>
+            <Button type="submit">Salvar</Button>
+          </Group>
+        </form>
+      </Modal>
     </Menu>
   );
 }

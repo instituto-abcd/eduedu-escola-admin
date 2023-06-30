@@ -5,10 +5,5 @@ export const CardStyles: MantineTheme["components"]["Card"] = {
     radius: "md",
     shadow: "sm",
   },
-  styles: {
-    root: {
-      height: '100%',
-      padding: '40px!important'
-    }
-  }
+  styles: {},
 };

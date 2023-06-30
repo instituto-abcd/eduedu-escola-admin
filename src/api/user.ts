@@ -3,6 +3,10 @@ import { API } from "./base";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MutationOptions, Paginated, QueryOptions } from "./api-types";
 import { UserProfile, UserStatus } from "~/constants";
+import { LoginResponse } from "./auth";
+import { useUserStore } from "~/stores/user";
+import { decodeJwt } from "~/utils/decodeJwt";
+import { z } from "zod";
 
 export type UserRole = "MASTER" | "ADMIN" | "USER";
 
@@ -22,6 +26,7 @@ export type User = {
   profile: UserProfile;
   role: UserRole;
   school: School;
+  owner: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -37,6 +42,11 @@ type UserSearch = {
   profile?: string;
 };
 
+export type UpdatePasswordInput = {
+  oldPassword: string;
+  newPassword: string;
+};
+
 const KEY = {
   ALL: "USER_ALL",
 };
@@ -49,6 +59,7 @@ const URL = {
   GET_ACCESS_KEY: (id: string) => `/user/${id}/access-key`,
   DELETE: "/user",
   INACTIVATE: "/user/inactivate",
+  UPDATE_PASSWORD: "/user/password",
 };
 
 class UserAPI extends API {
@@ -70,13 +81,17 @@ class UserAPI extends API {
   }
 
   static async updateAccessKey(id: string) {
-    const { data } = await this.api.put<{ accessKey: string }>(URL.UPDATE_ACCESS_KEY(id))
-    return data
+    const { data } = await this.api.put<{ accessKey: string }>(
+      URL.UPDATE_ACCESS_KEY(id)
+    );
+    return data;
   }
 
   static async getAccessKey(id: string) {
-    const { data } = await this.api.get<{ accessKey: string }>(URL.GET_ACCESS_KEY(id))
-    return data
+    const { data } = await this.api.get<{ accessKey: string }>(
+      URL.GET_ACCESS_KEY(id)
+    );
+    return data;
   }
 
   static async inactivate(userIds: string[]) {
@@ -93,10 +108,20 @@ class UserAPI extends API {
 
     return data;
   }
+
+  static async updatePassword(input: UpdatePasswordInput) {
+    const { data } = await this.api.put<LoginResponse>(
+      URL.UPDATE_PASSWORD,
+      input
+    );
+    return data;
+  }
 }
 
 export function useUserGetAll(
-  options?: QueryOptions<Paginated<User>, [string, UserSearch | undefined]> & { search?: UserSearch }
+  options?: QueryOptions<Paginated<User>, [string, UserSearch | undefined]> & {
+    search?: UserSearch;
+  }
 ) {
   const handler = useCallback(
     function () {
@@ -125,7 +150,7 @@ export function useUserUpdate(
   }) {
     return UserAPI.update(data.userId, data.input);
   },
-    []);
+  []);
 
   return useMutation(handler, options);
 }
@@ -134,12 +159,14 @@ export function useGetAccessKey(
   id: string,
   options?: QueryOptions<{ accessKey: string }, [string, string]>
 ) {
+  const handler = useCallback(
+    function () {
+      return UserAPI.getAccessKey(id);
+    },
+    [id]
+  );
 
-  const handler = useCallback(function () {
-    return UserAPI.getAccessKey(id);
-  }, [id]);
-
-  return useQuery(['accessKey', id], handler, options)
+  return useQuery(["accessKey", id], handler, options);
 }
 
 export function useUpdateAccessKey(
@@ -154,10 +181,12 @@ export function useUpdateAccessKey(
   return useMutation(handler, {
     ...options,
     onSuccess: (data, vars, ctx) => {
-      queryClient.setQueryData(['accessKey', vars], { accessKey: data.accessKey })
+      queryClient.setQueryData(["accessKey", vars], {
+        accessKey: data.accessKey,
+      });
       options?.onSuccess?.(data, vars, ctx);
-    }
-  })
+    },
+  });
 }
 
 export function useUserDelete(
@@ -191,6 +220,35 @@ export function useUserInactivate(
     ...options,
     onSuccess: async (data, vars, ctx) => {
       await queryClient.invalidateQueries([KEY.ALL]);
+      options?.onSuccess?.(data, vars, ctx);
+    },
+  });
+}
+
+export function useUserUpdatePassword(
+  options?: MutationOptions<UpdatePasswordInput, LoginResponse>
+) {
+  const handler = useCallback(function (input: UpdatePasswordInput) {
+    return UserAPI.updatePassword(input);
+  }, []);
+
+  return useMutation(handler, {
+    ...options,
+
+    onSuccess: (data, vars, ctx) => {
+      const tokenValidation = z.object({
+        email: z.string().email(),
+        profile: z.enum(["DIRECTOR", "TEACHER"]),
+        iat: z.number(),
+      });
+
+      const token = decodeJwt(data.accessToken) as z.infer<
+        typeof tokenValidation
+      >;
+
+      tokenValidation.parse(token);
+
+      useUserStore.setState({ ...data, profile: token.profile });
       options?.onSuccess?.(data, vars, ctx);
     },
   });

@@ -5,7 +5,7 @@ type TableLoaderProps = {
   loading: boolean;
   title?: string;
   empty: boolean;
-  link?: string;
+  link?: { to: string; label: string };
 };
 
 export function TableLoader({
@@ -25,8 +25,8 @@ export function TableLoader({
             {title}
           </Title>
           {link && (
-            <Anchor component={Link} to={link}>
-              Cadastrar usuário
+            <Anchor component={Link} to={link.to}>
+              {link.label}
             </Anchor>
           )}
         </Stack>

@@ -1,4 +1,5 @@
 export const PATH = {
+  CHANGEPASSWORD: "/recuperar-senha",
   LOGIN: "/login",
   DASHBOARD: "/dashboard",
   USERS: "/usuarios",
@@ -9,4 +10,5 @@ export const PATH = {
   CLASSES: "/turmas",
   NEW_CLASS: "/turmas/nova-turma",
   EDIT_CLASS: "/turmas/editar",
+  SETUP: "/setup",
 };

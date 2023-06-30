@@ -1,0 +1,1 @@
+export { SchoolYearCard } from "./SchoolYearCard";

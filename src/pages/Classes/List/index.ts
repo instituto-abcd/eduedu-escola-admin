@@ -1,0 +1,1 @@
+export { ClassesListPage } from "./List";

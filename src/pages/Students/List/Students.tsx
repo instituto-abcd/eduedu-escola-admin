@@ -1,14 +1,11 @@
-import { Link } from "react-router-dom";
-import { PATH } from "~/constants/path";
-
-// Components:
 import {
   ActionIcon,
+  Anchor,
   Button,
   Checkbox,
+  Divider,
   FileInput,
   Group,
-  Pagination,
   Select,
   Table,
   Text,
@@ -17,15 +14,40 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
-import { HorizontalRule } from "~/components/HorizontalRule";
+import {
+  IconEdit,
+  IconEye,
+  IconFileDownload,
+  IconPaperclip,
+} from "@tabler/icons-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useStudentGetAll } from "~/api/student";
 import { PageHeader } from "~/components/PageHeader";
+import { Pagination } from "~/components/Pagination";
+import { TableLoader } from "~/components/TableLoader";
 import { InfoTooltip } from "~/components/Tooltips/Info";
-
-// Icons
-import { IconEdit, IconEye, IconFileDownload, IconPaperclip } from "@tabler/icons-react";
+import { PATH } from "~/constants/path";
+import { usePagination } from "~/hooks/usePagination";
+import { DeleteStudentModal } from "../Student/components/DeleteStudentModal";
+import { useDisclosure } from "@mantine/hooks";
+import { sheetDownloadUrl } from "~/api/school-class";
 
 export function StudentsListPage() {
   const theme = useMantineTheme();
+
+  const [selected, setSelected] = useState<string[]>([]);
+  function toggleSelected(id: string) {
+    if (selected.includes(id)) {
+      setSelected(selected.filter((item) => item !== id));
+    } else {
+      setSelected([...selected, id]);
+    }
+  }
+
+  const { data, isLoading } = useStudentGetAll();
+  const pagination = usePagination();
+  const [deleteModalOpen, deleteModalHandlers] = useDisclosure(false);
 
   // Modals
   const openModalUploadStudent = () =>
@@ -38,18 +60,21 @@ export function StudentsListPage() {
               Para fazer upload de aluno em lote é necessário seguir o template
               de cadastro de aluno.
             </Text>
-            <Text c="blue.6" size="sm">
-              Fazer download do template &#32;
-              <IconFileDownload size={rem(18)} />
-            </Text>
+            <Group align="center">
+              <Anchor c="blue.6" size="sm" href={sheetDownloadUrl()}>
+                Fazer download do template &#32;
+                <IconFileDownload size={rem(18)} />
+              </Anchor>
+            </Group>
           </Group>
 
           <Group mb={10}>
             <Text size="sm">
               Selecione o arquivo do template de Cadastro de Aluno.
             </Text>
+
             <FileInput
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
               placeholder="Selecione o arquivo"
               rightSection={<IconPaperclip size={rem(14)} />}
             />
@@ -65,10 +90,10 @@ export function StudentsListPage() {
               style={{ width: "100%" }}
             />
           </Group>
-          <HorizontalRule />
+          <Divider mt={20} />
         </>
       ),
-      labels: { confirm: "Sim", cancel: "Não" }
+      labels: { confirm: "Sim", cancel: "Não" },
     });
 
   const openModalAuthorizeNewTest = () => {
@@ -77,61 +102,31 @@ export function StudentsListPage() {
       children: (
         <>
           <Text size="sm">
-            Deseja que o sistema permita o(s) aluno(s)
-            selecionado(s) à realizarem uma nova prova?
+            Deseja que o sistema permita o(s) aluno(s) selecionado(s) à
+            realizarem uma nova prova?
           </Text>
-          <HorizontalRule />
-        </>
-      ),
-      labels: { confirm: "Sim", cancel: "Não" }
-    })
-  }
-  const openModalDeleteStudent = () =>
-    modals.openConfirmModal({
-      title: 'Excluir',
-      children: (
-        <>
-          <Text size="sm">
-            Deseja excluir o(s) alunos(s) selecionado(s)?
-          </Text>
-          <HorizontalRule />
+          <Divider mt={20} />
         </>
       ),
       labels: { confirm: "Sim", cancel: "Não" },
-    })
-
-  // TODO: get real data:
-  const students = {
-    items: [
-      {
-        id: "1",
-        name: "Amanda Freitas Dias",
-        status: "ACTIVE",
-        class: "1º A",
-        period: "Manhã",
-        serie: "Infantil",
-        cfo: "30%",
-        sea: "30%",
-        lct: "30%",
-      },
-    ],
-    pagination: {
-      totalPages: 1,
-    },
+    });
   };
 
   return (
     <>
-      <PageHeader title="Alunos">
-        <Button
-          variant="outline"
-          onClick={openModalUploadStudent}
-        >
-          Upload aluno
-        </Button>
-        <Link to={`${PATH.STUDENTS}/novo-aluno`}>
-          <Button>Novo aluno</Button>
-        </Link>
+      <PageHeader
+        title="Alunos"
+        description={`${data?.items.length ?? 0} registros`}
+        gap={0}
+      >
+        <Group noWrap>
+          <Button variant="outline" onClick={openModalUploadStudent}>
+            Upload aluno
+          </Button>
+          <Button component={Link} to={`${PATH.STUDENTS}/novo-aluno`}>
+            Novo aluno
+          </Button>
+        </Group>
       </PageHeader>
 
       <Group>
@@ -139,7 +134,7 @@ export function StudentsListPage() {
           size="xs"
           variant="outline"
           color="red"
-          onClick={openModalDeleteStudent}
+          onClick={deleteModalHandlers.open}
         >
           Excluir
         </Button>
@@ -157,7 +152,13 @@ export function StudentsListPage() {
         <thead>
           <tr>
             <th>
-              <Checkbox />
+              <Checkbox
+                onChange={(e) =>
+                  e.currentTarget.checked
+                    ? setSelected(data?.items.map((u) => u.id) ?? [])
+                    : setSelected([])
+                }
+              />
             </th>
             <th>
               Nome
@@ -180,11 +181,17 @@ export function StudentsListPage() {
               <Select data={[]} placeholder="Pesquisar" />
             </th>
             <th>
-              <InfoTooltip text="SEA" tooltipText="Sistema de Escrita Alfabética" />
+              <InfoTooltip
+                text="SEA"
+                tooltipText="Sistema de Escrita Alfabética"
+              />
               <Select data={[]} placeholder="Pesquisar" />
             </th>
             <th>
-              <InfoTooltip text="LCT" tooltipText="Leitura e Compreensão de Texto" />
+              <InfoTooltip
+                text="LCT"
+                tooltipText="Leitura e Compreensão de Texto"
+              />
               <Select data={[]} placeholder="Pesquisar" />
             </th>
             <th>
@@ -195,19 +202,22 @@ export function StudentsListPage() {
           </tr>
         </thead>
         <tbody>
-          {students?.items.map((student) => (
+          {data?.items.map((student) => (
             <tr key={student.id}>
               <td>
-                <Checkbox />
+                <Checkbox
+                  checked={selected.includes(student.id)}
+                  onChange={() => toggleSelected(student.id)}
+                />
               </td>
               <td>{student.name}</td>
-              <td>{student.class}</td>
-              <td>{student.period}</td>
-              <td>{student.serie}</td>
+              <td>{student.schoolClassName}</td>
+              <td>{student.schoolPeriod}</td>
+              <td>{student.schoolGrade}</td>
               <td>{student.cfo}</td>
               <td>{student.sea}</td>
               <td>{student.lct}</td>
-              <td>{student.status === "ACTIVE" ? "Ativo" : "Inativo"}</td>
+              <td>{student.status}</td>
               <td>
                 <Group noWrap spacing="xs">
                   <ActionIcon
@@ -232,8 +242,27 @@ export function StudentsListPage() {
         </tbody>
       </Table>
 
-      {/* TODO: commented while backend is not ready */}
-      {/* {students && <Pagination paginationApi={users.pagination} paginationHook={pagination} /> } */}
+      <TableLoader
+        loading={isLoading}
+        empty={data ? data.items.length === 0 : false}
+        link={{
+          label: "Cadastrar aluno",
+          to: `${PATH.STUDENTS}/novo-aluno`,
+        }}
+      />
+
+      {data && (
+        <Pagination
+          paginationApi={data.pagination}
+          paginationHook={pagination}
+        />
+      )}
+
+      <DeleteStudentModal
+        opened={deleteModalOpen}
+        onClose={deleteModalHandlers.close}
+        studentIds={selected}
+      />
     </>
   );
 }

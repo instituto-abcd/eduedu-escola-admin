@@ -1,0 +1,1 @@
+export { ChangePasswordLoggedModal } from "./ChangePasswordLoggedModal";
