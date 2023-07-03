@@ -42,7 +42,10 @@ export function SchoolYearCard({ data }: SchoolYearCardProps) {
   const { mutate: deleteSchoolYear, isLoading: isDeleting } =
     useSchoolYearDelete({
       onError: (error) => {
-        errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
+        errorNotification(
+          "Erro durante a operação",
+          `${error.message} (cod: ${error.code})`
+        );
       },
       onSuccess: deleteModalHandlers.close,
     });
@@ -50,7 +53,10 @@ export function SchoolYearCard({ data }: SchoolYearCardProps) {
   const { mutate: activate, isLoading: isActivateLoading } =
     useSchoolYearActivate({
       onError: (error) => {
-        errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
+        errorNotification(
+          "Erro durante a operação",
+          `${error.message} (cod: ${error.code})`
+        );
       },
     });
 
@@ -68,7 +74,7 @@ export function SchoolYearCard({ data }: SchoolYearCardProps) {
               weight={500}
               inline
             >
-              {new Date(data.createdAt).getFullYear()}
+              {data.name}
             </Text>
           </Group>
           {data.status === "DRAFT" && (

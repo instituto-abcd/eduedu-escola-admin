@@ -22,6 +22,7 @@ import {
   useAuthLogin,
   useRequestPasswordReset,
 } from "~/api/auth";
+import { useSettingsGetStatus } from "~/api/settings";
 import bg from "~/assets/backgrounds/login-1920w.png";
 import logo from "~/assets/logos/eduedu-branca.svg";
 import { ChangePasswordModal } from "~/components/ChangePasswordModal";
@@ -54,7 +55,10 @@ export function LoginPage() {
 
   const { mutate: login, isLoading: isAuthenticating } = useAuthLogin({
     onError: (error) => {
-      errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
+      errorNotification(
+        "Erro durante a operação",
+        `${error.message} (cod: ${error.code})`
+      );
     },
     onSuccess: () => {
       navigate(PATH.DASHBOARD);
@@ -80,11 +84,28 @@ export function LoginPage() {
       );
     },
     onError: (error) => {
-      errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
+      errorNotification(
+        "Erro durante a operação",
+        `${error.message} (cod: ${error.code})`
+      );
     },
   });
 
   const disableActions = [isAuthenticating].includes(true);
+
+  useSettingsGetStatus({
+    onError: (error) => {
+      errorNotification("Erro", `${error.message} (cod: ${error.code})`);
+
+      navigate(PATH.LOGIN);
+    },
+
+    onSuccess(data) {
+      if (!data.completedOwnerSetup || !data.completedSchoolSetup) {
+        navigate(PATH.SETUP);
+      }
+    },
+  });
 
   return (
     <BackgroundImage src={bg} h="100vh">
@@ -168,11 +189,7 @@ export function LoginPage() {
               placeholder="Email"
               {...formRecovery.getInputProps("email")}
             />
-            <Button
-              type="submit"
-              variant="outline"
-              fullWidth
-            >
+            <Button type="submit" variant="outline" fullWidth>
               Enviar
             </Button>
           </Stack>
