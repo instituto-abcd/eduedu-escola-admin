@@ -1,24 +1,19 @@
 import {
   ActionIcon,
-  Anchor,
   Button,
   Checkbox,
   Divider,
-  FileInput,
   Group,
   Select,
   Table,
   Text,
   TextInput,
-  rem,
   useMantineTheme,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import {
   IconEdit,
-  IconEye,
-  IconFileDownload,
-  IconPaperclip,
+  IconEye
 } from "@tabler/icons-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -31,7 +26,7 @@ import { PATH } from "~/constants/path";
 import { usePagination } from "~/hooks/usePagination";
 import { DeleteStudentModal } from "../Student/components/DeleteStudentModal";
 import { useDisclosure } from "@mantine/hooks";
-import { sheetDownloadUrl } from "~/api/school-class";
+import { UploadStudentsSheet } from "./components/UploadStudentsSheet";
 
 export function StudentsListPage() {
   const theme = useMantineTheme();
@@ -48,54 +43,9 @@ export function StudentsListPage() {
   const { data, isLoading } = useStudentGetAll();
   const pagination = usePagination();
   const [deleteModalOpen, deleteModalHandlers] = useDisclosure(false);
+  const [uploadSheetModalOpen, uploadSheetModalHandlers] = useDisclosure(false);
 
   // Modals
-  const openModalUploadStudent = () =>
-    modals.openConfirmModal({
-      title: "Upload de Aluno",
-      children: (
-        <>
-          <Group mb={10}>
-            <Text size="sm">
-              Para fazer upload de aluno em lote é necessário seguir o template
-              de cadastro de aluno.
-            </Text>
-            <Group align="center">
-              <Anchor c="blue.6" size="sm" href={sheetDownloadUrl()}>
-                Fazer download do template &#32;
-                <IconFileDownload size={rem(18)} />
-              </Anchor>
-            </Group>
-          </Group>
-
-          <Group mb={10}>
-            <Text size="sm">
-              Selecione o arquivo do template de Cadastro de Aluno.
-            </Text>
-
-            <FileInput
-              style={{ width: "100%" }}
-              placeholder="Selecione o arquivo"
-              rightSection={<IconPaperclip size={rem(14)} />}
-            />
-          </Group>
-
-          <Group>
-            <Text size="sm">
-              Selecione a turma que deseja adicionar os alunos do template.
-            </Text>
-            <Select
-              placeholder="Selecione a turma"
-              data={[]}
-              style={{ width: "100%" }}
-            />
-          </Group>
-          <Divider mt={20} />
-        </>
-      ),
-      labels: { confirm: "Sim", cancel: "Não" },
-    });
-
   const openModalAuthorizeNewTest = () => {
     modals.openConfirmModal({
       title: "Autorizar Nova Prova",
@@ -120,7 +70,7 @@ export function StudentsListPage() {
         gap={0}
       >
         <Group noWrap>
-          <Button variant="outline" onClick={openModalUploadStudent}>
+          <Button variant="outline" onClick={uploadSheetModalHandlers.open}>
             Upload aluno
           </Button>
           <Button component={Link} to={`${PATH.STUDENTS}/novo-aluno`}>
@@ -262,6 +212,11 @@ export function StudentsListPage() {
         opened={deleteModalOpen}
         onClose={deleteModalHandlers.close}
         studentIds={selected}
+      />
+
+      <UploadStudentsSheet
+        opened={uploadSheetModalOpen}
+        onClose={uploadSheetModalHandlers.close}
       />
     </>
   );
