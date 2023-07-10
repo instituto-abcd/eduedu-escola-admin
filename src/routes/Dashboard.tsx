@@ -5,6 +5,7 @@ export function DashboardRoutes() {
   return (
     <Routes>
       <Route index Component={DashboardPage} />
+      <Route path=":year" Component={DashboardPage} />
     </Routes>
   );
 }

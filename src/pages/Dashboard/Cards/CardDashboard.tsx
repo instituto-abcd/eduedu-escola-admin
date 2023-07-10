@@ -1,37 +1,58 @@
 import { Grid, Group, Card, Select, TextInput, Title } from "@mantine/core";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { useGetBySchoolYear } from "~/api/dashboard";
+import { useSchoolYearGetAll } from "~/api/school-year";
 import { useUserStore } from "~/stores/user";
 
-export function CardDashboard() {
+export function CardDashboard({ getReportData }) {
     const userProfile = useUserStore((u) => u.profile)
     const isTeacher = () => { return userProfile === "TEACHER" ? false : true }
+
+    const params = useParams();
+    const { data: years, isLoading: isLoadingYears } = useSchoolYearGetAll({ pageSize: 999 });
+    const [schoolYear, setSchoolYear] = useState(params.year ?? '')
+    const { data: schoolYearReport } = useGetBySchoolYear(schoolYear);
+    getReportData(schoolYearReport)
+
     return (
         <Card mb={20}>
             <Card.Section p={20}>
                 <Grid columns={4}>
-                    {!isTeacher &&
+                    {!!isTeacher &&
                         <Grid.Col span={1}>
                             <Group>
                                 <Title order={4}>Ano Letivo</Title>
                                 <Select
                                     maw={120}
-                                    placeholder="Selecione"
-                                    data={[
-                                        { value: '2023', label: '2023' },
-                                        { value: '2022', label: '2022' },
-                                        { value: '2021', label: '2021' },
-                                        { value: '2020', label: '2020' },
-                                    ]}
+                                    placeholder={params.year ?? 'Selecione'}
+                                    data={
+                                        isLoadingYears
+                                            ? [
+                                                {
+                                                    value: '',
+                                                    label: "Carregando...",
+                                                },
+                                            ]
+                                            : years?.map(({ name }) => ({
+                                                label: name.toString(),
+                                                value: name.toString(),
+                                            })) ?? []
+                                    }
+                                    onChange={(value) => {
+                                        setSchoolYear(value)
+                                    }}
                                 />
                             </Group>
                         </Grid.Col>
                     }
-                    {!isTeacher &&
+                    {!!isTeacher &&
                         <Grid.Col span={1}>
                             <Group>
                                 <Title order={4}>Professores</Title>
                                 <TextInput
                                     maw={60}
-                                    placeholder="50"
+                                    placeholder={schoolYearReport?.teachersCounter}
                                     disabled
                                 />
                             </Group>
@@ -42,7 +63,7 @@ export function CardDashboard() {
                             <Title order={4}>Turmas</Title>
                             <TextInput
                                 maw={60}
-                                placeholder="20"
+                                placeholder={schoolYearReport?.schoolClassesCounter}
                                 disabled
                             />
                         </Group>
@@ -52,7 +73,7 @@ export function CardDashboard() {
                             <Title order={4}>Alunos</Title>
                             <TextInput
                                 maw={60}
-                                placeholder="100"
+                                placeholder={schoolYearReport?.studentsCounter}
                                 disabled
                             />
                         </Group>

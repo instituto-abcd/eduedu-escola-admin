@@ -1,1 +1,0 @@
-export { SchoolYearCard } from "./SchoolYearCard";

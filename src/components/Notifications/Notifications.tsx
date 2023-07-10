@@ -20,11 +20,6 @@ export function Notifications() {
         `${error.message} (cod: ${error.code})`
       );
     },
-
-    onSuccess: (data) => {
-      console.log(data);
-    },
-
     initialData: [],
     refetchOnWindowFocus: true,
     cacheTime: 1000 * 60 * 5,
@@ -64,6 +59,7 @@ export function Notifications() {
               size="sm"
               loading={isLoading}
               onClick={() => mutate()}
+              disabled={data ? data.length < 1 : true}
             >
               Marcar como lido
             </Button>

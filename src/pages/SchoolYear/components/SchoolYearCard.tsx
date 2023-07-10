@@ -11,11 +11,13 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCalendarPause } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 import {
   SchoolYear,
   useSchoolYearActivate,
   useSchoolYearDelete,
 } from "~/api/school-year";
+import { PATH } from "~/constants/path";
 import { errorNotification } from "~/utils/errorNotification";
 
 type SchoolYearCardProps = {
@@ -59,6 +61,11 @@ export function SchoolYearCard({ data }: SchoolYearCardProps) {
         );
       },
     });
+
+  const navigate = useNavigate();
+  function seeDetails(year) {
+    navigate(`${PATH.DASHBOARD}/${year}`);
+  }
 
   return (
     <Card px={20} py={16} h={163}>
@@ -140,7 +147,7 @@ export function SchoolYearCard({ data }: SchoolYearCardProps) {
           </Button>
         )}
         {data.status === "ACTIVE" && (
-          <Button fullWidth size="sm" compact variant="light" radius="sm">
+          <Button fullWidth size="sm" compact variant="light" radius="sm" onClick={() => { seeDetails(data.name) }}>
             Ver Detalhes
           </Button>
         )}

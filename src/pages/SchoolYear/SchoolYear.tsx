@@ -6,7 +6,8 @@ import { errorNotification } from "~/utils/errorNotification";
 import { CreateSchoolYearModal } from "./components/CreateSchoolYearModal";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
-import { SchoolYearCard } from "~/components/SchoolYearCard";
+import { SchoolYearCard } from "./components/SchoolYearCard";
+import { PromoteStudentsModal } from "./components/PromoteStudentsModal";
 
 export function SchoolYearPage() {
   const { data: schoolYears, isLoading } = useSchoolYearGetAll({
@@ -14,7 +15,7 @@ export function SchoolYearPage() {
   });
 
   const [createModalVisible, createModalHandlers] = useDisclosure(false);
-
+  const [promoteStudentsModal, promoteStudentsModalHandlers] = useDisclosure(false)
   return (
     <Stack spacing="xl">
       <PageHeader
@@ -23,7 +24,9 @@ export function SchoolYearPage() {
                     Só é possível existir o ano letivo atual e um ano letivo futuro, porém apenas um ano letivo pode estar ativo por vez.
                     Durante o final do ano letivo (31 de dezembro) o ano que estava vigente automáticamente se torna finalizado."
       >
-        <Button disabled>Promover Alunos</Button>
+        <Button onClick={promoteStudentsModalHandlers.open}>
+          Promover Alunos
+        </Button>
       </PageHeader>
 
       {!isLoading && (
@@ -59,6 +62,10 @@ export function SchoolYearPage() {
       <CreateSchoolYearModal
         opened={createModalVisible}
         onClose={createModalHandlers.close}
+      />
+      <PromoteStudentsModal
+        opened={promoteStudentsModal}
+        onClose={promoteStudentsModalHandlers.close}
       />
     </Stack>
   );

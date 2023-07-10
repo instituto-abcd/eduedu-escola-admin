@@ -52,6 +52,7 @@ const URL = {
   UPDATE: (id: string) => `/schoolClass/${id}`,
   SHEET: "/schoolClass/students/spreadsheet-template",
   UPLOAD_SHEET: (id: string) => `/schoolClass/${id}/students/spreadsheet`,
+  DESTINY_STUDENTS: (destinyID: string) => `/schoolClass/${destinyID}/students`
 };
 
 export class SchoolClassAPI extends API {
@@ -103,6 +104,11 @@ export class SchoolClassAPI extends API {
       });
 
     return data;
+  }
+
+  static async studentsDestiny(destinyID: string) {
+    const { data } = await this.api.post(URL.DESTINY_STUDENTS(destinyID))
+    return data
   }
 }
 
@@ -184,3 +190,5 @@ export function useSchoolClassUpdate(
 export function sheetDownloadUrl() {
   return SchoolClassAPI.api.defaults.baseURL + URL.SHEET;
 }
+
+export function useStudentsDestiny() { }

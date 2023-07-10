@@ -1,8 +1,14 @@
 import { Button, Grid, Group, Select, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
-import { User, UserInput, useUserCreate, useUserUpdate } from "~/api/user";
+import {
+  User,
+  UserInput,
+  useUserCreate,
+  useUserGetById,
+  useUserUpdate,
+} from "~/api/user";
 import { AccessKeyInput } from "~/components/AccessKeyInput";
 import { PageHeader } from "~/components/PageHeader";
 import { PROFILE_SELECT, STATUS_SELECT } from "~/constants";
@@ -27,45 +33,73 @@ const userInputValidation = z.object({
 
 export function UserPage() {
   const navigate = useNavigate();
+
   const editingUser = useLocation().state?.user as User | undefined;
+  const params = useParams();
+  const shouldFetchUser = Boolean(!editingUser && params.userId);
+
+  const { data, isFetching: isLoadingUser } = useUserGetById(
+    params.userId ?? "",
+    {
+      enabled: shouldFetchUser,
+      onSuccess: (data) => {
+        form.setValues(data);
+        form.resetDirty();
+      },
+    }
+  );
+
+  const finalUser = shouldFetchUser ? data : editingUser;
 
   const { mutate: createUser, isLoading: isCreateLoading } = useUserCreate({
     onSuccess: () => {
-      successNotification("Operação realizada com sucesso", "Usuário criado com sucesso!");
+      successNotification(
+        "Operação realizada com sucesso",
+        "Usuário criado com sucesso!"
+      );
       navigate(PATH.USERS);
     },
     onError: (error) => {
-      errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
+      errorNotification(
+        "Erro durante a operação",
+        `${error.message} (cod: ${error.code})`
+      );
     },
   });
 
   const { mutate: updateUser, isLoading: isUpdateLoading } = useUserUpdate({
     onSuccess: () => {
-      successNotification("Operação realizada com sucesso", "Usuário alterado com sucesso!");
+      successNotification(
+        "Operação realizada com sucesso",
+        "Usuário alterado com sucesso!"
+      );
     },
     onError: (error) => {
-      errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
+      errorNotification(
+        "Erro durante a operação",
+        `${error.message} (cod: ${error.code})`
+      );
     },
   });
 
   const form = useForm<UserInput>({
     initialValues: {
-      name: editingUser?.name ?? "",
-      document: editingUser?.document ?? "",
-      email: editingUser?.email ?? "",
-      profile: editingUser?.profile ?? ("" as "DIRECTOR" | "TEACHER"),
+      name: finalUser?.name ?? "",
+      document: finalUser?.document ?? "",
+      email: finalUser?.email ?? "",
+      profile: finalUser?.profile ?? ("" as "DIRECTOR" | "TEACHER"),
     },
     validate: zodResolver(userInputValidation),
   });
 
   return (
     <>
-      <PageHeader title={editingUser ? editingUser.name : "Novo usuário"} />
+      <PageHeader title={finalUser ? finalUser.name : "Novo usuário"} />
 
       <form
         onSubmit={form.onSubmit((values) => {
-          if (editingUser) {
-            updateUser({ userId: editingUser.id, input: values });
+          if (finalUser) {
+            updateUser({ userId: finalUser.id, input: values });
           } else {
             createUser(values);
           }
@@ -75,7 +109,8 @@ export function UserPage() {
           <Grid.Col span={1}>
             <TextInput
               label="Nome"
-              placeholder="Nome"
+              placeholder={isLoadingUser ? "Carregando..." : "Nome"}
+              disabled={isLoadingUser}
               {...form.getInputProps("name")}
             />
           </Grid.Col>
@@ -83,7 +118,8 @@ export function UserPage() {
           <Grid.Col span={1}>
             <TextInput
               label="CPF"
-              placeholder="CPF"
+              placeholder={isLoadingUser ? "Carregando..." : "CPF"}
+              disabled={isLoadingUser}
               {...form.getInputProps("document")}
             />
           </Grid.Col>
@@ -91,7 +127,8 @@ export function UserPage() {
           <Grid.Col span={1}>
             <TextInput
               label="Email"
-              placeholder="Email"
+              placeholder={isLoadingUser ? "Carregando..." : "Email"}
+              disabled={isLoadingUser}
               {...form.getInputProps("email")}
             />
           </Grid.Col>
@@ -100,13 +137,14 @@ export function UserPage() {
             <Select
               data={PROFILE_SELECT}
               label="Perfil"
-              placeholder="Selecione"
+              placeholder={isLoadingUser ? "Carregando..." : "Selecione"}
+              disabled={isLoadingUser}
               {...form.getInputProps("profile")}
             />
           </Grid.Col>
 
           {/* --- Editing user exclusive inputs --- */}
-          {editingUser && (
+          {finalUser && (
             <>
               <Grid.Col span={1}>
                 <Select
@@ -117,7 +155,7 @@ export function UserPage() {
                   disabled
                 />
               </Grid.Col>
-              {editingUser.profile === "TEACHER" && (
+              {finalUser.profile === "TEACHER" && (
                 <Grid.Col span={2}>
                   <TextInput
                     label="Salas Associadas"
@@ -127,7 +165,7 @@ export function UserPage() {
                 </Grid.Col>
               )}
               <Grid.Col span={1}>
-                <AccessKeyInput userId={editingUser?.id ?? ""} />
+                <AccessKeyInput userId={finalUser?.id ?? ""} />
               </Grid.Col>
             </>
           )}
@@ -138,9 +176,7 @@ export function UserPage() {
           </Link>
           <Button
             type="submit"
-            disabled={
-              Object.values(form.values).includes("") || !form.isDirty()
-            }
+            disabled={!form.isDirty()}
             loading={isUpdateLoading || isCreateLoading}
           >
             Salvar

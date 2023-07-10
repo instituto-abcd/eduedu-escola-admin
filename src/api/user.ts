@@ -49,10 +49,12 @@ export type UpdatePasswordInput = {
 
 const KEY = {
   ALL: "USER_ALL",
-};
+  BY_ID: "USER",
+} as const;
 
 const URL = {
   ALL: "/user/all",
+  BY_ID: (id: string) => `/user/${id}`,
   CREATE: "/user",
   UPDATE: (id: string) => `/user/${id}`,
   UPDATE_ACCESS_KEY: (id: string) => `/user/${id}/access-key`,
@@ -67,6 +69,11 @@ class UserAPI extends API {
     const { data } = await this.api.get<Paginated<User>>(URL.ALL, {
       params,
     });
+    return data;
+  }
+
+  static async getById(id: string) {
+    const { data } = await this.api.get<User>(URL.BY_ID(id));
     return data;
   }
 
@@ -131,6 +138,20 @@ export function useUserGetAll(
   );
 
   return useQuery([KEY.ALL, options?.search], handler, options);
+}
+
+export function useUserGetById(
+  userId: string,
+  options?: QueryOptions<User, [typeof KEY.BY_ID, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return UserAPI.getById(userId);
+    },
+    [userId]
+  );
+
+  return useQuery([KEY.BY_ID, userId], handler, options);
 }
 
 export function useUserCreate(options?: MutationOptions<UserInput, User>) {
