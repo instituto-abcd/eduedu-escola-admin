@@ -56,7 +56,7 @@ export function ButtonCollapse({ schoolClass }: componentsProps) {
                         {schoolClass.examPerformance.map((exam) => (
                             <Text size="sm" c="dimmed">
                                 {AXIS_ENUM[exam.axis]}
-                                Consc. Fonológica&nbsp;
+                                &nbsp;
                                 <span style={{ color: theme.colors.orange[4] }}>
                                     {exam.percentage}
                                 </span>
