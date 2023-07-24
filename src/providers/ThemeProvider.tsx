@@ -1,6 +1,8 @@
 import { MantineProvider, MantineThemeOverride } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
+import { DatesProvider } from "@mantine/dates";
+import "dayjs/locale/pt-br";
 
 import {
   ButtonStyles,
@@ -24,6 +26,7 @@ const theme: MantineThemeOverride = {
     TextInput: TextInputStyles,
     PasswordInput: PasswordInputStyles,
     Select: TextInputStyles,
+    DateInput: TextInputStyles,
     Title: TitleStyles,
     Table: TableStyles,
   },
@@ -39,11 +42,13 @@ interface ThemeProviderProps {
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   return (
-    <MantineProvider withNormalizeCSS withGlobalStyles theme={theme}>
-      <ModalsProvider>
-        <Notifications position="top-center" />
-        {children}
-      </ModalsProvider>
-    </MantineProvider>
+    <DatesProvider settings={{ locale: "pt-BR" }}>
+      <MantineProvider withNormalizeCSS withGlobalStyles theme={theme}>
+        <ModalsProvider>
+          <Notifications position="top-center" />
+          {children}
+        </ModalsProvider>
+      </MantineProvider>
+    </DatesProvider>
   );
 }

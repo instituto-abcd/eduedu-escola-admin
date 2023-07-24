@@ -14,19 +14,20 @@ import {
   Checkbox,
   Divider,
   Group,
-  Select,
   Space,
   Table,
   Text,
-  TextInput,
+  Stack,
   useMantineTheme,
 } from "@mantine/core";
 import { IconEdit } from "@tabler/icons-react";
 import { PATH } from "~/constants/path";
 import { TableLoader } from "~/components/TableLoader";
+import { TableHeader } from "~/components/TableHeader";
 
 export function UsersListPage() {
   const [selected, setSelected] = useState<string[]>([]);
+  const [search, setSearch] = useState({});
   const theme = useMantineTheme();
 
   function toggleSelected(id: string) {
@@ -40,10 +41,12 @@ export function UsersListPage() {
   const pagination = usePagination();
   const { data: users, isLoading: loadingUsers } = useUserGetAll({
     search: {
+      ...search,
       "page-number": pagination.page,
       "page-size": pagination.pageSize,
     },
-    onError: (error) => errorNotification("Erro durante a operação", error.message),
+    onError: (error) =>
+      errorNotification("Erro durante a operação", error.message),
   });
 
   const { mutate: deleteUser, isLoading: isDeleting } = useUserDelete({
@@ -55,7 +58,10 @@ export function UsersListPage() {
       setSelected([]);
     },
     onError: (error) => {
-      errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
+      errorNotification(
+        "Erro durante a operação",
+        `${error.message} (cod: ${error.code})`
+      );
     },
   });
 
@@ -69,7 +75,10 @@ export function UsersListPage() {
         setSelected([]);
       },
       onError: (error) => {
-        errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
+        errorNotification(
+          "Erro durante a operação",
+          `${error.message} (cod: ${error.code})`
+        );
       },
     });
 
@@ -102,11 +111,10 @@ export function UsersListPage() {
     });
 
   return (
-    <>
+    <Stack>
       <PageHeader
         title="Usuários"
         description={`${users?.pagination.totalItems} registros` ?? ""}
-        mbDescription="0"
       >
         <Button component={Link} to="/usuarios/novo-usuario">
           Novo usuário
@@ -140,38 +148,54 @@ export function UsersListPage() {
 
       <Table horizontalSpacing="sm" verticalSpacing="md">
         <thead>
-          <tr>
-            <th>
-              <Checkbox
-                onChange={(e) =>
-                  e.currentTarget.checked
-                    ? setSelected(users?.items.filter(u => !u.owner).map((u) => u.id) ?? [])
-                    : setSelected([])
-                }
-              />
-            </th>
-            <th>
-              Nome
-              <TextInput size="sm" placeholder="Pesquisar" />
-            </th>
-            <th>
-              Email
-              <TextInput size="sm" placeholder="Pesquisar" />
-            </th>
-            <th>
-              CPF
-              <TextInput size="sm" placeholder="Pesquisar" />
-            </th>
-            <th>
-              Perfil
-              <Select data={PROFILE_SELECT} placeholder="Pesquisar" />
-            </th>
-            <th>
-              Status
-              <Select data={STATUS_SELECT} placeholder="Pesquisar" />
-            </th>
-            <th></th>
-          </tr>
+          <TableHeader
+            onValueChange={setSearch}
+            columns={[
+              {
+                label: "Nome",
+                type: "text",
+                searchTerm: "name",
+              },
+              {
+                label: "E-mail",
+                type: "text",
+                searchTerm: "email",
+              },
+              {
+                label: "CPF",
+                type: "text",
+                searchTerm: "document",
+              },
+              {
+                label: "Perfil",
+                type: "select",
+                searchTerm: "profile",
+                inputProps: {
+                  data: PROFILE_SELECT,
+                },
+              },
+              {
+                label: "Status",
+                type: "select",
+                searchTerm: "status",
+                inputProps: {
+                  data: STATUS_SELECT,
+                },
+              },
+              {
+                label: "",
+                type: "empty",
+                searchTerm: "",
+              },
+            ]}
+            onCheckAll={(checked) =>
+              checked
+                ? setSelected(
+                    users?.items.filter((u) => !u.owner).map((u) => u.id) ?? []
+                  )
+                : setSelected([])
+            }
+          />
         </thead>
         <tbody>
           {users?.items.map((user) => (
@@ -214,6 +238,6 @@ export function UsersListPage() {
           paginationHook={pagination}
         />
       )}
-    </>
+    </Stack>
   );
 }

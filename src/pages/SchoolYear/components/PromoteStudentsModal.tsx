@@ -43,6 +43,7 @@ export function PromoteStudentsModal({ opened, onClose }: Props) {
                     <Text size="sm" mb={20}>Para promover os alunos de turma é necessário seguir algumas etapas.</Text>
                     <Text size="sm" mb={20}>Selecione a turma que deseja promover.</Text>
                     <Select
+                        withinPortal
                         data={
                             schoolClasses?.items.map((item) => ({
                                 value: item.id,

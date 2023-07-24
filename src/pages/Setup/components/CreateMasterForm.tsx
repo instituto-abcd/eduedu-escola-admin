@@ -87,6 +87,7 @@ export function CreateMasterForm() {
             </Grid.Col>
             <Grid.Col span={1}>
               <Select
+                withinPortal
                 data={PROFILE_SELECT}
                 disabled
                 label="Perfil"

@@ -3,6 +3,7 @@ import {
   Divider,
   Grid,
   Group,
+  NumberInput,
   PasswordInput,
   Select,
   Stack,
@@ -51,8 +52,8 @@ export function SettingsPage() {
           </Button>
         </PageHeader>
 
-        <Grid columns={4}>
-          <Grid.Col span={1}>
+        <Grid columns={8}>
+          <Grid.Col span={2}>
             <TextInput
               label="Nome da escola"
               placeholder={isLoading ? "Carregando..." : "Escola XYZ"}
@@ -60,8 +61,9 @@ export function SettingsPage() {
               disabled={isLoading || isMutating}
             />
           </Grid.Col>
-          <Grid.Col span={1}>
+          <Grid.Col span={2}>
             <Select
+              withinPortal
               label="Sincronização de planetas"
               placeholder={isLoading ? "Carregando..." : "Escolha um"}
               data={[
@@ -80,10 +82,10 @@ export function SettingsPage() {
             />
           </Grid.Col>
 
-          <Grid.Col span={1} />
-          <Grid.Col span={1} />
+          <Grid.Col span={2} />
+          <Grid.Col span={2} />
 
-          <Grid.Col span={1}>
+          <Grid.Col span={2}>
             <TextInput
               label="Nome do Host de SMTP"
               placeholder={isLoading ? "Carregando..." : "smtp.office365.com"}
@@ -91,7 +93,7 @@ export function SettingsPage() {
               disabled={isLoading || isMutating}
             />
           </Grid.Col>
-          <Grid.Col span={1}>
+          <Grid.Col span={2}>
             <TextInput
               label="Nome do Usuário de SMTP"
               placeholder={
@@ -101,7 +103,7 @@ export function SettingsPage() {
               disabled={isLoading || isMutating}
             />
           </Grid.Col>
-          <Grid.Col span={1}>
+          <Grid.Col span={2}>
             <PasswordInput
               label="Senha de SMTP"
               {...form.getInputProps("smtpPassword")}
@@ -110,6 +112,7 @@ export function SettingsPage() {
           </Grid.Col>
           <Grid.Col span={1}>
             <Select
+              withinPortal
               label="SSL"
               placeholder="Escolha um"
               data={[
@@ -120,6 +123,15 @@ export function SettingsPage() {
                 form.setFieldValue("sslIsActive", v === "Ativo" ? true : false)
               }
               value={form.values.sslIsActive ? "Ativo" : "Inativo"}
+              disabled={isLoading || isMutating}
+            />
+          </Grid.Col>
+          <Grid.Col span={1}>
+            <NumberInput
+              label="Porta"
+              hideControls
+              {...form.getInputProps("smtpPort")}
+              placeholder={isLoading ? "Carregando..." : "Porta SMTP"}
               disabled={isLoading || isMutating}
             />
           </Grid.Col>

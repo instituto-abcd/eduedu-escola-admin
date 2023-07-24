@@ -119,7 +119,7 @@ export function ClassDetailPage() {
           <Accordion.Control>
             <Flex>
               Desempenho de Alunos por &nbsp;
-              <Select style={{ width: "100px" }} data={[]} />
+              <Select withinPortal style={{ width: "100px" }} data={[]} />
             </Flex>
           </Accordion.Control>
           <Accordion.Panel>

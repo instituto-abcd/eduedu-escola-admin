@@ -135,6 +135,7 @@ export function UserPage() {
 
           <Grid.Col span={1}>
             <Select
+              withinPortal
               data={PROFILE_SELECT}
               label="Perfil"
               placeholder={isLoadingUser ? "Carregando..." : "Selecione"}
@@ -148,6 +149,7 @@ export function UserPage() {
             <>
               <Grid.Col span={1}>
                 <Select
+                  withinPortal
                   data={STATUS_SELECT}
                   label="Status"
                   placeholder="Selecione"

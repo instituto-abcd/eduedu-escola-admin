@@ -11,6 +11,7 @@ import {
   Title,
   Text,
   PasswordInput,
+  NumberInput,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
@@ -73,22 +74,22 @@ export function CreateSchoolForm() {
             Agora precisamos configurar as credenciais que serão utilizadas pelo
             mecanismo de e-mail.
           </Text>
-          <Grid columns={2}>
-            <Grid.Col span={1}>
+          <Grid columns={4}>
+            <Grid.Col span={2}>
               <TextInput
                 label="Nome do Host de SMTP"
                 placeholder="Host de SMTP"
                 {...form.getInputProps("smtpHostName")}
               />
             </Grid.Col>
-            <Grid.Col span={1}>
+            <Grid.Col span={2}>
               <TextInput
                 label="Nome do Usuário de SMTP"
                 placeholder="Usuário de SMTP"
                 {...form.getInputProps("smtpUserName")}
               />
             </Grid.Col>
-            <Grid.Col span={1}>
+            <Grid.Col span={2}>
               <PasswordInput
                 label="Senha de SMTP"
                 placeholder="Senha de SMTP"
@@ -97,6 +98,7 @@ export function CreateSchoolForm() {
             </Grid.Col>
             <Grid.Col span={1}>
               <Select
+                withinPortal
                 label="SSL"
                 placeholder="Escolha um"
                 data={[
@@ -110,6 +112,14 @@ export function CreateSchoolForm() {
                   )
                 }
                 value={form.values.sslIsActive ? "Ativo" : "Inativo"}
+              />
+            </Grid.Col>
+            <Grid.Col span={1}>
+              <NumberInput
+                label="Porta"
+                placeholder="Porta SMTP"
+                hideControls
+                {...form.getInputProps("smtpPort")}
               />
             </Grid.Col>
           </Grid>

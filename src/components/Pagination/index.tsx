@@ -39,6 +39,7 @@ export function Pagination({ paginationHook, paginationApi }: PaginationOptions)
             <Group align="center" spacing={24} noWrap>
                 <Text>Exibir</Text>
                 <Select
+                    withinPortal
                     value={String(paginationHook.pageSize)}
                     onChange={(value) => { paginationHook.setPageSize(Number(value)) }}
                     data={paginationOptions}

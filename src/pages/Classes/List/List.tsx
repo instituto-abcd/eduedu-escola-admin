@@ -21,10 +21,18 @@ import { PATH } from "~/constants/path";
 import { usePagination } from "~/hooks/usePagination";
 import { errorNotification } from "~/utils/errorNotification";
 import { DeleteClassModal } from "./components/DeleteClassModal";
-import { SCHOOL_GRADE, SCHOOL_PERIOD } from "~/constants";
+import {
+  SCHOOL_GRADE,
+  SCHOOL_GRADE_SELECT,
+  SCHOOL_PERIOD,
+  SCHOOL_PERIOD_SELECT,
+} from "~/constants";
+import { TableHeader } from "~/components/TableHeader";
 
 export function ClassesListPage() {
   const [selected, setSelected] = useState<string[]>([]);
+  const [search, setSearch] = useState({});
+
   function toggleSelected(id: string) {
     if (selected.includes(id)) {
       setSelected(selected.filter((item) => item !== id));
@@ -36,6 +44,7 @@ export function ClassesListPage() {
   const pagination = usePagination();
   const { data: schoolClasses, isLoading } = useSchoolClassGetAll({
     search: {
+      ...search,
       "page-number": pagination.page,
       "page-size": pagination.pageSize,
     },
@@ -74,38 +83,40 @@ export function ClassesListPage() {
 
       <Table horizontalSpacing="sm" verticalSpacing="md">
         <thead>
-          <tr>
-            <th>
-              <Checkbox
-                onChange={(e) =>
-                  e.currentTarget.checked
-                    ? setSelected(schoolClasses?.items.map((u) => u.id) ?? [])
-                    : setSelected([])
-                }
-              />
-            </th>
-            <th>
-              Nome
-              <TextInput size="sm" placeholder="Pesquisar" />
-            </th>
-            <th>
-              Ano Letivo
-              <Select data={[]} placeholder="Pesquisar" searchable />
-            </th>
-            <th>
-              Série
-              <TextInput size="sm" placeholder="Pesquisar" />
-            </th>
-            <th>
-              Período
-              <Select data={[]} placeholder="Pesquisar" searchable />
-            </th>
-            <th>
-              Professores
-              <Select data={[]} placeholder="Pesquisar" searchable />
-            </th>
-            <th></th>
-          </tr>
+          <TableHeader
+            columns={[
+              { label: "Nome", type: "text", searchTerm: "name" },
+              {
+                label: "Ano Letivo",
+                type: "text",
+                searchTerm: "schoolYearName ",
+              },
+              {
+                label: "Série",
+                type: "select",
+                searchTerm: "schoolGrade",
+                inputProps: { data: SCHOOL_GRADE_SELECT },
+              },
+              {
+                label: "Período",
+                type: "select",
+                searchTerm: "schoolPeriod",
+                inputProps: { data: SCHOOL_PERIOD_SELECT },
+              },
+              {
+                label: "Professores",
+                type: "text",
+                searchTerm: "teacherName",
+              },
+              { label: "", type: "empty", searchTerm: "" },
+            ]}
+            onCheckAll={(checked) =>
+              checked
+                ? setSelected(schoolClasses?.items.map((u) => u.id) ?? [])
+                : setSelected([])
+            }
+            onValueChange={setSearch}
+          />
         </thead>
         <tbody>
           {schoolClasses?.items.map((schoolClass) => (
@@ -120,6 +131,11 @@ export function ClassesListPage() {
               <td>{schoolClass.schoolYear.name}</td>
               <td>{SCHOOL_GRADE[schoolClass.schoolGrade]}</td>
               <td>{SCHOOL_PERIOD[schoolClass.schoolPeriod]}</td>
+              <td>
+                {schoolClass.teachers
+                  .map((t) => t.name.split(" ")[0])
+                  .join(", ")}
+              </td>
               <td>
                 <Group noWrap spacing="xs">
                   <ActionIcon

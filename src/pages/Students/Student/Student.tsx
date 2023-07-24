@@ -20,7 +20,7 @@ import {
   useStudentUpdate,
 } from "~/api/student";
 import { PageHeader } from "~/components/PageHeader";
-import { schoolPeriod } from "~/constants";
+import { SCHOOL_PERIOD_SELECT } from "~/constants";
 import { PATH } from "~/constants/path";
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
@@ -121,13 +121,15 @@ export function StudentPage() {
           </Grid.Col>
           <Grid.Col span={1}>
             <Select
-              data={schoolPeriod}
+              withinPortal
+              data={SCHOOL_PERIOD_SELECT}
               label="Período"
               placeholder="Selecione"
             />
           </Grid.Col>
           <Grid.Col span={1}>
             <Select
+              withinPortal
               data={
                 schoolClasses?.items.map((item) => ({
                   value: item.id,

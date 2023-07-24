@@ -11,10 +11,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
-import {
-  IconEdit,
-  IconEye
-} from "@tabler/icons-react";
+import { IconEdit, IconEye } from "@tabler/icons-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useStudentGetAll } from "~/api/student";
@@ -27,11 +24,23 @@ import { usePagination } from "~/hooks/usePagination";
 import { DeleteStudentModal } from "../Student/components/DeleteStudentModal";
 import { useDisclosure } from "@mantine/hooks";
 import { UploadStudentsSheet } from "./components/UploadStudentsSheet";
+import {
+  SCHOOL_GRADE,
+  SCHOOL_GRADE_SELECT,
+  SCHOOL_PERIOD,
+  SCHOOL_PERIOD_SELECT,
+  STATUS_SELECT,
+  USER_STATUS,
+} from "~/constants";
+import { TableHeader } from "~/components/TableHeader";
 
 export function StudentsListPage() {
   const theme = useMantineTheme();
-
+  const [search, setSearch] = useState({});
   const [selected, setSelected] = useState<string[]>([]);
+
+  const pagination = usePagination();
+
   function toggleSelected(id: string) {
     if (selected.includes(id)) {
       setSelected(selected.filter((item) => item !== id));
@@ -40,8 +49,14 @@ export function StudentsListPage() {
     }
   }
 
-  const { data, isLoading } = useStudentGetAll();
-  const pagination = usePagination();
+  const { data, isLoading } = useStudentGetAll({
+    search: {
+      ...search,
+      "page-number": pagination.page,
+      "page-size": pagination.pageSize,
+    },
+  });
+
   const [deleteModalOpen, deleteModalHandlers] = useDisclosure(false);
   const [uploadSheetModalOpen, uploadSheetModalHandlers] = useDisclosure(false);
 
@@ -100,56 +115,44 @@ export function StudentsListPage() {
 
       <Table horizontalSpacing="sm" verticalSpacing="md">
         <thead>
-          <tr>
-            <th>
-              <Checkbox
-                onChange={(e) =>
-                  e.currentTarget.checked
-                    ? setSelected(data?.items.map((u) => u.id) ?? [])
-                    : setSelected([])
-                }
-              />
-            </th>
-            <th>
-              Nome
-              <TextInput size="sm" placeholder="Pesquisar" />
-            </th>
-            <th>
-              Turma
-              <Select data={[]} placeholder="Pesquisar" />
-            </th>
-            <th>
-              Período
-              <Select data={[]} placeholder="Pesquisar" />
-            </th>
-            <th>
-              Série
-              <Select data={[]} placeholder="Pesquisar" />
-            </th>
-            <th>
-              <InfoTooltip text="CFO" tooltipText="Consciência Fonológica" />
-              <Select data={[]} placeholder="Pesquisar" />
-            </th>
-            <th>
-              <InfoTooltip
-                text="SEA"
-                tooltipText="Sistema de Escrita Alfabética"
-              />
-              <Select data={[]} placeholder="Pesquisar" />
-            </th>
-            <th>
-              <InfoTooltip
-                text="LCT"
-                tooltipText="Leitura e Compreensão de Texto"
-              />
-              <Select data={[]} placeholder="Pesquisar" />
-            </th>
-            <th>
-              Status
-              <Select data={[]} placeholder="Pesquisar" />
-            </th>
-            <th></th>
-          </tr>
+          <TableHeader
+            onCheckAll={(checked) =>
+              checked
+                ? setSelected(data?.items.map((u) => u.id) ?? [])
+                : setSelected([])
+            }
+            columns={[
+              { label: "Nome", type: "text", searchTerm: "name" },
+              { label: "Turma", type: "text", searchTerm: "schoolClassName" },
+              {
+                label: "Período",
+                type: "select",
+                searchTerm: "schoolPeriod",
+                inputProps: { data: SCHOOL_PERIOD_SELECT },
+              },
+              {
+                label: "Série",
+                type: "select",
+                searchTerm: "schoolGrade",
+                inputProps: { data: SCHOOL_GRADE_SELECT },
+              },
+              { label: "CFO", type: "number", searchTerm: "cfo" },
+              { label: "SEA", type: "number", searchTerm: "sea" },
+              { label: "LCT", type: "number", searchTerm: "lct" },
+              {
+                label: "Status",
+                type: "select",
+                searchTerm: "status",
+                inputProps: { data: STATUS_SELECT },
+              },
+              {
+                label: "",
+                type: "empty",
+                searchTerm: "",
+              },
+            ]}
+            onValueChange={setSearch}
+          />
         </thead>
         <tbody>
           {data?.items.map((student) => (
@@ -162,12 +165,12 @@ export function StudentsListPage() {
               </td>
               <td>{student.name}</td>
               <td>{student.schoolClassName}</td>
-              <td>{student.schoolPeriod}</td>
-              <td>{student.schoolGrade}</td>
+              <td>{SCHOOL_PERIOD[student.schoolPeriod]}</td>
+              <td>{SCHOOL_GRADE[student.schoolGrade]}</td>
               <td>{student.cfo}</td>
               <td>{student.sea}</td>
               <td>{student.lct}</td>
-              <td>{student.status}</td>
+              <td>{USER_STATUS[student.status]}</td>
               <td>
                 <Group noWrap spacing="xs">
                   <ActionIcon

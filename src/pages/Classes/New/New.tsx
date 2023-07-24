@@ -23,7 +23,7 @@ import {
 import { useSchoolYearGetAll } from "~/api/school-year";
 import { useUserGetAll } from "~/api/user";
 import { PageHeader } from "~/components/PageHeader";
-import { schoolGrade, schoolPeriod } from "~/constants";
+import { SCHOOL_GRADE_SELECT, SCHOOL_PERIOD_SELECT } from "~/constants";
 import { PATH } from "~/constants/path";
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
@@ -137,21 +137,22 @@ export function NewClassPage() {
             </Grid.Col>
             <Grid.Col span={1}>
               <Select
+                withinPortal
                 label="Ano Letivo"
                 placeholder="Selecione"
                 disabled={isLoadingYears}
                 data={
                   isLoadingYears
                     ? [
-                        {
-                          value: form.values.schoolYearId,
-                          label: "Carregando...",
-                        },
-                      ]
+                      {
+                        value: form.values.schoolYearId,
+                        label: "Carregando...",
+                      },
+                    ]
                     : years?.map(({ name, id }) => ({
-                        label: name.toString(), // TODO: request property change to string type
-                        value: id,
-                      })) ?? []
+                      label: name.toString(), // TODO: request property change to string type
+                      value: id,
+                    })) ?? []
                 }
                 nothingFound="Nada encontrado"
                 {...form.getInputProps("schoolYearId")}
@@ -159,18 +160,20 @@ export function NewClassPage() {
             </Grid.Col>
             <Grid.Col span={1}>
               <Select
+                withinPortal
                 label="Série"
                 placeholder="Selecione"
-                data={schoolGrade}
+                data={SCHOOL_GRADE_SELECT}
                 nothingFound="Nada encontrado"
                 {...form.getInputProps("schoolGrade")}
               />
             </Grid.Col>
             <Grid.Col span={1}>
               <Select
+                withinPortal
                 label="Período"
                 placeholder="Selecione"
-                data={schoolPeriod}
+                data={SCHOOL_PERIOD_SELECT}
                 nothingFound="Nada encontrado"
                 {...form.getInputProps("schoolPeriod")}
               />

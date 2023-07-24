@@ -6,9 +6,12 @@ import {
   Text,
   Anchor,
 } from "@mantine/core";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuditGet } from "~/api/audit";
 import { Pagination } from "~/components/Pagination";
+import { TableHeader } from "~/components/TableHeader";
+import { TableLoader } from "~/components/TableLoader";
 import { PATH } from "~/constants/path";
 import { usePagination } from "~/hooks/usePagination";
 import { errorNotification } from "~/utils/errorNotification";
@@ -19,13 +22,16 @@ type ModalProps = {
 };
 
 export function AuditModal({ opened, onClose }: ModalProps) {
+  const [search, setSearch] = useState({});
   const pagination = usePagination();
+
   const { data, isLoading } = useAuditGet({
     onError: (error) =>
       errorNotification("Erro durante a operação", error.message),
 
     page: pagination.page,
     pageSize: pagination.pageSize,
+    search,
   });
 
   return (
@@ -35,15 +41,17 @@ export function AuditModal({ opened, onClose }: ModalProps) {
       onClose={onClose}
       size={843}
     >
-      <LoadingOverlay visible={isLoading} m="md" />
       <Table horizontalSpacing="sm" verticalSpacing="md" mb={20}>
         <thead>
-          <tr>
-            <th>Id Usuário</th>
-            <th>Entidade</th>
-            <th>Operação</th>
-            <th>Data/Hora</th>
-          </tr>
+          <TableHeader
+            columns={[
+              { label: "Id Usuário", type: "text", searchTerm: "userId" },
+              { label: "Entidade", type: "text", searchTerm: "entity" },
+              { label: "Operação", type: "text", searchTerm: "action" },
+              { label: "Data", type: "date", searchTerm: "createdAt" },
+            ]}
+            onValueChange={setSearch}
+          />
         </thead>
         <tbody>
           {data?.items.map((item) => (
@@ -72,6 +80,12 @@ export function AuditModal({ opened, onClose }: ModalProps) {
           ))}
         </tbody>
       </Table>
+
+      <TableLoader
+        loading={isLoading}
+        empty={!data || data.items.length === 0}
+      />
+
       {data && (
         <Center>
           <Pagination

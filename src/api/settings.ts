@@ -15,6 +15,7 @@ type Settings = {
   smtpHostName: string;
   smtpUserName: string;
   smtpPassword: string;
+  smtpPort: string;
   sslIsActive: boolean;
   schoolId: string;
   createdAt: string;

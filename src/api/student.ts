@@ -1,7 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
-import { MutationOptions, Paginated, QueryOptions } from "./api-types";
+import {
+  MutationOptions,
+  Paginated,
+  PaginationParams,
+  QueryOptions,
+} from "./api-types";
 import { API } from "./base";
+import { SchoolGrade, SchoolPeriod } from "./school-class";
+import { UserStatus } from "~/constants";
 
 type Student = {
   id: string;
@@ -9,13 +16,24 @@ type Student = {
   registry: string;
   schoolClassId: string;
   schoolClassName: string;
-  schoolPeriod: string;
-  schoolGrade: string;
+  schoolPeriod: SchoolPeriod;
+  schoolGrade: SchoolGrade;
   cfo?: string;
   sea?: string;
   lct?: string;
-  status: string;
+  status: UserStatus;
 };
+
+type StudentSearch = {
+  name?: string;
+  schoolClassName?: string;
+  schoolPeriod?: SchoolPeriod;
+  schoolGrade?: SchoolGrade;
+  cfo?: string;
+  sea?: string;
+  lct?: string;
+  status?: UserStatus;
+} & PaginationParams;
 
 export type StudentInput = Pick<Student, "name" | "registry" | "schoolClassId">;
 
@@ -30,8 +48,10 @@ const KEY = {
 };
 
 class StudentAPI extends API {
-  static async getAll() {
-    const { data } = await this.api.get<Paginated<Student>>(URL.ALL);
+  static async getAll(params?: StudentSearch) {
+    const { data } = await this.api.get<Paginated<Student>>(URL.ALL, {
+      params,
+    });
 
     return data;
   }
@@ -64,13 +84,21 @@ class StudentAPI extends API {
 }
 
 export function useStudentGetAll(
-  options?: QueryOptions<Paginated<Student>, [typeof KEY.ALL]>
+  options?: QueryOptions<
+    Paginated<Student>,
+    [typeof KEY.ALL, StudentSearch | undefined]
+  > & {
+    search?: StudentSearch;
+  }
 ) {
-  const handler = useCallback(function () {
-    return StudentAPI.getAll();
-  }, []);
+  const handler = useCallback(
+    function () {
+      return StudentAPI.getAll(options?.search);
+    },
+    [options?.search]
+  );
 
-  return useQuery([KEY.ALL], handler, options);
+  return useQuery([KEY.ALL, options?.search], handler, options);
 }
 
 export function useStudentCreate(

@@ -7,6 +7,7 @@ export function DetailsHeader() {
                 <Group>
                     <Title order={5}>Turma:</Title>
                     <Select
+                        withinPortal
                         data={[]}
                         placeholder="Pesquisar"
                         searchable

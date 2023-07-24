@@ -18,6 +18,8 @@ import { SchoolClassAPI, sheetDownloadUrl, useSchoolClassGetAll } from "~/api/sc
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "~/constants/path";
 
 type Props = {
   opened: boolean;
@@ -50,11 +52,13 @@ export function UploadStudentsSheet({ opened, onClose }: Props) {
     ),
   });
 
+  const navigate = useNavigate()
   async function uploadSheet(values: FormData) {
     setIsLoading(true)
     try {
       await SchoolClassAPI.uploadStudentsSheet(values.file, values.id)
       successNotification("Operação realizada com sucesso", "Aluno(s) adicionado(s) com sucesso!")
+      navigate(PATH.STUDENTS)
       onClose()
     } catch (error) {
       errorNotification("Erro durante a operação", (error as Error).message)
@@ -106,6 +110,7 @@ export function UploadStudentsSheet({ opened, onClose }: Props) {
               Selecione a turma que deseja adicionar os alunos do template.
             </Text>
             <Select
+              withinPortal
               {...formUploadSheet.getInputProps("id")}
               placeholder="Selecione a turma"
               disabled={isLoadingSchoolClasses}

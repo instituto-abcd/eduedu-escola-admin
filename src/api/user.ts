@@ -33,7 +33,7 @@ export type User = {
 
 export type UserInput = Pick<User, "name" | "email" | "document" | "profile">;
 
-type UserSearch = {
+export type UserSearch = {
   "page-number"?: number;
   "page-size"?: number;
   name?: string;

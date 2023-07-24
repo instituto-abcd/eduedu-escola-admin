@@ -51,7 +51,7 @@ export const monthsAbbreviation = [
   "Dez",
 ];
 
-export const schoolPeriod: {
+export const SCHOOL_PERIOD_SELECT: {
   value: SchoolPeriod;
   label: string;
 }[] = [
@@ -75,7 +75,7 @@ export const SCHOOL_PERIOD: Record<SchoolPeriod, string> = {
   FULL: "Integral",
 };
 
-export const schoolGrade: { value: SchoolGrade; label: string }[] = [
+export const SCHOOL_GRADE_SELECT: { value: SchoolGrade; label: string }[] = [
   {
     value: "CHILDREN",
     label: "Infantil",

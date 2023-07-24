@@ -14,19 +14,19 @@ export function StudentsPerformance() {
                     </th>
                     <th>
                         Última prova
-                        <Select data={[]} placeholder="Pesquisar" searchable />
+                        <Select withinPortal data={[]} placeholder="Pesquisar" searchable />
                     </th>
                     <th>
                         CFO
-                        <Select data={[]} placeholder="Ordenar" searchable />
+                        <Select withinPortal data={[]} placeholder="Ordenar" searchable />
                     </th>
                     <th>
                         SEA
-                        <Select data={[]} placeholder="Ordenar" searchable />
+                        <Select withinPortal data={[]} placeholder="Ordenar" searchable />
                     </th>
                     <th>
                         LCT
-                        <Select data={[]} placeholder="Ordenar" searchable />
+                        <Select withinPortal data={[]} placeholder="Ordenar" searchable />
                     </th>
                     <th></th>
                 </tr>

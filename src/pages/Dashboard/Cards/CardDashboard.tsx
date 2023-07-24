@@ -24,6 +24,7 @@ export function CardDashboard({ getReportData }) {
                             <Group>
                                 <Title order={4}>Ano Letivo</Title>
                                 <Select
+                                    withinPortal
                                     maw={120}
                                     placeholder={params.year ?? 'Selecione'}
                                     data={

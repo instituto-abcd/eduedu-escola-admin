@@ -51,6 +51,7 @@ export function MoveStudentsModal({ opened, onClose, schoolClassId }: Props) {
                     <Grid columns={2}>
                         <Grid.Col span={1}>
                             <Select
+                                withinPortal
                                 data={[]}
                                 placeholder="Selecione"
                                 disabled
@@ -84,6 +85,7 @@ export function MoveStudentsModal({ opened, onClose, schoolClassId }: Props) {
                         </Grid.Col>
                         <Grid.Col span={1}>
                             <Select
+                                withinPortal
                                 data={
                                     schoolClasses?.items.map((item) => ({
                                         value: item.id,
