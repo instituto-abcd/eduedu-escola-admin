@@ -7,7 +7,7 @@ import { CreateSchoolYearModal } from "./components/CreateSchoolYearModal";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import { SchoolYearCard } from "./components/SchoolYearCard";
-import { PromoteStudentsModal } from "./components/PromoteStudentsModal";
+import { PromoteStudentsModal } from "./components/PromoteStudentsModal/Step01";
 
 export function SchoolYearPage() {
   const { data: schoolYears, isLoading } = useSchoolYearGetAll({

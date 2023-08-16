@@ -197,9 +197,8 @@ export function NewClassPage() {
           </Grid>
           <Divider mt={20} />
           <Group position="right">
-            <Button variant="outline">Cancelar</Button>
-            {/* TODO: set the "saveBtn" as disabled while empty inputs */}
-            <Button type="submit">Salvar</Button>
+            <Button variant="outline" onClick={() => navigate(PATH.CLASSES)}>Cancelar</Button>
+            <Button type="submit" disabled={!form.isValid()}>Salvar</Button>
           </Group>
         </Stack>
       </form>

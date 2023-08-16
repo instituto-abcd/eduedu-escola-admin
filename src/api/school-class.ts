@@ -1,9 +1,10 @@
 import { useCallback } from "react";
 import { API } from "./base";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MutationOptions, Paginated, QueryOptions } from "./api-types";
 import { User } from "./user";
 import { SchoolYear } from "./school-year";
+import { Student } from "./student";
 
 export type SchoolGrade =
   | "CHILDREN"
@@ -12,7 +13,7 @@ export type SchoolGrade =
   | "THIRD_GRADE";
 export type SchoolPeriod = "MORNING" | "AFTERNOON" | "FULL";
 
-type SchoolClass = {
+export type SchoolClass = {
   id: string;
   name: string;
   schoolGrade: SchoolGrade;
@@ -42,6 +43,8 @@ type SchoolClassSearch = {
 const KEY = {
   ALL: "SCHOOL_CLASS_ALL",
   BY_ID: "SCHOOL_CLASS_BY_ID",
+  STUDENT_DESTINATION: "SCHOOL_CLASS_STUDENT_DESTINATION",
+  STUDENT_BY_SCHOOLCLASS: "STUDENT_BY_SCHOOLCLASS"
 } as const;
 
 const URL = {
@@ -52,7 +55,8 @@ const URL = {
   UPDATE: (id: string) => `/schoolClass/${id}`,
   SHEET: "/schoolClass/students/spreadsheet-template",
   UPLOAD_SHEET: (id: string) => `/schoolClass/${id}/students/spreadsheet`,
-  DESTINY_STUDENTS: (destinyID: string) => `/schoolClass/${destinyID}/students`
+  DESTINY_STUDENTS: (destinyID: string) => `/schoolClass/${destinyID}/students`,
+  STUDENTS_BY_SCHOOLCLASS: (schoolClassId: string) => `/schoolClass/${schoolClassId}/students`
 };
 
 export class SchoolClassAPI extends API {
@@ -106,8 +110,13 @@ export class SchoolClassAPI extends API {
     return data;
   }
 
-  static async studentsDestiny(destinyID: string) {
-    const { data } = await this.api.post(URL.DESTINY_STUDENTS(destinyID))
+  static async studentsBySchoolclass(schoolClassId: string) {
+    const { data } = await this.api.get(URL.STUDENTS_BY_SCHOOLCLASS(schoolClassId))
+    return data
+  }
+
+  static async studentsDestiny(destinyID: string, form: { originId: string, studentIds: string[] }) {
+    const { data } = await this.api.post(URL.DESTINY_STUDENTS(destinyID), form)
     return data
   }
 }
@@ -191,4 +200,41 @@ export function sheetDownloadUrl() {
   return SchoolClassAPI.api.defaults.baseURL + URL.SHEET;
 }
 
-export function useStudentsDestiny() { }
+export function useStudentsBySchoolclass(
+  schoolClassId: string,
+  options?: QueryOptions<Array<Student>, [typeof KEY.STUDENT_BY_SCHOOLCLASS, string]>) {
+  const handler = useCallback(
+    function () {
+      return SchoolClassAPI.studentsBySchoolclass(schoolClassId)
+    },
+    [schoolClassId]
+  )
+
+  return useQuery([KEY.STUDENT_BY_SCHOOLCLASS, schoolClassId], handler, options)
+}
+
+export function useStudentsDestiny(
+  options?: MutationOptions<
+    { destinationId: string; form: { originId: string, studentIds: string[] }; },
+    {}
+  >
+) {
+
+  const queryClient = new QueryClient()
+
+  const handler = useCallback(function (data: {
+    destinationId: string;
+    form: { originId: string, studentIds: string[] };
+  }) {
+    return SchoolClassAPI.studentsDestiny(data.destinationId, data.form);
+  },
+    []);
+
+  return useMutation(handler, {
+    ...options,
+    async onSuccess(data, variables, ctx) {
+      await queryClient.invalidateQueries([KEY.STUDENT_BY_SCHOOLCLASS, KEY.STUDENT_DESTINATION])
+      options?.onSuccess?.(data, variables, ctx)
+    }
+  });
+}

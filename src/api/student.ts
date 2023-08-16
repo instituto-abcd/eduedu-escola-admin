@@ -10,7 +10,7 @@ import { API } from "./base";
 import { SchoolGrade, SchoolPeriod } from "./school-class";
 import { UserStatus } from "~/constants";
 
-type Student = {
+export type Student = {
   id: string;
   name: string;
   registry: string;
@@ -154,7 +154,7 @@ export function useStudentUpdate(
   }) {
     return StudentAPI.update(data.id, data.input);
   },
-  []);
+    []);
 
   return useMutation(handler, {
     ...options,
