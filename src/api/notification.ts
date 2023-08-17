@@ -43,7 +43,7 @@ export function useNotificationGet(
     return NotificationAPI.get();
   }, []);
 
-  return useQuery(["NOTIFICATION"], handler, options);
+  return useQuery([KEY.BASE], handler, options);
 }
 
 export function useNotificationRead(options?: MutationOptions<void, void>) {

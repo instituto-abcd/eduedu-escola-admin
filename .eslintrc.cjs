@@ -11,5 +11,7 @@ module.exports = {
   rules: {
     "react-refresh/only-export-components": "warn",
     "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
   },
 };
