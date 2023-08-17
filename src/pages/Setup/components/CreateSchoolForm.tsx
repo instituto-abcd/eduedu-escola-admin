@@ -21,9 +21,6 @@ import {
   useSettingsGet,
   useSettingsUpdate,
 } from "~/api/settings";
-import {
-  useSyncExams, useSyncPlanets,
-} from "~/api/sync";
 import { PATH } from "~/constants/path";
 import { errorNotification } from "~/utils/errorNotification";
 
@@ -41,9 +38,6 @@ export function CreateSchoolForm() {
   });
 
   const { mutate, isLoading: mutating } = useSettingsUpdate();
-
-  const {} = useSyncExams();
-  const {} = useSyncPlanets();
 
   const form = useForm<SettingsUpdateInput>({
     initialValues: data,

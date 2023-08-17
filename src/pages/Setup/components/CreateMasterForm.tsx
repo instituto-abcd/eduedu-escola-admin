@@ -15,6 +15,7 @@ import {
 import { useForm, zodResolver } from "@mantine/form";
 import { z } from "zod";
 import { useSettingsCreateOwner } from "~/api/settings";
+import { useSyncExams, useSyncPlanets } from "~/api/sync";
 import { UserInput } from "~/api/user";
 import { PROFILE_SELECT, USER_PROFILE } from "~/constants";
 import { errorNotification } from "~/utils/errorNotification";
@@ -35,7 +36,14 @@ const userInputValidation = z.object({
 });
 
 export function CreateMasterForm() {
+  const { refetch: refetchSyncExams } = useSyncExams({ enabled: false });
+  const { mutate: mutateSyncPlanets } = useSyncPlanets();
+
   const { mutate, isLoading } = useSettingsCreateOwner({
+    onSuccess: () => {
+      refetchSyncExams();
+      mutateSyncPlanets();
+    },
     onError: (error) => {
       errorNotification("Erro", `${error.message} (cod: ${error.code})`);
     },
