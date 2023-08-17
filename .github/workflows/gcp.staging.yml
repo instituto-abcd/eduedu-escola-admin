@@ -45,8 +45,8 @@ jobs:
 
     - name: Push Docker Image to Setup
       run: |-
-        docker tag $IMAGE_NAME:latest $REGISTRY_SETUP_REPOSITORY:main
-        docker push $REGISTRY_SETUP_REPOSITORY:main
+        docker tag $IMAGE_NAME:latest $REGISTRY_SETUP_REPOSITORY:staging
+        docker push $REGISTRY_SETUP_REPOSITORY:staging
 
     outputs:
       git-tag: ${{ steps.increment-git-tag.outputs.git-tag }}
