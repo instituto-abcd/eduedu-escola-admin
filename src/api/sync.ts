@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { API } from "./base";
-import { useQuery } from "@tanstack/react-query";
-import { QueryOptions } from "./api-types";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { MutationOptions, QueryOptions } from "./api-types";
 
 type Settings = {
   id: string;
@@ -42,7 +42,7 @@ class SyncAPI extends API {
 }
 
 export function useSyncExams(
-  options?: QueryOptions<Settings, [typeof KEY.EXAM]>
+  options?: QueryOptions<void, [typeof KEY.EXAM]>
 ) {  
   const handler = useCallback(function () {
     return SyncAPI.syncExams();
@@ -52,11 +52,11 @@ export function useSyncExams(
 }
 
 export function useSyncPlanets(
-  options?: QueryOptions<Settings, [typeof KEY.PLANETS]>
+  options?: MutationOptions<void, void>
 ) {  
   const handler = useCallback(function () {
     return SyncAPI.syncPlanets();
   }, []);
 
-  return useQuery([KEY.PLANETS], handler, options);
+  return useMutation(handler, options);
 }
