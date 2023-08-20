@@ -14,7 +14,11 @@ import {
 import { IconFileDownload, IconPaperclip } from "@tabler/icons-react";
 import { useForm, zodResolver } from "@mantine/form";
 import { z } from "zod";
-import { SchoolClassAPI, sheetDownloadUrl, useSchoolClassGetAll } from "~/api/school-class";
+import {
+  SchoolClassAPI,
+  sheetDownloadUrl,
+  useSchoolClassGetAll,
+} from "~/api/school-class";
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
 import { useState } from "react";
@@ -27,50 +31,56 @@ type Props = {
 };
 
 type FormData = {
-  file: File,
-  id: string
-}
+  file: File;
+  id: string;
+};
 
-export function UploadStudentsSheet({ opened, onClose }: Props) {
-
-  const [isLoading, setIsLoading] = useState(false)
-  const { data: schoolClasses, isLoading: isLoadingSchoolClasses } = useSchoolClassGetAll({
-    search: {
-      "page-number": 1,
-      "page-size": 999,
-    },
-  })
+export function UploadStudentsSheet({ opened, onClose: _onClose }: Props) {
+  const [isLoading, setIsLoading] = useState(false);
+  const { data: schoolClasses, isLoading: isLoadingSchoolClasses } =
+    useSchoolClassGetAll({
+      search: {
+        "page-number": 1,
+        "page-size": 999,
+      },
+    });
 
   const formUploadSheet = useForm<FormData>({
     validate: zodResolver(
       z.object({
-        id: z
-          .string()
-          .min(1, { message: "Selecione uma turma" }),
-        file: z.instanceof(File, { message: "Selecione um arquivo" })
+        id: z.string().min(1, { message: "Selecione uma turma" }),
+        file: z.instanceof(File, { message: "Selecione um arquivo" }),
       })
     ),
   });
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   async function uploadSheet(values: FormData) {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      await SchoolClassAPI.uploadStudentsSheet(values.file, values.id)
-      successNotification("Operação realizada com sucesso", "Aluno(s) adicionado(s) com sucesso!")
-      navigate(PATH.STUDENTS)
-      onClose()
+      await SchoolClassAPI.uploadStudentsSheet(values.file, values.id);
+      successNotification(
+        "Operação realizada com sucesso",
+        "Aluno(s) adicionado(s) com sucesso!"
+      );
+      navigate(PATH.STUDENTS);
+      onClose();
     } catch (error) {
-      errorNotification("Erro durante a operação", (error as Error).message)
+      errorNotification("Erro durante a operação", (error as Error).message);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
+  }
+
+  function onClose() {
+    formUploadSheet.reset();
+    _onClose();
   }
 
   return (
     <Modal
       opened={opened}
-      onClose={isLoading ? () => { } : onClose}
+      onClose={isLoading ? () => {} : onClose}
       title="Upload de Aluno"
     >
       <form
@@ -115,12 +125,12 @@ export function UploadStudentsSheet({ opened, onClose }: Props) {
               placeholder="Selecione a turma"
               disabled={isLoadingSchoolClasses}
               data={
-                isLoadingSchoolClasses
+                isLoadingSchoolClasses || !schoolClasses
                   ? []
                   : schoolClasses.items.map(({ name, id }) => ({
-                    label: name.toString(),
-                    value: id,
-                  }))
+                      label: name.toString(),
+                      value: id,
+                    }))
               }
               style={{ width: "100%" }}
             />
@@ -129,15 +139,11 @@ export function UploadStudentsSheet({ opened, onClose }: Props) {
           <Divider my="xl" />
 
           <Group position="right">
-            <Button
-              variant="outline"
-              onClick={onClose}
-            >
+            <Button variant="outline" onClick={onClose}>
               Não
             </Button>
             <Button type="submit">Sim</Button>
           </Group>
-
         </Stack>
       </form>
       <LoadingOverlay visible={isLoading} />

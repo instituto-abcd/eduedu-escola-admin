@@ -1,6 +1,11 @@
 import { useCallback } from "react";
 import { API } from "./base";
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { MutationOptions, Paginated, QueryOptions } from "./api-types";
 import { User } from "./user";
 import { SchoolYear } from "./school-year";
@@ -37,14 +42,14 @@ type SchoolClassSearch = {
   schoolGrade?: string;
   schoolPeriod?: string;
   schoolYearId?: string;
-  teacherIds?: any;
+  teacherIds?: unknown; // TODO: tipar
 };
 
 const KEY = {
   ALL: "SCHOOL_CLASS_ALL",
   BY_ID: "SCHOOL_CLASS_BY_ID",
   STUDENT_DESTINATION: "SCHOOL_CLASS_STUDENT_DESTINATION",
-  STUDENT_BY_SCHOOLCLASS: "STUDENT_BY_SCHOOLCLASS"
+  STUDENT_BY_SCHOOLCLASS: "STUDENT_BY_SCHOOLCLASS",
 } as const;
 
 const URL = {
@@ -56,7 +61,8 @@ const URL = {
   SHEET: "/schoolClass/students/spreadsheet-template",
   UPLOAD_SHEET: (id: string) => `/schoolClass/${id}/students/spreadsheet`,
   DESTINY_STUDENTS: (destinyID: string) => `/schoolClass/${destinyID}/students`,
-  STUDENTS_BY_SCHOOLCLASS: (schoolClassId: string) => `/schoolClass/${schoolClassId}/students`
+  STUDENTS_BY_SCHOOLCLASS: (schoolClassId: string) =>
+    `/schoolClass/${schoolClassId}/students`,
 };
 
 export class SchoolClassAPI extends API {
@@ -98,26 +104,30 @@ export class SchoolClassAPI extends API {
 
   static async uploadStudentsSheet(sheet: File, id: string) {
     const formData = new FormData();
-    formData.append('file', sheet);
+    formData.append("file", sheet);
 
-    const { data } = await this.api.post(URL.UPLOAD_SHEET(id), formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      });
+    const { data } = await this.api.post(URL.UPLOAD_SHEET(id), formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
     return data;
   }
 
   static async studentsBySchoolclass(schoolClassId: string) {
-    const { data } = await this.api.get(URL.STUDENTS_BY_SCHOOLCLASS(schoolClassId))
-    return data
+    const { data } = await this.api.get(
+      URL.STUDENTS_BY_SCHOOLCLASS(schoolClassId)
+    );
+    return data;
   }
 
-  static async studentsDestiny(destinyID: string, form: { originId: string, studentIds: string[] }) {
-    const { data } = await this.api.post(URL.DESTINY_STUDENTS(destinyID), form)
-    return data
+  static async studentsDestiny(
+    destinyID: string,
+    form: { originId: string; studentIds: string[] }
+  ) {
+    const { data } = await this.api.post(URL.DESTINY_STUDENTS(destinyID), form);
+    return data;
   }
 }
 
@@ -191,7 +201,7 @@ export function useSchoolClassUpdate(
   }) {
     return SchoolClassAPI.update(data.schoolClassId, data.input);
   },
-    []);
+  []);
 
   return useMutation(handler, options);
 }
@@ -202,39 +212,49 @@ export function sheetDownloadUrl() {
 
 export function useStudentsBySchoolclass(
   schoolClassId: string,
-  options?: QueryOptions<Array<Student>, [typeof KEY.STUDENT_BY_SCHOOLCLASS, string]>) {
+  options?: QueryOptions<
+    Array<Student>,
+    [typeof KEY.STUDENT_BY_SCHOOLCLASS, string]
+  >
+) {
   const handler = useCallback(
     function () {
-      return SchoolClassAPI.studentsBySchoolclass(schoolClassId)
+      return SchoolClassAPI.studentsBySchoolclass(schoolClassId);
     },
     [schoolClassId]
-  )
+  );
 
-  return useQuery([KEY.STUDENT_BY_SCHOOLCLASS, schoolClassId], handler, options)
+  return useQuery(
+    [KEY.STUDENT_BY_SCHOOLCLASS, schoolClassId],
+    handler,
+    options
+  );
 }
 
 export function useStudentsDestiny(
   options?: MutationOptions<
-    { destinationId: string; form: { originId: string, studentIds: string[] }; },
-    {}
+    { destinationId: string; form: { originId: string; studentIds: string[] } },
+    void
   >
 ) {
-
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient();
 
   const handler = useCallback(function (data: {
     destinationId: string;
-    form: { originId: string, studentIds: string[] };
+    form: { originId: string; studentIds: string[] };
   }) {
     return SchoolClassAPI.studentsDestiny(data.destinationId, data.form);
   },
-    []);
+  []);
 
   return useMutation(handler, {
     ...options,
     async onSuccess(data, variables, ctx) {
-      await queryClient.invalidateQueries([KEY.STUDENT_BY_SCHOOLCLASS, KEY.STUDENT_DESTINATION])
-      options?.onSuccess?.(data, variables, ctx)
-    }
+      await queryClient.invalidateQueries([
+        KEY.STUDENT_BY_SCHOOLCLASS,
+        KEY.STUDENT_DESTINATION,
+      ]);
+      options?.onSuccess?.(data, variables, ctx);
+    },
   });
 }
