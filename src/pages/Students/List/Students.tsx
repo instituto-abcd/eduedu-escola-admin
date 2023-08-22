@@ -31,7 +31,6 @@ import {
   USER_STATUS,
 } from "~/constants";
 import { TableHeader } from "~/components/TableHeader";
-import { AuthorizeNewExamModal } from "../Student/components/AuthorizeNewExamModal";
 import { successNotification } from "~/utils/successNotification";
 import { errorNotification } from "~/utils/errorNotification";
 
@@ -74,7 +73,6 @@ export function StudentsListPage() {
     },
   });
 
-  const [authNewExamModalOpen, authNewExamModalHandlers] = useDisclosure(false);
   const [deleteModalOpen, deleteModalHandlers] = useDisclosure(false);
   const [uploadSheetModalOpen, uploadSheetModalHandlers] = useDisclosure(false);
 
