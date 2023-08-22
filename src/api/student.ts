@@ -40,6 +40,7 @@ export type StudentInput = Pick<Student, "name" | "registry" | "schoolClassId">;
 const URL = {
   ALL: "/student/all",
   BASE: "/student",
+  AUTH_NEW_EXAM: "/student/authorize-new-exam",
 };
 
 const KEY = {
@@ -78,6 +79,12 @@ class StudentAPI extends API {
 
   static async update(id: string, input: StudentInput) {
     const { data } = await this.api.patch<Student>(`${URL.BASE}/${id}`, input);
+
+    return data;
+  }
+
+  static async authorizeNewExam(ids: string[]) {
+    const { data } = await this.api.post<{ success: boolean }>(URL.AUTH_NEW_EXAM,  { ids });
 
     return data;
   }
@@ -155,6 +162,24 @@ export function useStudentUpdate(
     return StudentAPI.update(data.id, data.input);
   },
     []);
+
+  return useMutation(handler, {
+    ...options,
+    onSuccess: (data, vars, ctx) => {
+      queryClient.invalidateQueries([KEY.ALL]);
+      options?.onSuccess?.(data, vars, ctx);
+    },
+  });
+}
+
+export function useAuthorizeNewExam(
+  options?: MutationOptions<string[], { success: boolean }>
+) {
+  const queryClient = useQueryClient();
+
+  const handler = useCallback(function (ids: string[]) {
+    return StudentAPI.authorizeNewExam(ids);
+  }, []);
 
   return useMutation(handler, {
     ...options,
