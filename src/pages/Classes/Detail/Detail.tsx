@@ -4,8 +4,10 @@ import {
   Flex,
   Select,
   useMantineTheme,
-  Table,
   Divider,
+  ActionIcon,
+  Box,
+  Text,
 } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { DetailsHeader } from "~/components/Classes/Details/DetailsHeader";
@@ -14,6 +16,8 @@ import {
   TestPerformance,
   TestResultsHistory,
 } from "~/components/Classes/Details/TestsPerformance";
+
+import { PlanetsPerformance } from "./components/PlanetsPerformance";
 
 export function ClassDetailPage() {
   const theme = useMantineTheme();
@@ -32,16 +36,24 @@ export function ClassDetailPage() {
               transform: "rotate(45deg)",
             },
           },
+          item: {
+            backgroundColor: '#fff',
+            boxShadow: "4px 6px 15px -5px rgba(0,0,0,0.40)",
+          }
         }}
       >
         <Accordion.Item value="testPerformance">
-          <Accordion.Control
-            style={{
-              color: theme.colors.indigo[9],
-            }}
-          >
-            <Flex justify="space-between">
-              Desempenho em Provas
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Accordion.Control
+              style={{
+                color: theme.colors.indigo[9],
+                maxWidth: '85%'
+              }}
+            >
+              <Text>Desempenho em Provas</Text>
+            </Accordion.Control>
+
+            <ActionIcon>
               <Button
                 size="xs"
                 style={{
@@ -51,10 +63,11 @@ export function ClassDetailPage() {
               >
                 Alunos que não precisam de reforço
               </Button>
-            </Flex>
-          </Accordion.Control>
+            </ActionIcon>
+          </Box>
+
           <Accordion.Panel>
-            <Flex justify="space-between">
+            <Flex justify="space-around">
               <TestPerformance examType="Consciência Fonológica" />
               <Divider orientation="vertical" variant="solid" />
               <TestPerformance examType="Sistema de Escrita Alfabética" />
@@ -67,61 +80,44 @@ export function ClassDetailPage() {
         <Accordion.Item value="planetsPerformance">
           <Accordion.Control>Desempenho em Planetas</Accordion.Control>
           <Accordion.Panel>
-            <Table horizontalSpacing="sm" verticalSpacing="md">
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Planetas Oferecidos</th>
-                  <th>Planetas Realizados</th>
-                  <th>Média Estrelas</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td style={{ color: theme.colors.blue[6] }}>
-                    Consciência Fonológica
-                  </td>
-                  <td>30</td>
-                  <td>30</td>
-                  <td>{/* TODO: estrelinhas aqui */}</td>
-                </tr>
-                <tr>
-                  <td style={{ color: theme.colors.blue[6] }}>
-                    Sistema de Escrita Alfabética
-                  </td>
-                  <td>25</td>
-                  <td>20</td>
-                  <td>{/* TODO: estrelinhas aqui */}</td>
-                </tr>
-                <tr>
-                  <td style={{ color: theme.colors.blue[6] }}>
-                    Leitura e Compreensão de Texto
-                  </td>
-                  <td>18</td>
-                  <td>17</td>
-                  <td>{/* TODO: estrelinhas aqui */}</td>
-                </tr>
-              </tbody>
-            </Table>
+            <PlanetsPerformance />
           </Accordion.Panel>
         </Accordion.Item>
 
         <Accordion.Item value="testResultsHistory">
-          <Accordion.Control>
-            Histórico de Resultado de Provas
-          </Accordion.Control>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Accordion.Control style={{ width: '40%' }}>
+              Histórico de Resultado de Provas
+            </Accordion.Control>
+            <Flex>
+              <Box style={{ display: 'flex' }}>
+                <Box style={{ width: '20px', height: '20px', backgroundColor: '#66d9e8', margin: '0 5px 0 15px' }}></Box>
+                <Text fz="sm">Consciência fonológica</Text>
+              </Box>
+              <Box style={{ display: 'flex' }}>
+                <Box style={{ width: '20px', height: '20px', backgroundColor: '#d0bfff', margin: '0 5px 0 15px' }}></Box>
+                <Text fz="sm">Sistema de Escrita Alfabética</Text>
+              </Box>
+              <Box style={{ display: 'flex' }}>
+                <Box style={{ width: '20px', height: '20px', backgroundColor: '#ffc078', margin: '0 5px 0 15px' }}></Box>
+                <Text fz="sm">Leitura e Compreensão de Texto</Text>
+              </Box>
+            </Flex>
+          </Box>
           <Accordion.Panel>
             <TestResultsHistory />
           </Accordion.Panel>
         </Accordion.Item>
 
         <Accordion.Item value="studentsPerformance">
-          <Accordion.Control>
-            <Flex>
-              Desempenho de Alunos por &nbsp;
-              <Select withinPortal style={{ width: "100px" }} data={[]} />
-            </Flex>
-          </Accordion.Control>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Accordion.Control style={{ width: '90%' }}>
+              <Flex>
+                Desempenho de Alunos por &nbsp;
+              </Flex>
+            </Accordion.Control>
+            <Select withinPortal style={{ width: "100px" }} data={[]} />
+          </Box>
           <Accordion.Panel>
             <StudentsPerformance />
           </Accordion.Panel>

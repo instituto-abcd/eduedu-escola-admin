@@ -36,6 +36,9 @@ export function TestResultsHistory() {
             title: {
                 display: false,
             },
+            legend: {
+                display: false
+            }
         },
         scales: {
             y: {
