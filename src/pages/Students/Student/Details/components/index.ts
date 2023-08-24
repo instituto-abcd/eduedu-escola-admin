@@ -1,0 +1,5 @@
+export { HeaderStudent } from './Header'
+export { PerformancePerArea } from './PerformancePerArea'
+export { StudentReport } from './StudentReport'
+export { SchoolClassPerformanceBy } from './SchoolClassPerformanceBy'
+export { StudentPerformanceBy } from './StudentPerformanceBy'

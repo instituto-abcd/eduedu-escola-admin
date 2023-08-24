@@ -198,14 +198,14 @@ export function StudentsListPage() {
                 <Group noWrap spacing="xs">
                   <ActionIcon
                     component={Link}
-                    to={`${PATH.STUDENTS}/${student.id}`}
+                    to={`${PATH.STUDENTS}/${student.id}/detalhes`}
                     color="blue.9"
                   >
                     <IconEye />
                   </ActionIcon>
                   <ActionIcon
                     component={Link}
-                    to={`${PATH.STUDENTS}/${student.id}`}
+                    to={`${PATH.STUDENTS}/${student.id}/editar`}
                     state={{ student }}
                     color="blue.9"
                   >

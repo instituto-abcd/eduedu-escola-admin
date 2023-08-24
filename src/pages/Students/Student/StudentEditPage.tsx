@@ -31,7 +31,7 @@ const studentInputValidation = z.object({
   schoolClassId: z.string().nonempty({ message: "Campo obrigatório" }),
 });
 
-export function StudentPage() {
+export function StudentEditPage() {
   const navigate = useNavigate();
   const params = useParams();
   const location = useLocation();
