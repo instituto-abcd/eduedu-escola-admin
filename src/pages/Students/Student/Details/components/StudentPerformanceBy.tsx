@@ -12,14 +12,47 @@ import {
 } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
 import { useState } from "react";
-import { monthsAbbreviation } from "~/constants";
 
 // Stars:
 import { Rating } from '@smastrom/react-rating'
 import '@smastrom/react-rating/style.css'
+import { errorNotification } from "~/utils/errorNotification";
+import { useGetExamCharts, useGetPlanetsCharts } from "~/api/student";
 
-export function StudentPerformanceBy() {
+type componentProps = {
+    studentId: string;
+}
+
+export function StudentPerformanceBy({ studentId }: componentProps) {
     const theme = useMantineTheme();
+
+    const { data: studentPerformanceByExam } = useGetExamCharts(
+        studentId ?? "",
+        {
+            onError: (error) =>
+                errorNotification("Erro durante a operação", error.message)
+        }
+    )
+
+    const { data: studentPerformanceByPlanets } = useGetPlanetsCharts(
+        studentId ?? "",
+        {
+            onError: (error) =>
+                errorNotification("Erro durante a operação", error.message)
+        }
+    )
+
+    const [performanceType, setPerformanceType] = useState('');
+    const selectOptions = [
+        {
+            label: 'Provas',
+            value: 'Provas'
+        },
+        {
+            label: 'Planetas',
+            value: 'Planetas'
+        }
+    ]
 
     // Graphic stuff:
     ChartJS.register(
@@ -32,6 +65,7 @@ export function StudentPerformanceBy() {
     );
 
     const options = {
+        aspectRatio: 4,
         responsive: true,
         interaction: {
             mode: 'index' as const,
@@ -62,171 +96,33 @@ export function StudentPerformanceBy() {
             },
         },
     };
-    // TODO: get real data when backend is finished
-    const PhonologicalAwarenessData = [
-        {
-            month: "Jan",
-            testValue: 60,
-        },
-        {
-            month: "Fev",
-            testValue: 74,
-        },
-        {
-            month: "Mar",
-            testValue: 77,
-        },
-        {
-            month: "Abr",
-            testValue: 80,
-        },
-        {
-            month: "Jun",
-            testValue: 73,
-        },
-        {
-            month: "Jul",
-            testValue: 85,
-        },
-        {
-            month: "Ago",
-            testValue: 85,
-        },
-        {
-            month: "Set",
-            testValue: 85,
-        },
-        {
-            month: "Out",
-            testValue: 80,
-        },
-        {
-            month: "Nov",
-            testValue: 87,
-        },
-        {
-            month: "Dez",
-            testValue: 90,
-        },
-    ]
-    const AlphabeticWritingSystem = [
-        {
-            month: "Jan",
-            testValue: 30,
-        },
-        {
-            month: "Fev",
-            testValue: 60,
-        },
-        {
-            month: "Mar",
-            testValue: 70,
-        },
-        {
-            month: "Abr",
-            testValue: 80,
-        },
-        {
-            month: "Jun",
-            testValue: 70,
-        },
-        {
-            month: "Jul",
-            testValue: 80,
-        },
-        {
-            month: "Ago",
-            testValue: 90,
-        },
-        {
-            month: "Set",
-            testValue: 85,
-        },
-        {
-            month: "Out",
-            testValue: 95,
-        },
-        {
-            month: "Nov",
-            testValue: 100,
-        },
-        {
-            month: "Dez",
-            testValue: 100,
-        },
-    ]
-    const TextReadingAndComprehension = [
-        {
-            month: "Jan",
-            testValue: 70,
-        },
-        {
-            month: "Fev",
-            testValue: 70,
-        },
-        {
-            month: "Mar",
-            testValue: 75,
-        },
-        {
-            month: "Abr",
-            testValue: 80,
-        },
-        {
-            month: "Jun",
-            testValue: 75,
-        },
-        {
-            month: "Jul",
-            testValue: 85,
-        },
-        {
-            month: "Ago",
-            testValue: 90,
-        },
-        {
-            month: "Set",
-            testValue: 85,
-        },
-        {
-            month: "Out",
-            testValue: 95,
-        },
-        {
-            month: "Nov",
-            testValue: 100,
-        },
-        {
-            month: "Dez",
-            testValue: 100,
-        },
-    ]
 
-    const [testsData, setTestsData] = useState({
-        labels: monthsAbbreviation,
-        datasets: [
-            {
-                label: "Consciência Fonológica",
-                data: PhonologicalAwarenessData.map((data) => data.testValue),
-                borderColor: theme.colors.cyan[3],
-                backgroundColor: theme.colors.cyan[3],
-                yAxisID: 'y',
-            },
-            {
-                label: "Sistema de Escrita Alfabética",
-                data: AlphabeticWritingSystem.map((data) => data.testValue),
-                borderColor: theme.colors.violet[2],
-                backgroundColor: theme.colors.violet[2],
-                yAxisID: 'y',
-            },
-            {
-                label: "Leitura e Compreensão de Texto",
-                data: TextReadingAndComprehension.map((data) => data.testValue),
-                borderColor: theme.colors.orange[3],
-                backgroundColor: theme.colors.orange[3],
-                yAxisID: 'y',
-            },
-        ],
+    studentPerformanceByExam?.datasets.forEach(element => {
+        if (element.label == "Consciência Fonológica") {
+            element.backgroundColor = theme.colors.cyan[3]
+            element.borderColor = theme.colors.cyan[3]
+        } else if (element.label == "Sistema de Escrita Alfabética") {
+            element.backgroundColor = theme.colors.violet[2]
+            element.borderColor = theme.colors.violet[2]
+        } else {
+            element.backgroundColor = theme.colors.orange[3]
+            element.borderColor = theme.colors.orange[3]
+        }
+        element.yAxisID = 'y'
+    });
+
+    studentPerformanceByPlanets?.datasets.forEach(element => {
+        if (element.label == "Consciência Fonológica") {
+            element.backgroundColor = theme.colors.cyan[3]
+            element.borderColor = theme.colors.cyan[3]
+        } else if (element.label == "Sistema de Escrita Alfabética") {
+            element.backgroundColor = theme.colors.violet[2]
+            element.borderColor = theme.colors.violet[2]
+        } else {
+            element.backgroundColor = theme.colors.orange[3]
+            element.borderColor = theme.colors.orange[3]
+        }
+        element.yAxisID = 'y'
     });
 
     return (
@@ -242,12 +138,13 @@ export function StudentPerformanceBy() {
                         <Text pr={10}>Desempenho do aluno por</Text>
                         <Select
                             withinPortal
-                            data={[]}
+                            data={selectOptions}
                             placeholder="Pesquisar"
                             searchable
                             style={{
                                 width: '150px'
                             }}
+                            onChange={(value) => setPerformanceType(value)}
                         />
                     </Flex>
                 </Accordion.Control>
@@ -256,14 +153,23 @@ export function StudentPerformanceBy() {
 
             <Accordion.Panel>
                 <Flex>
-                    <Stack w={200}>
-                        <Rating readOnly value={5} key={Math.random()} style={{ width: '150px' }} />
-                        <Rating readOnly value={4} key={Math.random()} style={{ width: '150px' }} />
-                        <Rating readOnly value={3} key={Math.random()} style={{ width: '150px' }} />
-                        <Rating readOnly value={2} key={Math.random()} style={{ width: '150px' }} />
-                        <Rating readOnly value={1} key={Math.random()} style={{ width: '150px' }} />
-                    </Stack>
-                    <Line options={options} data={testsData} />
+                    {performanceType == "Planetas" &&
+                        <Stack w={200}>
+                            <Rating readOnly value={5} key={Math.random()} style={{ width: '140px' }} />
+                            <Rating readOnly value={4} key={Math.random()} style={{ width: '140px' }} />
+                            <Rating readOnly value={3} key={Math.random()} style={{ width: '140px' }} />
+                            <Rating readOnly value={2} key={Math.random()} style={{ width: '140px' }} />
+                            <Rating readOnly value={1} key={Math.random()} style={{ width: '140px' }} />
+                        </Stack>
+                    }
+
+                    {performanceType == "Provas" &&
+                        <Line options={options} data={studentPerformanceByExam} />
+                    }
+
+                    {performanceType == "Planetas" &&
+                        <Line options={options} data={studentPerformanceByPlanets} />
+                    }
                 </Flex>
             </Accordion.Panel>
         </Accordion.Item>
