@@ -1,6 +1,10 @@
 import { Accordion, Text, Flex, Divider, useMantineTheme } from "@mantine/core";
 
-export function PerformancePerArea() {
+type componentProps = {
+    performanceByArea: Array<{}>;
+}
+
+export function PerformancePerArea({ performanceByArea }: componentProps) {
     const theme = useMantineTheme();
     return (
         <Accordion.Item value="performancePerArea">
@@ -15,11 +19,16 @@ export function PerformancePerArea() {
 
             <Accordion.Panel>
                 <Flex justify="space-around">
-                    <Text>Consciência Fonológica: 38% Muito abaixo</Text>
-                    <Divider orientation="vertical" variant="solid" />
-                    <Text>Sistema de Escrita Alfabética: 53% Abaixo</Text>
-                    <Divider orientation="vertical" variant="solid" />
-                    <Text>Leitura e Compreensão de Texto: 71% Abaixo</Text>
+                    {performanceByArea &&
+                        performanceByArea.map((item, i) => (
+                            <>
+                                <Text>{item.axisName}: <span style={{ color: `${item.color}` }}>{item.description}</span></Text>
+                                {(i + 1) != performanceByArea.length &&
+                                    <Divider orientation="vertical" variant="solid" />
+                                }
+                            </>
+                        ))
+                    }
                 </Flex>
             </Accordion.Panel>
         </Accordion.Item>
