@@ -9,7 +9,6 @@ import { errorNotification } from "~/utils/errorNotification";
 export function StudentDetailPage() {
     // Getting student ID:
     const params = useParams();
-    console.log('student: \n', params.studentId);
 
     // Getting detailed-summary data:
     const { data: detailedSummary } = useGetDetailedSummary(
@@ -19,7 +18,6 @@ export function StudentDetailPage() {
                 errorNotification("Erro durante a operação", error.message)
         }
     )
-    console.log(detailedSummary)
 
     return (
         <>
@@ -43,7 +41,7 @@ export function StudentDetailPage() {
             >
                 <PerformancePerArea performanceByArea={detailedSummary?.performanceByArea} />
                 <StudentReport summaries={detailedSummary?.summaries} />
-                <StudentPerformanceBy />
+                <StudentPerformanceBy studentId={params?.studentId ?? ""} />
                 <SchoolClassPerformanceBy />
                 <PerformanceAtPlanets />
             </Accordion>

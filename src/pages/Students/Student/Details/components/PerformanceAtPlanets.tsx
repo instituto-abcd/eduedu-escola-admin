@@ -1,4 +1,4 @@
-import { Accordion, ActionIcon, Box, Button, Flex, Select, Table, Text, useMantineTheme } from "@mantine/core";
+import { Accordion, Box, Button, Flex, Select, Table, Text, useMantineTheme } from "@mantine/core";
 import { Rating } from '@smastrom/react-rating'
 import '@smastrom/react-rating/style.css'
 
@@ -27,7 +27,7 @@ export function PerformanceAtPlanets() {
                     </Flex>
 
                 </Accordion.Control>
-                <ActionIcon>
+                <Flex>
                     <Button
                         size="xs"
                         style={{
@@ -47,7 +47,7 @@ export function PerformanceAtPlanets() {
                     >
                         Autorizar nova prova
                     </Button>
-                </ActionIcon>
+                </Flex>
 
             </Box>
 

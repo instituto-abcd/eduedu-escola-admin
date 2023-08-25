@@ -1,4 +1,4 @@
-import { Accordion, Text, Flex, Divider, useMantineTheme } from "@mantine/core";
+import { Accordion, Text, Flex, Divider, Box, useMantineTheme } from "@mantine/core";
 
 type componentProps = {
     performanceByArea: Array<{}>;
@@ -21,12 +21,12 @@ export function PerformancePerArea({ performanceByArea }: componentProps) {
                 <Flex justify="space-around">
                     {performanceByArea &&
                         performanceByArea.map((item, i) => (
-                            <>
-                                <Text>{item.axisName}: <span style={{ color: `${item.color}` }}>{item.description}</span></Text>
+                            <Box key={item?.axisCode}>
+                                <Text>{item?.axisName}: <span style={{ color: `${item?.color}` }}>{item?.description}</span></Text>
                                 {(i + 1) != performanceByArea.length &&
                                     <Divider orientation="vertical" variant="solid" />
                                 }
-                            </>
+                            </Box>
                         ))
                     }
                 </Flex>

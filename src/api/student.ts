@@ -41,12 +41,16 @@ const URL = {
   ALL: "/student/all",
   BASE: "/student",
   AUTH_NEW_EXAM: "/student/authorize-new-exam",
-  DEITALED_SUMMARY: (id: string) => `/student/${id}/detailed-summary`,
+  DETAILED_SUMMARY: (id: string) => `/student/${id}/detailed-summary`,
+  EXAM_CHARTS: (id: string) => `/student/${id}/exams-chart`,
+  PLANET_CHARTS: (id: string) => `/student/${id}/planets-chart`,
 };
 
 const KEY = {
   ALL: "STUDENT_ALL",
   BY_ID: "STUDENT_BY_ID",
+  EXAM_CHART_BY_ID: "EXAM_CHART_BY_ID",
+  PLANETS_CHART_BY_ID: "PLANETS_CHART_BY_ID",
 };
 
 class StudentAPI extends API {
@@ -90,7 +94,17 @@ class StudentAPI extends API {
   }
 
   static async getDetailedSummary(id: string) {
-    const { data } = await this.api.get(URL.DEITALED_SUMMARY(id));
+    const { data } = await this.api.get(URL.DETAILED_SUMMARY(id));
+    return data;
+  }
+
+  static async getExamCharts(id: string) {
+    const { data } = await this.api.get(URL.EXAM_CHARTS(id));
+    return data;
+  }
+
+  static async getPlanetsCharts(id: string) {
+    const { data } = await this.api.get(URL.PLANET_CHARTS(id));
     return data;
   }
 }
@@ -206,4 +220,30 @@ export function useGetDetailedSummary(
     [id]
   )
   return useQuery([KEY.BY_ID, id], handler, options)
+}
+
+export function useGetExamCharts(
+  id: string,
+  options?: QueryOptions<Student, [typeof KEY.EXAM_CHART_BY_ID, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return StudentAPI.getExamCharts(id);
+    },
+    [id]
+  )
+  return useQuery([KEY.EXAM_CHART_BY_ID, id], handler, options)
+}
+
+export function useGetPlanetsCharts(
+  id: string,
+  options?: QueryOptions<Student, [typeof KEY.PLANETS_CHART_BY_ID, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return StudentAPI.getPlanetsCharts(id);
+    },
+    [id]
+  )
+  return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options)
 }

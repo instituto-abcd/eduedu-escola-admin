@@ -20,7 +20,7 @@ export function StudentReport({ summaries }: componentProps) {
             <Accordion.Panel>
                 {summaries &&
                     summaries.map((item) => (
-                        <Text pb={20}>{item.summary}</Text>
+                        <Text key={item?.axisCode} pb={20}>{item?.summary}</Text>
                     ))
                 }
             </Accordion.Panel>
