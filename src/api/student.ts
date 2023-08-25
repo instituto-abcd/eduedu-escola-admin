@@ -41,6 +41,7 @@ const URL = {
   ALL: "/student/all",
   BASE: "/student",
   AUTH_NEW_EXAM: "/student/authorize-new-exam",
+  DEITALED_SUMMARY: (id: string) => `/student/${id}/detailed-summary`,
 };
 
 const KEY = {
@@ -73,7 +74,6 @@ class StudentAPI extends API {
 
   static async getOne(id: string) {
     const { data } = await this.api.get<Student>(`${URL.BASE}/${id}`);
-
     return data;
   }
 
@@ -84,8 +84,13 @@ class StudentAPI extends API {
   }
 
   static async authorizeNewExam(ids: string[]) {
-    const { data } = await this.api.post<{ success: boolean }>(URL.AUTH_NEW_EXAM,  { ids });
+    const { data } = await this.api.post<{ success: boolean }>(URL.AUTH_NEW_EXAM, { ids });
 
+    return data;
+  }
+
+  static async getDetailedSummary(id: string) {
+    const { data } = await this.api.get(URL.DEITALED_SUMMARY(id));
     return data;
   }
 }
@@ -188,4 +193,17 @@ export function useAuthorizeNewExam(
       options?.onSuccess?.(data, vars, ctx);
     },
   });
+}
+
+export function useGetDetailedSummary(
+  id: string,
+  options?: QueryOptions<Student, [typeof KEY.BY_ID, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return StudentAPI.getDetailedSummary(id);
+    },
+    [id]
+  )
+  return useQuery([KEY.BY_ID, id], handler, options)
 }
