@@ -40,11 +40,17 @@ export type StudentInput = Pick<Student, "name" | "registry" | "schoolClassId">;
 const URL = {
   ALL: "/student/all",
   BASE: "/student",
+  AUTH_NEW_EXAM: "/student/authorize-new-exam",
+  DETAILED_SUMMARY: (id: string) => `/student/${id}/detailed-summary`,
+  EXAM_CHARTS: (id: string) => `/student/${id}/exams-chart`,
+  PLANET_CHARTS: (id: string) => `/student/${id}/planets-chart`,
 };
 
 const KEY = {
   ALL: "STUDENT_ALL",
   BY_ID: "STUDENT_BY_ID",
+  EXAM_CHART_BY_ID: "EXAM_CHART_BY_ID",
+  PLANETS_CHART_BY_ID: "PLANETS_CHART_BY_ID",
 };
 
 class StudentAPI extends API {
@@ -72,13 +78,33 @@ class StudentAPI extends API {
 
   static async getOne(id: string) {
     const { data } = await this.api.get<Student>(`${URL.BASE}/${id}`);
-
     return data;
   }
 
   static async update(id: string, input: StudentInput) {
     const { data } = await this.api.patch<Student>(`${URL.BASE}/${id}`, input);
 
+    return data;
+  }
+
+  static async authorizeNewExam(ids: string[]) {
+    const { data } = await this.api.post<{ success: boolean }>(URL.AUTH_NEW_EXAM, { ids });
+
+    return data;
+  }
+
+  static async getDetailedSummary(id: string) {
+    const { data } = await this.api.get(URL.DETAILED_SUMMARY(id));
+    return data;
+  }
+
+  static async getExamCharts(id: string) {
+    const { data } = await this.api.get(URL.EXAM_CHARTS(id));
+    return data;
+  }
+
+  static async getPlanetsCharts(id: string) {
+    const { data } = await this.api.get(URL.PLANET_CHARTS(id));
     return data;
   }
 }
@@ -163,4 +189,61 @@ export function useStudentUpdate(
       options?.onSuccess?.(data, vars, ctx);
     },
   });
+}
+
+export function useAuthorizeNewExam(
+  options?: MutationOptions<string[], { success: boolean }>
+) {
+  const queryClient = useQueryClient();
+
+  const handler = useCallback(function (ids: string[]) {
+    return StudentAPI.authorizeNewExam(ids);
+  }, []);
+
+  return useMutation(handler, {
+    ...options,
+    onSuccess: (data, vars, ctx) => {
+      queryClient.invalidateQueries([KEY.ALL]);
+      options?.onSuccess?.(data, vars, ctx);
+    },
+  });
+}
+
+export function useGetDetailedSummary(
+  id: string,
+  options?: QueryOptions<Student, [typeof KEY.BY_ID, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return StudentAPI.getDetailedSummary(id);
+    },
+    [id]
+  )
+  return useQuery([KEY.BY_ID, id], handler, options)
+}
+
+export function useGetExamCharts(
+  id: string,
+  options?: QueryOptions<Student, [typeof KEY.EXAM_CHART_BY_ID, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return StudentAPI.getExamCharts(id);
+    },
+    [id]
+  )
+  return useQuery([KEY.EXAM_CHART_BY_ID, id], handler, options)
+}
+
+export function useGetPlanetsCharts(
+  id: string,
+  options?: QueryOptions<Student, [typeof KEY.PLANETS_CHART_BY_ID, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return StudentAPI.getPlanetsCharts(id);
+    },
+    [id]
+  )
+  return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options)
 }

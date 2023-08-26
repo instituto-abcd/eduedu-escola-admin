@@ -9,7 +9,7 @@ export function TestPerformance({ examType }: componentProps) {
     return (
         <Stack>
             <Text align="center">{examType}</Text>
-            <Group>
+            <Group spacing="xl">
                 <Stack>
                     <Flex justify="center">
                         <Text weight={600} color="blue.6">03</Text>

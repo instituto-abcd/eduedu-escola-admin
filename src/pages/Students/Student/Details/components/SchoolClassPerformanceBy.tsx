@@ -1,4 +1,6 @@
-import { monthsAbbreviation } from "~/constants";
+import { Accordion, Box, Flex, Select, Stack, Text, useMantineTheme } from "@mantine/core";
+
+// Chart:
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -8,13 +10,16 @@ import {
     Tooltip,
     Legend,
 } from "chart.js/auto";
-import { Line } from "react-chartjs-2";
-import { useMantineTheme } from "@mantine/core";
+import { Bar } from "react-chartjs-2";
 import { useState } from "react";
+import { monthsAbbreviation } from "~/constants";
 
-export function TestResultsHistory() {
-    const theme = useMantineTheme()
+// Stars:
+import { Rating } from '@smastrom/react-rating'
+import '@smastrom/react-rating/style.css'
 
+export function SchoolClassPerformanceBy() {
+    const theme = useMantineTheme();
     // Graphic stuff:
     ChartJS.register(
         CategoryScale,
@@ -37,7 +42,7 @@ export function TestResultsHistory() {
                 display: false,
             },
             legend: {
-                display: false
+                display: false,
             }
         },
         scales: {
@@ -222,8 +227,43 @@ export function TestResultsHistory() {
             },
         ],
     });
-
     return (
-        <Line options={options} data={testsData} />
+        <Accordion.Item value="schoolClassPerformanceBy">
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Accordion.Control
+                    style={{
+                        color: theme.colors.indigo[9],
+                        maxWidth: '85%'
+                    }}
+                >
+                    <Flex align="center">
+                        <Text pr={10}>Desempenho da turma por</Text>
+                        <Select
+                            withinPortal
+                            data={[]}
+                            placeholder="Pesquisar"
+                            searchable
+                            style={{
+                                width: '150px'
+                            }}
+                        />
+                    </Flex>
+                </Accordion.Control>
+
+            </Box>
+
+            <Accordion.Panel>
+                <Flex>
+                    <Stack w={200}>
+                        <Rating readOnly value={5} key={Math.random()} style={{ width: '150px' }} />
+                        <Rating readOnly value={4} key={Math.random()} style={{ width: '150px' }} />
+                        <Rating readOnly value={3} key={Math.random()} style={{ width: '150px' }} />
+                        <Rating readOnly value={2} key={Math.random()} style={{ width: '150px' }} />
+                        <Rating readOnly value={1} key={Math.random()} style={{ width: '150px' }} />
+                    </Stack>
+                    <Bar options={options} data={testsData} />
+                </Flex>
+            </Accordion.Panel>
+        </Accordion.Item>
     )
 }

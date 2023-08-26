@@ -1,1 +1,2 @@
-export { StudentPage } from './Student'
+export { StudentEditPage } from './StudentEditPage'
+export { StudentDetailPage } from './Details/StudentDetailPage'

@@ -4,21 +4,19 @@ import {
   Checkbox,
   Divider,
   Group,
-  Select,
+  Space,
   Table,
   Text,
-  TextInput,
   useMantineTheme,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { IconEdit, IconEye } from "@tabler/icons-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useStudentGetAll } from "~/api/student";
+import { useAuthorizeNewExam, useStudentGetAll } from "~/api/student";
 import { PageHeader } from "~/components/PageHeader";
 import { Pagination } from "~/components/Pagination";
 import { TableLoader } from "~/components/TableLoader";
-import { InfoTooltip } from "~/components/Tooltips/Info";
 import { PATH } from "~/constants/path";
 import { usePagination } from "~/hooks/usePagination";
 import { DeleteStudentModal } from "../Student/components/DeleteStudentModal";
@@ -33,6 +31,8 @@ import {
   USER_STATUS,
 } from "~/constants";
 import { TableHeader } from "~/components/TableHeader";
+import { successNotification } from "~/utils/successNotification";
+import { errorNotification } from "~/utils/errorNotification";
 
 export function StudentsListPage() {
   const theme = useMantineTheme();
@@ -49,6 +49,22 @@ export function StudentsListPage() {
     }
   }
 
+  const { mutate: authorizeNewExam } = useAuthorizeNewExam({
+    onSuccess: () => {
+      successNotification(
+        "Operação realizada com sucesso",
+        "Nova prova autorizada para os alunos selecionados!"
+      );
+      setSelected([]);
+    },
+    onError: (error) => {
+      errorNotification(
+        "Erro durante a operação",
+        `${error.message} (cod: ${error.code})`
+      );
+    },
+  });
+
   const { data, isLoading } = useStudentGetAll({
     search: {
       ...search,
@@ -61,7 +77,7 @@ export function StudentsListPage() {
   const [uploadSheetModalOpen, uploadSheetModalHandlers] = useDisclosure(false);
 
   // Modals
-  const openModalAuthorizeNewTest = () => {
+  const openModalAuthorizeNewExam = () => {
     modals.openConfirmModal({
       title: "Autorizar Nova Prova",
       children: (
@@ -74,6 +90,9 @@ export function StudentsListPage() {
         </>
       ),
       labels: { confirm: "Sim", cancel: "Não" },
+      onConfirm: () => {
+        authorizeNewExam(selected);
+      },
     });
   };
 
@@ -94,24 +113,28 @@ export function StudentsListPage() {
         </Group>
       </PageHeader>
 
-      <Group>
-        <Button
-          size="xs"
-          variant="outline"
-          color="red"
-          onClick={deleteModalHandlers.open}
-        >
-          Excluir
-        </Button>
-        <Button
-          size="xs"
-          color="blue.0"
-          style={{ color: theme.colors.blue[6] }}
-          onClick={openModalAuthorizeNewTest}
-        >
-          Autorizar Nova Prova
-        </Button>
-      </Group>
+      {selected.length > 0 ? (
+        <Group>
+          <Button
+            size="xs"
+            variant="outline"
+            color="red"
+            onClick={deleteModalHandlers.open}
+          >
+            Excluir
+          </Button>
+          <Button
+            size="xs"
+            color="blue.0"
+            style={{ color: theme.colors.blue[6] }}
+            onClick={openModalAuthorizeNewExam}
+          >
+            Autorizar Nova Prova
+          </Button>
+        </Group>
+      ) : (
+        <Space h="xs" />
+      )}
 
       <Table horizontalSpacing="sm" verticalSpacing="md">
         <thead>
@@ -175,14 +198,14 @@ export function StudentsListPage() {
                 <Group noWrap spacing="xs">
                   <ActionIcon
                     component={Link}
-                    to={`${PATH.STUDENTS}/${student.id}`}
+                    to={`${PATH.STUDENTS}/${student.id}/detalhes`}
                     color="blue.9"
                   >
                     <IconEye />
                   </ActionIcon>
                   <ActionIcon
                     component={Link}
-                    to={`${PATH.STUDENTS}/${student.id}`}
+                    to={`${PATH.STUDENTS}/${student.id}/editar`}
                     state={{ student }}
                     color="blue.9"
                   >
