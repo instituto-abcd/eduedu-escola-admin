@@ -1,32 +1,83 @@
-import { Accordion, Box, Button, Flex, Select, Table, Text, useMantineTheme } from "@mantine/core";
-import { Rating } from '@smastrom/react-rating'
-import '@smastrom/react-rating/style.css'
+import { Accordion, Box, Button, Flex, Select, Text, useMantineTheme } from "@mantine/core";
 
-export function PerformanceAtPlanets() {
+import { useState } from "react";
+import { useExamsPerformancePlanets, useGetExamExecutions } from "~/api/student";
+import { monthsAbbreviation } from "~/constants";
+import { errorNotification } from "~/utils/errorNotification";
+import { TablePerformancePlanets } from "./performance-planets/Table";
+
+type componentProps = {
+    studentId: string;
+}
+
+export function PerformanceAtPlanets({ studentId }: componentProps) {
     const theme = useMantineTheme();
+
+    // Get and manage the list of exams executed:
+    const [dateExam, setDateExam] = useState('');
+
+    const { data: dateExamList } = useGetExamExecutions(
+        studentId,
+        {
+            onSuccess: (data) => {
+                data?.forEach(element => {
+                    let d = new Date(element.examDate)
+                    let month = monthsAbbreviation[d.getMonth()];
+                    let day = d.getDay();
+
+                    element.label = `${day}/${month}`;
+                    element.value = element.id
+                });
+            },
+            onError: (error) => {
+                errorNotification("Erro durante a operação", error.message);
+            }
+        }
+    )
+
+    const [examsPerformanceData, setExamsPerformanceData] = useState([])
+    const { mutate: examsPerformancePlanets, isLoading: isExamsPerformancePlanetsLoading } = useExamsPerformancePlanets({
+        onSuccess: (data) => {
+            setExamsPerformanceData(data)
+        },
+        onError: (error) => {
+            errorNotification(
+                "Erro durante a operação",
+                `${error.message} (cod: ${error.code})`
+            );
+        },
+    });
+
     return (
         <Accordion.Item value="planetsPerformance">
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Accordion.Control
                     style={{
                         color: theme.colors.indigo[9],
-                        maxWidth: '83%'
+                        maxWidth: '70%'
                     }}
                 >
                     <Flex align="center">
                         <Text pr={10}>Desempenho nos planetas disponibilizados após a prova realizada em</Text>
                         <Select
                             withinPortal
-                            data={[]}
+                            data={dateExamList?.length ? dateExamList : []}
                             placeholder="Pesquisar"
                             searchable
                             style={{
                                 width: '150px'
                             }}
+                            onChange={(value) => {
+                                setDateExam(value)
+                                examsPerformancePlanets({
+                                    id: studentId,
+                                    studentExamId: value,
+                                })
+                            }}
                         />
                     </Flex>
-
                 </Accordion.Control>
+
                 <Flex>
                     <Button
                         size="xs"
@@ -48,52 +99,15 @@ export function PerformanceAtPlanets() {
                         Autorizar nova prova
                     </Button>
                 </Flex>
-
             </Box>
 
             <Accordion.Panel>
-                <Table horizontalSpacing="sm" verticalSpacing="md">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Planetas Oferecidos</th>
-                            <th>Planetas Realizados</th>
-                            <th>Média Estrelas (Realizado)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td style={{ color: theme.colors.blue[6] }}>
-                                Consciência Fonológica
-                            </td>
-                            <td>30</td>
-                            <td>30</td>
-                            <td>
-                                <Rating readOnly value={2} key={Math.random()} style={{ width: '100px' }} />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style={{ color: theme.colors.blue[6] }}>
-                                Sistema de Escrita Alfabética
-                            </td>
-                            <td>25</td>
-                            <td>20</td>
-                            <td>
-                                <Rating readOnly value={3.5} key={Math.random()} style={{ width: '100px' }} />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style={{ color: theme.colors.blue[6] }}>
-                                Leitura e Compreensão de Texto
-                            </td>
-                            <td>18</td>
-                            <td>17</td>
-                            <td>
-                                <Rating readOnly value={4} key={Math.random()} style={{ width: '100px' }} />
-                            </td>
-                        </tr>
-                    </tbody>
-                </Table>
+                <TablePerformancePlanets
+                    examsPerformanceData={examsPerformanceData}
+                    studentId={studentId}
+                    dateExamList={dateExamList}
+                    dateExam={dateExam}
+                />
             </Accordion.Panel>
         </Accordion.Item>
     )

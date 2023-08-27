@@ -43,7 +43,7 @@ export function StudentDetailPage() {
                 <StudentReport summaries={detailedSummary?.summaries} />
                 <StudentPerformanceBy studentId={params?.studentId ?? ""} />
                 <SchoolClassPerformanceBy />
-                <PerformanceAtPlanets />
+                <PerformanceAtPlanets studentId={params?.studentId ?? ""} />
             </Accordion>
         </>
     )

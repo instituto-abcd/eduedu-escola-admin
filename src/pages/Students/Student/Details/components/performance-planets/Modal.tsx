@@ -1,0 +1,117 @@
+import { Box, Flex, Modal, Select, Table, Text, useMantineTheme } from "@mantine/core";
+
+// Rating stars:
+import { Rating } from '@smastrom/react-rating'
+import '@smastrom/react-rating/style.css'
+import { IconMinus, IconPlus } from "@tabler/icons-react";
+import { useState } from "react";
+import { useExamsPerformancePlanets } from "~/api/student";
+import { errorNotification } from "~/utils/errorNotification";
+
+type Props = {
+    opened: boolean;
+    onClose: () => void;
+    performancePlanetsData: Array<{}>;
+    studentId: string;
+    dateExamList: Array<{}>;
+    dateExam: string;
+}
+
+export function ModalPerformancePlanets({ opened, onClose, performancePlanetsData, studentId, dateExamList, dateExam }: Props) {
+    const theme = useMantineTheme();
+    const [selectedItem, setSelectedItem] = useState('');
+
+    const [newDateExam, setDateExam] = useState(dateExam);
+    const [examsPerformanceData, setExamsPerformanceData] = useState([])
+    const { mutate: examsPerformancePlanets, isLoading: isExamsPerformancePlanetsLoading } = useExamsPerformancePlanets({
+        onSuccess: (data) => {
+            setExamsPerformanceData(data)
+        },
+        onError: (error) => {
+            errorNotification(
+                "Erro durante a operação",
+                `${error.message} (cod: ${error.code})`
+            );
+        },
+    });
+    return (
+        <Modal
+            opened={opened}
+            onClose={onClose}
+            size="xl"
+        >
+            <Modal.Title>
+                <Flex align="center">
+                    <Text pr={10}>Desempenho nos planetas disponibilizados após a prova realizada em</Text>
+                    <Select
+                        value={newDateExam}
+                        withinPortal
+                        data={dateExamList?.length ? dateExamList : []}
+                        placeholder="Pesquisar"
+                        searchable
+                        style={{
+                            width: '150px'
+                        }}
+                        onChange={(value) => {
+                            setDateExam(value)
+                            examsPerformancePlanets({
+                                id: studentId,
+                                studentExamId: value,
+                            })
+                        }}
+                    />
+                </Flex>
+            </Modal.Title>
+
+            <Table horizontalSpacing="sm" verticalSpacing="md" mt={20}>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Planetas Oferecidos</th>
+                        <th>Planetas Realizados</th>
+                        <th>Média Estrelas (Realizado)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {performancePlanetsData &&
+                        performancePlanetsData.map((item) => (
+                            <>
+                                <tr key={item.id}>
+                                    <td
+                                        onClick={() => {
+                                            item.id == selectedItem ? setSelectedItem('') : setSelectedItem(item.id)
+                                        }}
+                                        style={{ color: theme.colors.blue[6] }}
+                                    >
+                                        <Flex align="center">
+                                            {selectedItem == item.id ? <IconMinus /> : <IconPlus />}
+                                            <Text pl={20} c="blue.6">{item.axisName}</Text>
+                                        </Flex>
+                                    </td>
+                                    <td>{item.offeredPlanets}</td>
+                                    <td>{item.accomplishedPlanets}</td>
+                                    <td>
+                                        <Rating readOnly value={item.averageStars} key={Math.random()} style={{ width: '100px' }} />
+                                    </td>
+                                </tr>
+
+                                {selectedItem == item.id &&
+                                    item.planets.map((element) => (
+                                        <tr>
+                                            <td>{element.planetName}</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>
+                                                <Rating readOnly value={item.stars} key={Math.random()} style={{ width: '100px' }} />
+                                            </td>
+                                        </tr>
+                                    ))
+                                }
+                            </>
+                        ))
+                    }
+                </tbody>
+            </Table>
+        </Modal>
+    )
+}

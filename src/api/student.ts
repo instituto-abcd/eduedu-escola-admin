@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 import {
   MutationOptions,
@@ -24,6 +24,13 @@ export type Student = {
   status: UserStatus;
 };
 
+export type ExamExecutions = [
+  {
+    id: string;
+    examDate: string;
+  }
+];
+
 type StudentSearch = {
   name?: string;
   schoolClassName?: string;
@@ -44,6 +51,8 @@ const URL = {
   DETAILED_SUMMARY: (id: string) => `/student/${id}/detailed-summary`,
   EXAM_CHARTS: (id: string) => `/student/${id}/exams-chart`,
   PLANET_CHARTS: (id: string) => `/student/${id}/planets-chart`,
+  EXAM_EXECUTIONS: (id: string) => `/student/${id}/exam-executions`,
+  EXAMS_PERFORMANCE_PLANETS: (id: string, studentExamId: string) => `/student/${id}/exam-executions/${studentExamId}/planets-performance?loadPlanets=true`,
 };
 
 const KEY = {
@@ -51,6 +60,8 @@ const KEY = {
   BY_ID: "STUDENT_BY_ID",
   EXAM_CHART_BY_ID: "EXAM_CHART_BY_ID",
   PLANETS_CHART_BY_ID: "PLANETS_CHART_BY_ID",
+  EXAM_EXECUTIONS: "EXAM_EXECUTIONS",
+  EXAMS_PERFORMANCE_PLANETS: "EXAMS_PERFORMANCE_PLANETS",
 };
 
 class StudentAPI extends API {
@@ -105,6 +116,16 @@ class StudentAPI extends API {
 
   static async getPlanetsCharts(id: string) {
     const { data } = await this.api.get(URL.PLANET_CHARTS(id));
+    return data;
+  }
+
+  static async getExamExecutions(id: string) {
+    const { data } = await this.api.get(URL.EXAM_EXECUTIONS(id));
+    return data;
+  }
+
+  static async getExamsPerformancePlanets(id: string, studentExamId: string) {
+    const { data } = await this.api.get(URL.EXAMS_PERFORMANCE_PLANETS(id, studentExamId));
     return data;
   }
 }
@@ -246,4 +267,42 @@ export function useGetPlanetsCharts(
     [id]
   )
   return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options)
+}
+
+export function useGetExamExecutions(
+  id: string,
+  options?: QueryOptions<ExamExecutions, [typeof KEY.EXAM_EXECUTIONS, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return StudentAPI.getExamExecutions(id);
+    },
+    [id]
+  )
+  return useQuery([KEY.EXAM_EXECUTIONS, id], handler, options)
+}
+
+export function useExamsPerformancePlanets(
+  options?: MutationOptions<{ id: string; studentExamId: string }, void>
+) {
+  const queryClient = new QueryClient();
+
+  const handler = useCallback(function (data: {
+    id: string;
+    studentExamId: string;
+    loadPlanets: boolean;
+  }) {
+    return StudentAPI.getExamsPerformancePlanets(data.id, data.studentExamId);
+  },
+    []);
+
+  return useMutation(handler, {
+    ...options,
+    async onSuccess(data, variables, ctx) {
+      await queryClient.invalidateQueries([
+        KEY.EXAMS_PERFORMANCE_PLANETS
+      ]);
+      options?.onSuccess?.(data, variables, ctx);
+    },
+  });
 }
