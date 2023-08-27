@@ -24,6 +24,7 @@ export function StudentDetailPage() {
             <HeaderStudent />
 
             <Accordion
+                multiple={true}
                 variant="separated"
                 chevron={<IconPlus size="1rem" />}
                 chevronPosition="left"
