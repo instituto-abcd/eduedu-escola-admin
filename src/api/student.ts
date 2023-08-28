@@ -58,6 +58,7 @@ const URL = {
 const KEY = {
   ALL: "STUDENT_ALL",
   BY_ID: "STUDENT_BY_ID",
+  SUMMARY_BY_ID: "SUMMARY_BY_ID",
   EXAM_CHART_BY_ID: "EXAM_CHART_BY_ID",
   PLANETS_CHART_BY_ID: "PLANETS_CHART_BY_ID",
   EXAM_EXECUTIONS: "EXAM_EXECUTIONS",
@@ -232,7 +233,7 @@ export function useAuthorizeNewExam(
 
 export function useGetDetailedSummary(
   id: string,
-  options?: QueryOptions<Student, [typeof KEY.BY_ID, string]>
+  options?: QueryOptions<Student, [typeof KEY.SUMMARY_BY_ID, string]>
 ) {
   const handler = useCallback(
     function () {
@@ -240,7 +241,7 @@ export function useGetDetailedSummary(
     },
     [id]
   )
-  return useQuery([KEY.BY_ID, id], handler, options)
+  return useQuery([KEY.SUMMARY_BY_ID, id], handler, options)
 }
 
 export function useGetExamCharts(
