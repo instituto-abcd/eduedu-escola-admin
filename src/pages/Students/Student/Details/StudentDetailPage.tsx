@@ -24,9 +24,10 @@ export function StudentDetailPage() {
 
     return (
         <>
-            <HeaderStudent />
+            <HeaderStudent studentId={params?.studentId ?? ""} />
 
             <Accordion
+                multiple={true}
                 variant="separated"
                 chevron={<IconPlus size="1rem" />}
                 chevronPosition="left"

@@ -24,6 +24,7 @@ import { successNotification } from "~/utils/successNotification";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "~/constants/path";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   opened: boolean;
@@ -55,6 +56,7 @@ export function UploadStudentsSheet({ opened, onClose: _onClose }: Props) {
   });
 
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   async function uploadSheet(values: FormData) {
     setIsLoading(true);
     try {
@@ -64,6 +66,8 @@ export function UploadStudentsSheet({ opened, onClose: _onClose }: Props) {
         "Aluno(s) adicionado(s) com sucesso!"
       );
       navigate(PATH.STUDENTS);
+      await queryClient.invalidateQueries(["STUDENT_ALL"]);
+
       onClose();
     } catch (error) {
       errorNotification("Erro durante a operação", (error as Error).message);
