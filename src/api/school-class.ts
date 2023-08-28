@@ -50,6 +50,8 @@ const KEY = {
   BY_ID: "SCHOOL_CLASS_BY_ID",
   STUDENT_DESTINATION: "SCHOOL_CLASS_STUDENT_DESTINATION",
   STUDENT_BY_SCHOOLCLASS: "STUDENT_BY_SCHOOLCLASS",
+  PLANETS_CHART_BY_ID: "PLANETS_CHART_BY_ID",
+  EXAMS_CHART_BY_ID: "EXAMS_CHART_BY_ID",
 } as const;
 
 const URL = {
@@ -61,8 +63,9 @@ const URL = {
   SHEET: "/schoolClass/students/spreadsheet-template",
   UPLOAD_SHEET: (id: string) => `/schoolClass/${id}/students/spreadsheet`,
   DESTINY_STUDENTS: (destinyID: string) => `/schoolClass/${destinyID}/students`,
-  STUDENTS_BY_SCHOOLCLASS: (schoolClassId: string) =>
-    `/schoolClass/${schoolClassId}/students`,
+  STUDENTS_BY_SCHOOLCLASS: (schoolClassId: string) => `/schoolClass/${schoolClassId}/students`,
+  PLANET_CHARTS: (id: string) => `/schoolClass/${id}/planets-chart`,
+  EXAM_CHARTS: (id: string) => `/schoolClass/${id}/exams-chart`,
 };
 
 export class SchoolClassAPI extends API {
@@ -127,6 +130,16 @@ export class SchoolClassAPI extends API {
     form: { originId: string; studentIds: string[] }
   ) {
     const { data } = await this.api.post(URL.DESTINY_STUDENTS(destinyID), form);
+    return data;
+  }
+
+  static async getPlanetsCharts(id: string) {
+    const { data } = await this.api.get(URL.PLANET_CHARTS(id));
+    return data;
+  }
+
+  static async getExamsCharts(id: string) {
+    const { data } = await this.api.get(URL.EXAM_CHARTS(id));
     return data;
   }
 }
@@ -201,7 +214,7 @@ export function useSchoolClassUpdate(
   }) {
     return SchoolClassAPI.update(data.schoolClassId, data.input);
   },
-  []);
+    []);
 
   return useMutation(handler, options);
 }
@@ -245,7 +258,7 @@ export function useStudentsDestiny(
   }) {
     return SchoolClassAPI.studentsDestiny(data.destinationId, data.form);
   },
-  []);
+    []);
 
   return useMutation(handler, {
     ...options,
@@ -257,4 +270,30 @@ export function useStudentsDestiny(
       options?.onSuccess?.(data, variables, ctx);
     },
   });
+}
+
+export function useGetPlanetsCharts(
+  id: string,
+  options?: QueryOptions<Student, [typeof KEY.PLANETS_CHART_BY_ID, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return SchoolClassAPI.getPlanetsCharts(id);
+    },
+    [id]
+  )
+  return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options)
+}
+
+export function useGetExamsCharts(
+  id: string,
+  options?: QueryOptions<Student, [typeof KEY.PLANETS_CHART_BY_ID, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return SchoolClassAPI.getExamsCharts(id);
+    },
+    [id]
+  )
+  return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options)
 }

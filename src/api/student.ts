@@ -63,6 +63,7 @@ const KEY = {
   PLANETS_CHART_BY_ID: "PLANETS_CHART_BY_ID",
   EXAM_EXECUTIONS: "EXAM_EXECUTIONS",
   EXAMS_PERFORMANCE_PLANETS: "EXAMS_PERFORMANCE_PLANETS",
+  DEITALED_SUMMARY_BY_ID: "DEITALED_SUMMARY_BY_ID",
 };
 
 class StudentAPI extends API {
@@ -233,7 +234,7 @@ export function useAuthorizeNewExam(
 
 export function useGetDetailedSummary(
   id: string,
-  options?: QueryOptions<Student, [typeof KEY.SUMMARY_BY_ID, string]>
+  options?: QueryOptions<Student, [typeof KEY.DEITALED_SUMMARY_BY_ID, string]>
 ) {
   const handler = useCallback(
     function () {
@@ -241,7 +242,7 @@ export function useGetDetailedSummary(
     },
     [id]
   )
-  return useQuery([KEY.SUMMARY_BY_ID, id], handler, options)
+  return useQuery([KEY.DEITALED_SUMMARY_BY_ID, id], handler, options)
 }
 
 export function useGetExamCharts(
