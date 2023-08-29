@@ -5,7 +5,6 @@ type componentProps = {
     schoolClass: Array<{}>
 }
 export function SchoolClassHeader({ schoolClass }: componentProps) {
-    console.log('children:\n', schoolClass)
     return (
         <Grid columns={5}>
             <Grid.Col span={1}>
