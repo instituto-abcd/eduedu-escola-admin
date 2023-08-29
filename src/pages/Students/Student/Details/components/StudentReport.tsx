@@ -10,11 +10,10 @@ export function StudentReport({ summaries }: componentProps) {
         <Accordion.Item value="studentReport">
             <Accordion.Control
                 style={{
-                    color: theme.colors.indigo[9],
                     maxWidth: '85%'
                 }}
             >
-                <Text>Relatório do aluno</Text>
+                <Text color={theme.colors.indigo[9]}>Relatório do aluno</Text>
             </Accordion.Control>
 
             <Accordion.Panel>
