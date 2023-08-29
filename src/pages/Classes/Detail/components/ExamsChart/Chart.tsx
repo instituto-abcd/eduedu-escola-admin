@@ -1,4 +1,3 @@
-import { monthsAbbreviation } from "~/constants";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -9,14 +8,12 @@ import {
     Legend,
 } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
-import { useMantineTheme } from "@mantine/core";
 import { useState } from "react";
 
 type componentProps = {
     schoolClassExamsChart: Array<[]>
 }
 export function Chart({ schoolClassExamsChart }: componentProps) {
-    const theme = useMantineTheme()
 
     // Graphic stuff:
     ChartJS.register(
@@ -61,12 +58,12 @@ export function Chart({ schoolClassExamsChart }: componentProps) {
         },
     };
 
-    const [testsData, setTestsData] = useState({
+    const [examsChart, setExamsChart] = useState({
         labels: schoolClassExamsChart?.labels ?? [],
         datasets: schoolClassExamsChart?.datasets ?? []
     });
 
     return (
-        <Line options={options} data={testsData} />
+        <Line options={options} data={examsChart} />
     )
 }
