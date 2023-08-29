@@ -1,8 +1,11 @@
-import { ActionIcon, Checkbox, Select, Table, TextInput } from "@mantine/core";
+import { ActionIcon, Checkbox, Table, Select, TextInput } from "@mantine/core";
 import { IconEye } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
-export function StudentsPerformance() {
+type componentProps = {
+    data: Array<[]>;
+}
+export function TablePlanet({ data }: componentProps) {
     return (
         <Table horizontalSpacing="sm" verticalSpacing="md">
             <thead>
@@ -32,25 +35,29 @@ export function StudentsPerformance() {
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>
-                        <Checkbox />
-                    </td>
-                    <td>Amanda Freitas Dias</td>
-                    <td>01/02</td>
-                    <td>30%</td>
-                    <td>70%</td>
-                    <td>67%</td>
-                    <td>
-                        <ActionIcon
-                            component={Link}
-                            to={`/`}
-                            color="blue.9"
-                        >
-                            <IconEye />
-                        </ActionIcon>
-                    </td>
-                </tr>
+                {data &&
+                    data.map((item) => (
+                        <tr>
+                            <td>
+                                <Checkbox />
+                            </td>
+                            <td>{item.studentName}</td>
+                            <td>{item.lastExamDate}</td>
+                            <td>{item.cfo.averageStars}</td>
+                            <td>{item.sea.averageStars}</td>
+                            <td>{item.lct.averageStars}</td>
+                            <td>
+                                <ActionIcon
+                                    component={Link}
+                                    to={`/`}
+                                    color="blue.9"
+                                >
+                                    <IconEye />
+                                </ActionIcon>
+                            </td>
+                        </tr>
+                    ))
+                }
             </tbody>
         </Table>
     )

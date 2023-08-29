@@ -113,7 +113,7 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
         element.yAxisID = 'y'
     });
 
-    const [performanceType, setPerformanceType] = useState('');
+    const [performanceType, setPerformanceType] = useState('Provas');
     const selectOptions = [
         {
             label: 'Provas',
@@ -129,17 +129,20 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Accordion.Control
                     style={{
-                        color: theme.colors.indigo[9],
                         maxWidth: '85%'
                     }}
                 >
                     <Flex align="center">
-                        <Text pr={10}>Desempenho da turma por</Text>
+                        <Text
+                            color={theme.colors.indigo[9]}
+                            pr={10}
+                        >
+                            Desempenho da turma por
+                        </Text>
                         <Select
                             withinPortal
                             data={selectOptions}
-                            placeholder="Pesquisar"
-                            searchable
+                            value={performanceType}
                             style={{
                                 width: '150px'
                             }}
@@ -159,14 +162,17 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
                             <Rating readOnly value={3} key={Math.random()} style={{ width: '150px' }} />
                             <Rating readOnly value={2} key={Math.random()} style={{ width: '150px' }} />
                             <Rating readOnly value={1} key={Math.random()} style={{ width: '150px' }} />
+                            <Rating readOnly value={0} key={Math.random()} style={{ width: '150px' }} />
                         </Stack>
                     }
 
                     {performanceType == "Provas" &&
+                        schoolClassPerformanceByExams &&
                         <Bar options={options} data={schoolClassPerformanceByExams} />
                     }
 
                     {performanceType == "Planetas" &&
+                        schoolClassPerformanceByPlanets &&
                         <Bar options={options} data={schoolClassPerformanceByPlanets} />
                     }
                 </Flex>
