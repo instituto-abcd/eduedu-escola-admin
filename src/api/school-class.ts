@@ -52,6 +52,11 @@ const KEY = {
   STUDENT_BY_SCHOOLCLASS: "STUDENT_BY_SCHOOLCLASS",
   PLANETS_CHART_BY_ID: "PLANETS_CHART_BY_ID",
   EXAMS_CHART_BY_ID: "EXAMS_CHART_BY_ID",
+  DEITALED_SUMMARY_BY_ID: "DEITALED_SUMMARY_BY_ID",
+  PLANETS_PERFORMANCE: "PLANETS_PERFORMANCE",
+  EXAMS_PERFORMANCE: "EXAMS_PERFORMANCE",
+  STUDENTS_PLANETS_PERFORMANCE: "STUDENTS_PLANETS_PERFORMANCE",
+  STUDENTS_EXAMS_PERFORMANCE: "STUDENTS_EXAMS_PERFORMANCE",
 } as const;
 
 const URL = {
@@ -66,6 +71,10 @@ const URL = {
   STUDENTS_BY_SCHOOLCLASS: (schoolClassId: string) => `/schoolClass/${schoolClassId}/students`,
   PLANET_CHARTS: (id: string) => `/schoolClass/${id}/planets-chart`,
   EXAM_CHARTS: (id: string) => `/schoolClass/${id}/exams-chart`,
+  EXAMS_PERFORMANCE: (id: string) => `/schoolClass/${id}/exams-performance`,
+  PLANETS_PERFORMANCE: (id: string) => `/schoolClass/${id}/planets-performance`,
+  STUDENTS_PLANETS_PERFORMANCE: (id: string) => `/schoolClass/${id}/planets-performance-students`,
+  STUDENTS_EXAMS_PERFORMANCE: (id: string) => `/schoolClass/${id}/exams-performance-students`,
 };
 
 export class SchoolClassAPI extends API {
@@ -140,6 +149,26 @@ export class SchoolClassAPI extends API {
 
   static async getExamsCharts(id: string) {
     const { data } = await this.api.get(URL.EXAM_CHARTS(id));
+    return data;
+  }
+
+  static async getExamsPerformance(id: string) {
+    const { data } = await this.api.get(URL.EXAMS_PERFORMANCE(id));
+    return data;
+  }
+
+  static async getPlanetsPerformance(id: string) {
+    const { data } = await this.api.get(URL.PLANETS_PERFORMANCE(id));
+    return data;
+  }
+
+  static async getStudentsExamsPerfomance(id: string) {
+    const { data } = await this.api.get(URL.STUDENTS_EXAMS_PERFORMANCE(id));
+    return data;
+  }
+
+  static async getStudentsPlanetsPerfomance(id: string) {
+    const { data } = await this.api.get(URL.STUDENTS_PLANETS_PERFORMANCE(id));
     return data;
   }
 }
@@ -296,4 +325,58 @@ export function useGetExamsCharts(
     [id]
   )
   return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options)
+}
+
+export function useGetExamsPerformance(
+  classId: string,
+  options?: QueryOptions<SchoolClass, [typeof KEY.EXAMS_PERFORMANCE, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return SchoolClassAPI.getExamsPerformance(classId);
+    },
+    [classId]
+  );
+
+  return useQuery([KEY.EXAMS_PERFORMANCE, classId], handler, options);
+}
+
+export function useGetPlanetsPerformance(
+  classId: string,
+  options?: QueryOptions<SchoolClass, [typeof KEY.PLANETS_PERFORMANCE, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return SchoolClassAPI.getPlanetsPerformance(classId);
+    },
+    [classId]
+  );
+
+  return useQuery([KEY.PLANETS_PERFORMANCE, classId], handler, options);
+}
+
+export function useGetStudentsPlanetsPerformance(
+  id: string,
+  options?: QueryOptions<Student, [typeof KEY.STUDENTS_PLANETS_PERFORMANCE, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return SchoolClassAPI.getStudentsPlanetsPerfomance(id);
+    },
+    [id]
+  )
+  return useQuery([KEY.STUDENTS_PLANETS_PERFORMANCE, id], handler, options)
+}
+
+export function useGetStudentsExamsPerformance(
+  id: string,
+  options?: QueryOptions<Student, [typeof KEY.STUDENTS_EXAMS_PERFORMANCE, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return SchoolClassAPI.getStudentsExamsPerfomance(id);
+    },
+    [id]
+  )
+  return useQuery([KEY.STUDENTS_EXAMS_PERFORMANCE, id], handler, options)
 }

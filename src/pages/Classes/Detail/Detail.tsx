@@ -1,128 +1,56 @@
+// Utils & Aux:
 import {
-  Accordion,
-  Button,
-  Flex,
-  Select,
-  useMantineTheme,
-  Divider,
-  ActionIcon,
-  Box,
-  Text,
-} from "@mantine/core";
-import { IconPlus } from "@tabler/icons-react";
-import { DetailsHeader } from "~/components/Classes/Details/DetailsHeader";
-import {
-  StudentsPerformance,
-  TestPerformance,
-  TestResultsHistory,
-} from "~/components/Classes/Details/TestsPerformance";
+  useGetExamsCharts,
+  useGetExamsPerformance,
+  useGetPlanetsPerformance,
+  useGetSchoolClass,
+  useGetStudentsExamsPerformance,
+  useGetStudentsPlanetsPerformance
+} from "~/api/school-class";
+import { useParams } from "react-router-dom";
 
+// Components:
+import { Accordion } from "@mantine/core";
+import { SchoolClassHeader } from "./components/Header";
 import { PlanetsPerformance } from "./components/PlanetsPerformance";
+import { ExamsPerformance } from "./components/ExamsPerformance";
+import { StudentsPerformanceBy } from "./components/StudentsPerformance/StudentsPerformanceBy";
+import { ExamsChart } from "./components/ExamsChart/ExamsChart";
+
+// Icons:
+import { IconPlus } from "@tabler/icons-react";
 
 export function ClassDetailPage() {
-  const theme = useMantineTheme();
+  // Getting the id of the schoolClass:
+  const params = useParams();
+
+  // Getting info about the schoolClass:
+  const { data: schoolClass } = useGetSchoolClass(params.classId ?? "", {});
+
+  // Getting the info about performance at exams:
+  const { data: schoolClassPerformanceExams } = useGetExamsPerformance(params.classId ?? "", {});
+  const { data: schoolClassPerformancePlanets } = useGetPlanetsPerformance(params.classId ?? "", {});
+  const { data: schoolClassExamsChart } = useGetExamsCharts(params.classId ?? "", {});
+  const { data: studentsPerformanceByPlanet } = useGetStudentsPlanetsPerformance(params.classId ?? "", {});
+  const { data: studentsPerformanceByExams } = useGetStudentsExamsPerformance(params.classId ?? "", {});
 
   return (
     <>
-      <DetailsHeader />
+      <SchoolClassHeader schoolClass={schoolClass ?? {}} />
 
       <Accordion
         variant="separated"
         chevron={<IconPlus size="1rem" />}
         chevronPosition="left"
-        styles={{
-          chevron: {
-            "&[data-rotate]": {
-              transform: "rotate(45deg)",
-            },
-          },
-          item: {
-            backgroundColor: '#fff',
-            boxShadow: "4px 6px 15px -5px rgba(0,0,0,0.40)",
-          }
-        }}
       >
-        <Accordion.Item value="testPerformance">
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Accordion.Control
-              style={{
-                color: theme.colors.indigo[9],
-                maxWidth: '85%'
-              }}
-            >
-              <Text>Desempenho em Provas</Text>
-            </Accordion.Control>
-
-            <ActionIcon>
-              <Button
-                size="xs"
-                style={{
-                  color: theme.colors.blue[6],
-                  backgroundColor: theme.colors.blue[0],
-                }}
-              >
-                Alunos que não precisam de reforço
-              </Button>
-            </ActionIcon>
-          </Box>
-
-          <Accordion.Panel>
-            <Flex justify="space-around">
-              <TestPerformance examType="Consciência Fonológica" />
-              <Divider orientation="vertical" variant="solid" />
-              <TestPerformance examType="Sistema de Escrita Alfabética" />
-              <Divider orientation="vertical" variant="solid" />
-              <TestPerformance examType="Leitura e Compreensão de Texto" />
-            </Flex>
-          </Accordion.Panel>
-        </Accordion.Item>
-
-        <Accordion.Item value="planetsPerformance">
-          <Accordion.Control>Desempenho em Planetas</Accordion.Control>
-          <Accordion.Panel>
-            <PlanetsPerformance />
-          </Accordion.Panel>
-        </Accordion.Item>
-
-        <Accordion.Item value="testResultsHistory">
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Accordion.Control style={{ width: '40%' }}>
-              Histórico de Resultado de Provas
-            </Accordion.Control>
-            <Flex>
-              <Box style={{ display: 'flex' }}>
-                <Box style={{ width: '20px', height: '20px', backgroundColor: '#66d9e8', margin: '0 5px 0 15px' }}></Box>
-                <Text fz="sm">Consciência fonológica</Text>
-              </Box>
-              <Box style={{ display: 'flex' }}>
-                <Box style={{ width: '20px', height: '20px', backgroundColor: '#d0bfff', margin: '0 5px 0 15px' }}></Box>
-                <Text fz="sm">Sistema de Escrita Alfabética</Text>
-              </Box>
-              <Box style={{ display: 'flex' }}>
-                <Box style={{ width: '20px', height: '20px', backgroundColor: '#ffc078', margin: '0 5px 0 15px' }}></Box>
-                <Text fz="sm">Leitura e Compreensão de Texto</Text>
-              </Box>
-            </Flex>
-          </Box>
-          <Accordion.Panel>
-            <TestResultsHistory />
-          </Accordion.Panel>
-        </Accordion.Item>
-
-        <Accordion.Item value="studentsPerformance">
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Accordion.Control style={{ width: '90%' }}>
-              <Flex>
-                Desempenho de Alunos por &nbsp;
-              </Flex>
-            </Accordion.Control>
-            <Select withinPortal style={{ width: "100px" }} data={[]} />
-          </Box>
-          <Accordion.Panel>
-            <StudentsPerformance />
-          </Accordion.Panel>
-        </Accordion.Item>
-      </Accordion>
+        <ExamsPerformance schoolClassPerformanceExams={schoolClassPerformanceExams} />
+        <PlanetsPerformance schoolClassPerformancePlanets={schoolClassPerformancePlanets} />
+        <ExamsChart schoolClassExamsChart={schoolClassExamsChart} />
+        <StudentsPerformanceBy
+          studentsPerformanceByPlanet={studentsPerformanceByPlanet}
+          studentsPerformanceByExams={studentsPerformanceByExams}
+        />
+      </Accordion >
     </>
   );
 }

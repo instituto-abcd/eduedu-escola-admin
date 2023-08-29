@@ -42,7 +42,7 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
         }
     )
 
-    const [performanceType, setPerformanceType] = useState('');
+    const [performanceType, setPerformanceType] = useState('Provas');
     const selectOptions = [
         {
             label: 'Provas',
@@ -130,17 +130,20 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Accordion.Control
                     style={{
-                        color: theme.colors.indigo[9],
                         maxWidth: '85%'
                     }}
                 >
                     <Flex align="center">
-                        <Text pr={10}>Desempenho do aluno por</Text>
+                        <Text
+                            color={theme.colors.indigo[9]}
+                            pr={10}
+                        >
+                            Desempenho do aluno por
+                        </Text>
                         <Select
                             withinPortal
                             data={selectOptions}
-                            placeholder="Pesquisar"
-                            searchable
+                            value={performanceType}
                             style={{
                                 width: '150px'
                             }}
@@ -164,11 +167,13 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
                     }
 
                     {performanceType == "Provas" &&
-                        <Line options={options} data={studentPerformanceByExam} />
+                        studentPerformanceByExam &&
+                        <Line options={options} data={studentPerformanceByExam ?? [{ labels: [], datasets: [] }]} />
                     }
 
                     {performanceType == "Planetas" &&
-                        <Line options={options} data={studentPerformanceByPlanets} />
+                        studentPerformanceByPlanets &&
+                        <Line options={options} data={studentPerformanceByPlanets ?? [{ labels: [], datasets: [] }]} />
                     }
                 </Flex>
             </Accordion.Panel>

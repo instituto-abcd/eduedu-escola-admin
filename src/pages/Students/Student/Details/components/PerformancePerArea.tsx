@@ -10,11 +10,10 @@ export function PerformancePerArea({ performanceByArea }: componentProps) {
         <Accordion.Item value="performancePerArea">
             <Accordion.Control
                 style={{
-                    color: theme.colors.indigo[9],
                     maxWidth: '85%'
                 }}
             >
-                <Text>Desempenho do aluno por área</Text>
+                <Text color={theme.colors.indigo[9]}>Desempenho do aluno por área</Text>
             </Accordion.Control>
 
             <Accordion.Panel>
