@@ -1,10 +1,11 @@
-import { Accordion, Box, Button, Flex, Select, Text, useMantineTheme } from "@mantine/core";
-
+import { Accordion, Box, Button, Divider, Flex, Select, Text, useMantineTheme } from "@mantine/core";
+import { modals } from "@mantine/modals";
 import { useState } from "react";
-import { useExamsPerformancePlanets, useGetExamExecutions } from "~/api/student";
+import { useAuthorizeNewExam, useExamsPerformancePlanets, useGetExamExecutions } from "~/api/student";
 import { monthsAbbreviation } from "~/constants";
 import { errorNotification } from "~/utils/errorNotification";
 import { TablePerformancePlanets } from "./performance-planets/Table";
+import { successNotification } from "~/utils/successNotification";
 
 type componentProps = {
     studentId: string;
@@ -56,6 +57,40 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
         }
     )
 
+    const { mutate: authorizeNewExam } = useAuthorizeNewExam({
+        onSuccess: () => {
+            successNotification(
+                "Operação realizada com sucesso",
+                "Nova prova autorizada para o aluno!"
+            );
+        },
+        onError: (error) => {
+            errorNotification(
+                "Erro durante a operação",
+                `${error.message} (cod: ${error.code})`
+            );
+        },
+    });
+
+    const openModalAuthorizeNewExam = () => {
+        modals.openConfirmModal({
+            title: "Autorizar Nova Prova",
+            children: (
+                <>
+                    <Text size="sm">
+                        Deseja que o sistema permita o aluno
+                        realizar uma nova prova?
+                    </Text>
+                    <Divider mt={20} />
+                </>
+            ),
+            labels: { confirm: "Sim", cancel: "Não" },
+            onConfirm: () => {
+                authorizeNewExam([studentId]);
+            },
+        });
+    };
+
     return (
         <Accordion.Item value="planetsPerformance">
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -106,6 +141,7 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
                             color: theme.colors.blue[6],
                             backgroundColor: theme.colors.blue[0],
                         }}
+                        onClick={openModalAuthorizeNewExam}
                     >
                         Autorizar nova prova
                     </Button>
