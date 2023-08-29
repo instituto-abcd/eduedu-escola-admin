@@ -15,8 +15,14 @@ export function AccessKeyInput({
 }: AccessKeyInputProps) {
   const authorizedUserId = useUserStore((u) => u.id);
   const finalId = userId ?? authorizedUserId ?? "";
+  const logout = useUserStore((u) => u.signOut);
 
-  const { data, isLoading: fetching } = useGetAccessKey(finalId);
+  const { data, isLoading: fetching } = useGetAccessKey(finalId, {
+    onError: (error) => {
+      logout();
+      errorNotification("Sessão expirada", 'Efetue o login novamente');
+    }
+  });
 
   const { mutate: updateAccessKey, isLoading: updating } = useUpdateAccessKey({
     onError: (error) => {
