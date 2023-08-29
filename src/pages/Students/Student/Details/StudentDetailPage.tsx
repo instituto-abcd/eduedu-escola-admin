@@ -31,17 +31,6 @@ export function StudentDetailPage() {
                 variant="separated"
                 chevron={<IconPlus size="1rem" />}
                 chevronPosition="left"
-                styles={{
-                    chevron: {
-                        "&[data-rotate]": {
-                            transform: "rotate(45deg)",
-                        },
-                    },
-                    item: {
-                        backgroundColor: '#fff',
-                        boxShadow: "4px 6px 15px -5px rgba(0,0,0,0.40)",
-                    }
-                }}
             >
                 <PerformancePerArea performanceByArea={detailedSummary?.performanceByArea} />
                 <StudentReport summaries={detailedSummary?.summaries} />
