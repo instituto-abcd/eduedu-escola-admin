@@ -6,7 +6,6 @@ type componentProps = {
     data: Array<[]>;
 }
 export function TablePlanet({ data }: componentProps) {
-    // console.log('planets', data)
     return (
         <Table horizontalSpacing="sm" verticalSpacing="md">
             <thead>
@@ -44,11 +43,9 @@ export function TablePlanet({ data }: componentProps) {
                             </td>
                             <td>{item.studentName}</td>
                             <td>{item.lastExamDate}</td>
-
-                            {/* TODO: come back here when back/DB have some data */}
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>{item.cfo.averageStars}</td>
+                            <td>{item.sea.averageStars}</td>
+                            <td>{item.lct.averageStars}</td>
                             <td>
                                 <ActionIcon
                                     component={Link}
