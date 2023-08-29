@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { IconEdit, IconEye } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthorizeNewExam, useStudentGetAll } from "~/api/student";
 import { PageHeader } from "~/components/PageHeader";
@@ -33,13 +33,19 @@ import {
 import { TableHeader } from "~/components/TableHeader";
 import { successNotification } from "~/utils/successNotification";
 import { errorNotification } from "~/utils/errorNotification";
+import { useStudentFilterStore } from "~/stores/filter";
 
 export function StudentsListPage() {
   const theme = useMantineTheme();
-  const [search, setSearch] = useState({});
+  const initialSearch = useStudentFilterStore();
+  const [search, setSearch] = useState(initialSearch);
   const [selected, setSelected] = useState<string[]>([]);
 
   const pagination = usePagination();
+
+  useEffect(() => {
+    useStudentFilterStore.setState(search);
+  }, [search]);
 
   function toggleSelected(id: string) {
     if (selected.includes(id)) {
@@ -174,6 +180,7 @@ export function StudentsListPage() {
                 searchTerm: "",
               },
             ]}
+            initialValues={initialSearch}
             onValueChange={setSearch}
           />
         </thead>

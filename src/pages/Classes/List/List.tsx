@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconEdit, IconEye } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSchoolClassGetAll } from "~/api/school-class";
 import { PageHeader } from "~/components/PageHeader";
@@ -28,10 +28,16 @@ import {
   SCHOOL_PERIOD_SELECT,
 } from "~/constants";
 import { TableHeader } from "~/components/TableHeader";
+import { useSchoolClassFilterStore } from "~/stores/filter";
 
 export function ClassesListPage() {
   const [selected, setSelected] = useState<string[]>([]);
-  const [search, setSearch] = useState({});
+  const initialSearch = useSchoolClassFilterStore();
+  const [search, setSearch] = useState(initialSearch);
+
+  useEffect(() => {
+    useSchoolClassFilterStore.setState(search);
+  }, [search]);
 
   function toggleSelected(id: string) {
     if (selected.includes(id)) {
@@ -110,6 +116,7 @@ export function ClassesListPage() {
               },
               { label: "", type: "empty", searchTerm: "" },
             ]}
+            initialValues={initialSearch}
             onCheckAll={(checked) =>
               checked
                 ? setSelected(schoolClasses?.items.map((u) => u.id) ?? [])
