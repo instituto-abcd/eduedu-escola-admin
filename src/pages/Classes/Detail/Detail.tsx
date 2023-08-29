@@ -14,7 +14,7 @@ import { Accordion } from "@mantine/core";
 import { SchoolClassHeader } from "./components/Header";
 import { PlanetsPerformance } from "./components/PlanetsPerformance";
 import { ExamsPerformance } from "./components/ExamsPerformance";
-import { StudentsPerformanceBy } from "./components/StudentsPerformanceBy";
+import { StudentsPerformanceBy } from "./components/StudentsPerformance/StudentsPerformanceBy";
 import { ExamsChart } from "./components/ExamsChart/ExamsChart";
 
 // Icons:
