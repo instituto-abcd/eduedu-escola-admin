@@ -3,11 +3,11 @@ import { HeaderStudent, PerformancePerArea, SchoolClassPerformanceBy, StudentPer
 import { IconPlus } from "@tabler/icons-react";
 import { PerformanceAtPlanets } from "./components/PerformanceAtPlanets";
 import { useParams } from "react-router-dom";
-import { useGetDetailedSummary } from "~/api/student";
+import { useGetDetailedSummary, useStudentGetOne } from "~/api/student";
 import { errorNotification } from "~/utils/errorNotification";
 
 export function StudentDetailPage() {
-    // Getting student ID:
+    // Getting student ID from params:
     const params = useParams();
 
     // Getting detailed-summary data:
@@ -18,6 +18,9 @@ export function StudentDetailPage() {
                 errorNotification("Erro durante a operação", error.message)
         }
     )
+
+    // Getting info about student:
+    const { data: student } = useStudentGetOne(params.studentId ?? "", {});
 
     return (
         <>
@@ -43,7 +46,7 @@ export function StudentDetailPage() {
                 <PerformancePerArea performanceByArea={detailedSummary?.performanceByArea} />
                 <StudentReport summaries={detailedSummary?.summaries} />
                 <StudentPerformanceBy studentId={params?.studentId ?? ""} />
-                <SchoolClassPerformanceBy />
+                <SchoolClassPerformanceBy schoolClassId={student?.schoolClassId ?? ""} />
                 <PerformanceAtPlanets studentId={params?.studentId ?? ""} />
             </Accordion>
         </>
