@@ -128,16 +128,6 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
                     <Button
                         size="xs"
                         style={{
-                            margin: '0 10px 0 0',
-                            color: theme.colors.blue[6],
-                            backgroundColor: theme.colors.blue[0],
-                        }}
-                    >
-                        Liberar mais planetas
-                    </Button>
-                    <Button
-                        size="xs"
-                        style={{
                             color: theme.colors.blue[6],
                             backgroundColor: theme.colors.blue[0],
                         }}
