@@ -32,7 +32,7 @@ export function ModalExamPerformance({ opened, onClose, title, students, color }
                         students.map((student) => (
                             <tr>
                                 <td>{student.name}</td>
-                                <td style={{ textAlign: 'center' }}></td>
+                                <td style={{ textAlign: 'center' }}>{student?.lastExamDate ?? '-'}</td>
                                 <td style={{ textAlign: 'center' }}>
                                     <Text c={color}>
                                         {student.percent}%

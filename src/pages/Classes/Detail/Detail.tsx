@@ -42,6 +42,7 @@ export function ClassDetailPage() {
         variant="separated"
         chevron={<IconPlus size="1rem" />}
         chevronPosition="left"
+        multiple={true}
       >
         <ExamsPerformance schoolClassPerformanceExams={schoolClassPerformanceExams} />
         <PlanetsPerformance schoolClassPerformancePlanets={schoolClassPerformancePlanets} />
