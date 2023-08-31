@@ -5,26 +5,35 @@ type componentProps = {
     item: string
 }
 export function ExamPerformance({ item }: componentProps) {
+    console.log(item)
     return (
-        <Stack>
-            <Text align="center">{item.axisName}</Text>
-            <Group spacing="xl">
-                <ExamItem
-                    count={item.veryLow.count}
-                    label="Muito Abaixo"
-                    color="red.9"
-                />
-                <ExamItem
-                    count={item.below.count}
-                    color="orange.4"
-                    label="Abaixo"
-                />
-                <ExamItem
-                    count={item.expected.count}
-                    color="green.8"
-                    label="Esperado"
-                />
-            </Group>
-        </Stack>
+        <>
+            <Stack>
+                <Text align="center">{item.axisName}</Text>
+                <Group spacing="xl">
+                    <ExamItem
+                        title={item.axisName}
+                        label="Muito Abaixo"
+                        count={item.veryLow.count}
+                        color="red.9"
+                        students={item.veryLow.students}
+                    />
+                    <ExamItem
+                        title={item.axisName}
+                        color="orange.4"
+                        count={item.below.count}
+                        label="Abaixo"
+                        students={item.below.students}
+                    />
+                    <ExamItem
+                        title={item.axisName}
+                        color="green.8"
+                        count={item.expected.count}
+                        label="Esperado"
+                        students={item.expected.students}
+                    />
+                </Group>
+            </Stack>
+        </>
     )
 }
