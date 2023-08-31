@@ -25,7 +25,7 @@ export function SchoolClassHeader({ schoolClass }: componentProps) {
                 <Group>
                     <Title order={5}>Alunos:</Title>
                     <Text>
-                        {/* TODO: get students quantity */}
+                        {schoolClass.studentsCount}
                     </Text>
                 </Group>
             </Grid.Col>

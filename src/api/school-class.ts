@@ -57,6 +57,7 @@ const KEY = {
   EXAMS_PERFORMANCE: "EXAMS_PERFORMANCE",
   STUDENTS_PLANETS_PERFORMANCE: "STUDENTS_PLANETS_PERFORMANCE",
   STUDENTS_EXAMS_PERFORMANCE: "STUDENTS_EXAMS_PERFORMANCE",
+  IDEAL_STUDENTS: "IDEAL_STUDENTS",
 } as const;
 
 const URL = {
@@ -75,6 +76,7 @@ const URL = {
   PLANETS_PERFORMANCE: (id: string) => `/schoolClass/${id}/planets-performance`,
   STUDENTS_PLANETS_PERFORMANCE: (id: string) => `/schoolClass/${id}/planets-performance-students`,
   STUDENTS_EXAMS_PERFORMANCE: (id: string) => `/schoolClass/${id}/exams-performance-students`,
+  IDEAL_STUDENTS: (id: string) => `/schoolClass/${id}/ideal-students`,
 };
 
 export class SchoolClassAPI extends API {
@@ -169,6 +171,11 @@ export class SchoolClassAPI extends API {
 
   static async getStudentsPlanetsPerfomance(id: string) {
     const { data } = await this.api.get(URL.STUDENTS_PLANETS_PERFORMANCE(id));
+    return data;
+  }
+
+  static async getIdealStudents(id: string) {
+    const { data } = await this.api.get(URL.IDEAL_STUDENTS(id));
     return data;
   }
 }
@@ -379,4 +386,17 @@ export function useGetStudentsExamsPerformance(
     [id]
   )
   return useQuery([KEY.STUDENTS_EXAMS_PERFORMANCE, id], handler, options)
+}
+
+export function useGetIdealStudents(
+  id: string,
+  options?: QueryOptions<Student, [typeof KEY.IDEAL_STUDENTS, string]>
+) {
+  const handler = useCallback(
+    function () {
+      return SchoolClassAPI.getIdealStudents(id);
+    },
+    [id]
+  )
+  return useQuery([KEY.IDEAL_STUDENTS, id], handler, options)
 }

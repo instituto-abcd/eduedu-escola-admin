@@ -1,4 +1,4 @@
-import { ActionIcon, Checkbox, Table, Select, TextInput, Text } from "@mantine/core";
+import { ActionIcon, Table, Select, TextInput, Text } from "@mantine/core";
 import { IconEye } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
@@ -10,7 +10,6 @@ export function TableExams({ data }: componentProps) {
         <Table horizontalSpacing="sm" verticalSpacing="md">
             <thead>
                 <tr>
-                    <th></th>
                     <th>
                         Nome
                         <TextInput size="sm" placeholder="Pesquisar" />
@@ -38,9 +37,6 @@ export function TableExams({ data }: componentProps) {
                 {data &&
                     data.map((item) => (
                         <tr>
-                            <td>
-                                <Checkbox />
-                            </td>
                             <td>{item.studentName}</td>
                             <td>{item.lastExamDate}</td>
                             <td>

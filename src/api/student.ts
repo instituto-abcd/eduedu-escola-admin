@@ -53,6 +53,7 @@ const URL = {
   PLANET_CHARTS: (id: string) => `/student/${id}/planets-chart`,
   EXAM_EXECUTIONS: (id: string) => `/student/${id}/exam-executions`,
   EXAMS_PERFORMANCE_PLANETS: (id: string, studentExamId: string) => `/student/${id}/exam-executions/${studentExamId}/planets-performance?loadPlanets=true`,
+  RELEASE_PLANETS: (id: string) => `/student/${id}/release-planets`,
 };
 
 const KEY = {
@@ -64,6 +65,7 @@ const KEY = {
   EXAM_EXECUTIONS: "EXAM_EXECUTIONS",
   EXAMS_PERFORMANCE_PLANETS: "EXAMS_PERFORMANCE_PLANETS",
   DEITALED_SUMMARY_BY_ID: "DEITALED_SUMMARY_BY_ID",
+  RELEASE_PLANETS: "RELEASE_PLANETS",
 };
 
 class StudentAPI extends API {
@@ -130,6 +132,12 @@ class StudentAPI extends API {
     const { data } = await this.api.get(URL.EXAMS_PERFORMANCE_PLANETS(id, studentExamId));
     return data;
   }
+
+  static async putReleasePlanets(id: string) {
+    const { data } = await this.api.put(URL.RELEASE_PLANETS(id));
+    return data;
+  }
+
 }
 
 export function useStudentGetAll(
@@ -305,6 +313,27 @@ export function useExamsPerformancePlanets(
         KEY.EXAMS_PERFORMANCE_PLANETS
       ]);
       options?.onSuccess?.(data, variables, ctx);
+    },
+  });
+}
+
+export function usePutReleasePlanets(
+  options?: MutationOptions<{ id: string }, Student>
+) {
+  const queryClient = useQueryClient();
+
+  const handler = useCallback(function (data: {
+    id: string;
+  }) {
+    return StudentAPI.putReleasePlanets(data);
+  },
+    []);
+
+  return useMutation(handler, {
+    ...options,
+    onSuccess: (data, vars, ctx) => {
+      queryClient.invalidateQueries([KEY.ALL]);
+      options?.onSuccess?.(data, vars, ctx);
     },
   });
 }
