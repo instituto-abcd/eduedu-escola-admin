@@ -6,6 +6,7 @@ import { monthsAbbreviation } from "~/constants";
 import { errorNotification } from "~/utils/errorNotification";
 import { TablePerformancePlanets } from "./performance-planets/Table";
 import { successNotification } from "~/utils/successNotification";
+import { AccordionButton } from "~/components/AccordionButton/AccordionButton";
 
 type componentProps = {
     studentId: string;
@@ -125,16 +126,13 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
                 </Accordion.Control>
 
                 <Flex>
-                    <Button
-                        size="xs"
-                        style={{
-                            color: theme.colors.blue[6],
-                            backgroundColor: theme.colors.blue[0],
-                        }}
-                        onClick={openModalAuthorizeNewExam}
-                    >
-                        Autorizar nova prova
-                    </Button>
+                    <AccordionButton
+                        parentCallback={() => openModalAuthorizeNewExam()}
+                        label="Autorizar nova prova"
+                        mr={10}
+                    />
+
+                    <AccordionButton label="Liberar mais planetas" />
                 </Flex>
             </Box>
 
