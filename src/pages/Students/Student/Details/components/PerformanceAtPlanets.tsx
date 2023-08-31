@@ -1,7 +1,7 @@
 import { Accordion, Box, Button, Divider, Flex, Select, Text, useMantineTheme } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { useState } from "react";
-import { useAuthorizeNewExam, useExamsPerformancePlanets, useGetExamExecutions } from "~/api/student";
+import { useAuthorizeNewExam, useExamsPerformancePlanets, useGetExamExecutions, usePutReleasePlanets } from "~/api/student";
 import { monthsAbbreviation } from "~/constants";
 import { errorNotification } from "~/utils/errorNotification";
 import { TablePerformancePlanets } from "./performance-planets/Table";
@@ -92,6 +92,21 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
         });
     };
 
+    const { mutate: releasePlanets } = usePutReleasePlanets({
+        onSuccess: () => {
+            successNotification(
+                "Operação realizada com sucesso",
+                "Planetas liberados."
+            );
+        },
+        onError: (error) => {
+            errorNotification(
+                "Erro durante a operação",
+                `${error.message} (cod: ${error.code})`
+            );
+        },
+    })
+
     return (
         <Accordion.Item value="planetsPerformance">
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -132,7 +147,10 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
                         mr={10}
                     />
 
-                    <AccordionButton label="Liberar mais planetas" />
+                    <AccordionButton
+                        parentCallback={() => releasePlanets(studentId)}
+                        label="Liberar mais planetas"
+                    />
                 </Flex>
             </Box>
 
