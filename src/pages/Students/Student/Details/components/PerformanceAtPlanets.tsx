@@ -38,7 +38,7 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
                 data?.forEach(element => {
                     let d = new Date(element.examDate)
                     let month = monthsAbbreviation[d.getMonth()];
-                    let day = d.getDay();
+                    let day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
 
                     element.label = `${day}/${month}`;
                     element.value = element.id

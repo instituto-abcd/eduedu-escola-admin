@@ -15,7 +15,7 @@ export function ModalExamsPerformance({ opened, onClose, students }: componentPr
     function configDate(examDate) {
         let d = new Date(examDate)
         let month = monthsAbbreviation[d.getMonth()];
-        let day = d.getDay();
+        let day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
 
         return `${day}/${month}`;
     }
@@ -30,7 +30,7 @@ export function ModalExamsPerformance({ opened, onClose, students }: componentPr
                 <thead>
                     <tr>
                         <th>Nome</th>
-                        <th>Última Prova</th>
+                        <th style={{ textAlign: 'center' }}>Última Prova</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -45,7 +45,7 @@ export function ModalExamsPerformance({ opened, onClose, students }: componentPr
                                 <td>
                                     <ActionIcon
                                         component={Link}
-                                        to={`${PATH.STUDENTS}/${student.id}/detalhes`}
+                                        to={`${PATH.STUDENTS}/${student.studentId}/detalhes`}
                                         color="blue.9"
                                     >
                                         <IconEye />

@@ -1,6 +1,7 @@
 import { ActionIcon, Modal, Table, Text } from "@mantine/core";
 import { IconEye } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
+import { monthsAbbreviation } from "~/constants";
 import { PATH } from "~/constants/path";
 
 type componentProps = {
@@ -11,6 +12,13 @@ type componentProps = {
     color: string;
 }
 export function ModalExamPerformance({ opened, onClose, title, students, color }: componentProps) {
+    function configDate(examDate) {
+        let d = new Date(examDate)
+        let month = monthsAbbreviation[d.getMonth()];
+        let day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
+
+        return `${day}/${month}`;
+    }
     return (
         <Modal
             opened={opened}
@@ -32,7 +40,7 @@ export function ModalExamPerformance({ opened, onClose, title, students, color }
                         students.map((student) => (
                             <tr>
                                 <td>{student.name}</td>
-                                <td style={{ textAlign: 'center' }}>{student?.lastExamDate ?? '-'}</td>
+                                <td style={{ textAlign: 'center' }}>{student?.lastExamDate ? configDate(student.lastExamDate) : '-' }</td>
                                 <td style={{ textAlign: 'center' }}>
                                     <Text c={color}>
                                         {student.percent}%
