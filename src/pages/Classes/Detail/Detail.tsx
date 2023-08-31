@@ -2,6 +2,7 @@
 import {
   useGetExamsCharts,
   useGetExamsPerformance,
+  useGetIdealStudents,
   useGetPlanetsPerformance,
   useGetSchoolClass,
   useGetStudentsExamsPerformance,
@@ -13,7 +14,7 @@ import { useParams } from "react-router-dom";
 import { Accordion } from "@mantine/core";
 import { SchoolClassHeader } from "./components/Header";
 import { PlanetsPerformance } from "./components/PlanetsPerformance";
-import { ExamsPerformance } from "./components/ExamsPerformance";
+import { ExamsPerformance } from "./components/exams-performance/ExamsPerformance";
 import { StudentsPerformanceBy } from "./components/StudentsPerformance/StudentsPerformanceBy";
 import { ExamsChart } from "./components/ExamsChart/ExamsChart";
 
@@ -33,6 +34,7 @@ export function ClassDetailPage() {
   const { data: schoolClassExamsChart } = useGetExamsCharts(params.classId ?? "", {});
   const { data: studentsPerformanceByPlanet } = useGetStudentsPlanetsPerformance(params.classId ?? "", {});
   const { data: studentsPerformanceByExams } = useGetStudentsExamsPerformance(params.classId ?? "", {});
+  const { data: idealStudents } = useGetIdealStudents(params.classId ?? "", {});
 
   return (
     <>
@@ -42,8 +44,12 @@ export function ClassDetailPage() {
         variant="separated"
         chevron={<IconPlus size="1rem" />}
         chevronPosition="left"
+        multiple={true}
       >
-        <ExamsPerformance schoolClassPerformanceExams={schoolClassPerformanceExams} />
+        <ExamsPerformance
+          schoolClassPerformanceExams={schoolClassPerformanceExams}
+          idealStudents={idealStudents}
+        />
         <PlanetsPerformance schoolClassPerformancePlanets={schoolClassPerformancePlanets} />
         <ExamsChart schoolClassExamsChart={schoolClassExamsChart} />
         <StudentsPerformanceBy
