@@ -28,7 +28,11 @@ const userInputValidation = z.object({
 
   email: z.string().email({ message: "Insira um e-mail válido" }),
 
-  profile: z.enum(["DIRECTOR", "TEACHER"]),
+  profile: z.enum(["DIRECTOR", "TEACHER"], {
+    errorMap: () => {
+      return { message: 'Por favor, selecione uma opção' };
+    },
+  }),
 });
 
 export function UserPage() {

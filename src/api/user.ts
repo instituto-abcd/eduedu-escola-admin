@@ -171,7 +171,7 @@ export function useUserUpdate(
   }) {
     return UserAPI.update(data.userId, data.input);
   },
-  []);
+    []);
 
   return useMutation(handler, options);
 }
@@ -259,7 +259,11 @@ export function useUserUpdatePassword(
     onSuccess: (data, vars, ctx) => {
       const tokenValidation = z.object({
         email: z.string().email(),
-        profile: z.enum(["DIRECTOR", "TEACHER"]),
+        profile: z.enum(["DIRECTOR", "TEACHER"], {
+          errorMap: () => {
+            return { message: 'Por favor, selecione uma opção' };
+          },
+        }),
         iat: z.number(),
       });
 
