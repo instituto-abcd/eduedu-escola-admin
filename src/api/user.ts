@@ -50,6 +50,8 @@ export type UpdatePasswordInput = {
 const KEY = {
   ALL: "USER_ALL",
   BY_ID: "USER",
+  INACTIVATE_USER: "INACTIVATE_USER",
+  ACTIVATE_USER: "ACTIVATE_USER",
 } as const;
 
 const URL = {
@@ -60,6 +62,7 @@ const URL = {
   UPDATE_ACCESS_KEY: (id: string) => `/user/${id}/access-key`,
   GET_ACCESS_KEY: (id: string) => `/user/${id}/access-key`,
   DELETE: "/user",
+  ACTIVATE: (id: string) => `/user/${id}`,
   INACTIVATE: "/user/inactivate",
   UPDATE_PASSWORD: "/user/password",
 };
@@ -108,6 +111,13 @@ class UserAPI extends API {
     return data;
   }
 
+  static async activate(userId: string[]) {
+    const { data } = await this.api.patch<{ success: boolean }>(URL.ACTIVATE(userId), {
+      status: 'ACTIVE'
+    });
+    return data;
+  }
+
   static async delete(userIds: string[]) {
     const { data } = await this.api.delete<{ success: boolean }>(URL.DELETE, {
       data: { ids: userIds },
@@ -138,6 +148,17 @@ export function useUserGetAll(
   );
 
   return useQuery([KEY.ALL, options?.search], handler, options);
+}
+
+export function useGetAllUsersMutation(
+  options?: MutationOptions<{ search?: UserSearch; }>
+) {
+  const handler = useCallback(function (options: Array<{}>) {
+    return UserAPI.getAll(options?.search);
+  },
+    []);
+
+  return useMutation(handler, options);
 }
 
 export function useUserGetById(
@@ -240,11 +261,30 @@ export function useUserInactivate(
   return useMutation(handler, {
     ...options,
     onSuccess: async (data, vars, ctx) => {
-      await queryClient.invalidateQueries([KEY.ALL]);
+      await queryClient.invalidateQueries([KEY.INACTIVATE_USER]);
       options?.onSuccess?.(data, vars, ctx);
     },
   });
 }
+
+export function useUserActivate(
+  options?: MutationOptions<string[], { success: boolean }>
+) {
+  const queryClient = useQueryClient();
+
+  const handler = useCallback(function (id: string[]) {
+    return UserAPI.activate(id);
+  }, []);
+
+  return useMutation(handler, {
+    ...options,
+    onSuccess: async (data, vars, ctx) => {
+      await queryClient.invalidateQueries([KEY.ACTIVATE_USER]);
+      options?.onSuccess?.(data, vars, ctx);
+    },
+  });
+}
+
 
 export function useUserUpdatePassword(
   options?: MutationOptions<UpdatePasswordInput, LoginResponse>

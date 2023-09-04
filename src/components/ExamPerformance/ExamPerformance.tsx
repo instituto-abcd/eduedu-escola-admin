@@ -5,7 +5,6 @@ type componentProps = {
     item: string
 }
 export function ExamPerformance({ item }: componentProps) {
-    console.log(item)
     return (
         <>
             <Stack>

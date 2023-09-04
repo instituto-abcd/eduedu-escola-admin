@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useUserDelete, useUserGetAll, useUserInactivate } from "~/api/user";
+import { useGetAllUsersMutation, useUserActivate, useUserDelete, useUserGetAll, useUserInactivate } from "~/api/user";
 import { PROFILE_SELECT, STATUS_SELECT, USER_PROFILE } from "~/constants";
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
@@ -26,9 +26,10 @@ import { TableLoader } from "~/components/TableLoader";
 import { TableHeader } from "~/components/TableHeader";
 
 export function UsersListPage() {
+
+  const theme = useMantineTheme();
   const [selected, setSelected] = useState<string[]>([]);
   const [search, setSearch] = useState({});
-  const theme = useMantineTheme();
 
   function toggleSelected(id: string) {
     if (selected.includes(id)) {
@@ -39,15 +40,18 @@ export function UsersListPage() {
   }
 
   const pagination = usePagination();
-  const { data: users, isLoading: loadingUsers } = useUserGetAll({
+  const [users, setUsers] = useState({});
+
+  const { mutate: getUsersMutation, isLoading: loadingUsers } = useGetAllUsersMutation({
     search: {
       ...search,
       "page-number": pagination.page,
       "page-size": pagination.pageSize,
     },
-    onError: (error) =>
-      errorNotification("Erro durante a operação", error.message),
-  });
+    onSuccess(data, variables, context) {
+      setUsers(data)
+    },
+  })
 
   const { mutate: deleteUser, isLoading: isDeleting } = useUserDelete({
     onSuccess: () => {
@@ -73,6 +77,13 @@ export function UsersListPage() {
           `${selected.length} Usuário(s) inativado(s) com sucesso!`
         );
         setSelected([]);
+        getUsersMutation({
+          search: {
+            ...search,
+            "page-number": pagination.page,
+            "page-size": pagination.pageSize,
+          },
+        })
       },
       onError: (error) => {
         errorNotification(
@@ -81,6 +92,40 @@ export function UsersListPage() {
         );
       },
     });
+
+  const { mutate: activateUser, isLoading: isActivating } =
+    useUserActivate({
+      onSuccess: () => {
+        successNotification(
+          "Operação realizada com sucesso",
+          `${selected.length} Usuário(s) ativado(s) com sucesso!`
+        );
+        setSelected([]);
+        getUsersMutation({
+          search: {
+            ...search,
+            "page-number": pagination.page,
+            "page-size": pagination.pageSize,
+          },
+        })
+      },
+      onError: (error) => {
+        errorNotification(
+          "Erro durante a operação",
+          `${error.message} (cod: ${error.code})`
+        );
+      },
+    });
+
+  useEffect(() => {
+    getUsersMutation({
+      search: {
+        ...search,
+        "page-number": pagination.page,
+        "page-size": pagination.pageSize,
+      },
+    })
+  }, []);
 
   const openModalDeleteUser = () =>
     modals.openConfirmModal({
@@ -110,11 +155,28 @@ export function UsersListPage() {
       onConfirm: () => inactivateUser(selected),
     });
 
+  const openModalActivateteUser = () =>
+    modals.openConfirmModal({
+      title: "Inativar",
+      children: (
+        <>
+          <Text mb={20}>Deseja ativar o(s) usuários(s) selecionado(s)?</Text>
+          <Divider />
+        </>
+      ),
+      labels: { confirm: "Sim", cancel: "Não" },
+      onConfirm: () => {
+        selected.forEach(element => {
+          activateUser(element)
+        });
+      },
+    });
+
   return (
     <Stack>
       <PageHeader
         title="Usuários"
-        description={`${users?.pagination.totalItems} registros` ?? ""}
+        description={`${users?.pagination?.totalItems} registros` ?? ""}
       >
         <Button component={Link} to="/usuarios/novo-usuario">
           Novo usuário
@@ -140,6 +202,15 @@ export function UsersListPage() {
             loading={isInactivating}
           >
             Inativar
+          </Button>
+          <Button
+            size="xs"
+            color="blue.6"
+            variant="outline"
+            onClick={openModalActivateteUser}
+            loading={isActivating}
+          >
+            Ativar
           </Button>
         </Group>
       ) : (
@@ -191,14 +262,14 @@ export function UsersListPage() {
             onCheckAll={(checked) =>
               checked
                 ? setSelected(
-                    users?.items.filter((u) => !u.owner).map((u) => u.id) ?? []
-                  )
+                  users?.items?.filter((u) => !u.owner).map((u) => u.id) ?? []
+                )
                 : setSelected([])
             }
           />
         </thead>
         <tbody>
-          {users?.items.map((user) => (
+          {users?.items?.map((user) => (
             <tr key={user.id}>
               <td>
                 <Checkbox
@@ -228,13 +299,13 @@ export function UsersListPage() {
 
       <TableLoader
         loading={loadingUsers}
-        empty={!users || users.items.length === 0}
+        empty={!users || users?.items?.length === 0}
         link={{ to: PATH.NEW_USER, label: "Cadastrar novo usuário" }}
       />
 
-      {users && (
+      {users?.pagination && (
         <Pagination
-          paginationApi={users.pagination}
+          paginationApi={users?.pagination}
           paginationHook={pagination}
         />
       )}
