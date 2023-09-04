@@ -43,7 +43,14 @@ export function SettingsPage() {
     validate: zodResolver(
       z.object(
         {
-          schoolName: z.string().min(1, { message: "Digite o nome da escola" })
+          schoolName: z.string().min(1, { message: "Campo obrigatório" }),
+          smtpHostName: z.string().nonempty({ message: "Campo obrigatório" }),
+          smtpUserName: z.string().nonempty({ message: "Campo obrigatório" }),
+          smtpPassword: z.string().nonempty({ message: "Campo obrigatório" }),
+          smtpPort: z.number({
+            required_error: "Campo obrigatório",
+            invalid_type_error: "Digite apenas o número da porta"
+          }),
         }
       )
     )
