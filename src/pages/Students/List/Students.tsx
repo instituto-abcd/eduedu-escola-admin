@@ -238,6 +238,7 @@ export function StudentsListPage() {
         opened={deleteModalOpen}
         onClose={deleteModalHandlers.close}
         studentIds={selected}
+        parentCallback={() => setSelected([])}
       />
 
       <UploadStudentsSheet
