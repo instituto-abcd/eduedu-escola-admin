@@ -43,7 +43,7 @@ export function SettingsPage() {
     validate: zodResolver(
       z.object(
         {
-          schoolName: z.string().min(1, { message: "Digite o nome da escola" });
+          schoolName: z.string().min(1, { message: "Digite o nome da escola" })
         }
       )
     )
