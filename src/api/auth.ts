@@ -64,7 +64,11 @@ export function useAuthLogin(
     onSuccess: (data, vars, ctx) => {
       const tokenValidation = z.object({
         email: z.string().email(),
-        profile: z.enum(["DIRECTOR", "TEACHER"]),
+        profile: z.enum(["DIRECTOR", "TEACHER"], {
+          errorMap: () => {
+            return { message: 'Por favor, selecione uma opção' };
+          },
+        }),
         iat: z.number(),
       });
 
