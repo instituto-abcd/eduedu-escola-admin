@@ -29,7 +29,7 @@ export function PlanetsPerformance({ schoolClassPerformancePlanets }: componentP
                         {schoolClassPerformancePlanets &&
                             schoolClassPerformancePlanets?.map((item) => (
                                 <tr key={item.axisCode}>
-                                    <td style={{ color: theme.colors.blue[6], cursor: 'pointer' }}>
+                                    <td>
                                         {item.axisName}
                                     </td>
                                     <td>{item.offeredPlanets}</td>
