@@ -8,6 +8,13 @@ type componentProps = {
 export function PlanetsPerformance({ schoolClassPerformancePlanets }: componentProps) {
     const theme = useMantineTheme();
 
+    const theads = [
+        { name: 'Nome' },
+        { name: 'Planetas Oferecidos' },
+        { name: 'Planetas Realizados' },
+        { name: 'Média Estrelas' }
+    ]
+
     return (
         <Accordion.Item value="planetsPerformance">
             <Accordion.Control>Desempenho em Planetas</Accordion.Control>
@@ -15,17 +22,14 @@ export function PlanetsPerformance({ schoolClassPerformancePlanets }: componentP
                 <Table horizontalSpacing="sm" verticalSpacing="md">
                     <thead>
                         <tr>
-                            <th>Nome</th>
-                            <th>Planetas Oferecidos</th>
-                            <th>Planetas Realizados</th>
-                            <th>Média Estrelas</th>
+                            {theads.map((item) => <th>{item.name}</th>)}
                         </tr>
                     </thead>
                     <tbody>
                         {schoolClassPerformancePlanets &&
                             schoolClassPerformancePlanets?.map((item) => (
                                 <tr key={item.axisCode}>
-                                    <td style={{ color: theme.colors.blue[6] }}>
+                                    <td style={{ color: theme.colors.blue[6], cursor: 'pointer' }}>
                                         {item.axisName}
                                     </td>
                                     <td>{item.offeredPlanets}</td>
