@@ -76,10 +76,10 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
                     {performancePlanetsData &&
                         performancePlanetsData.map((item) => (
                             <>
-                                <tr key={item.id}>
+                                <tr key={item.axisName}>
                                     <td
                                         onClick={() => {
-                                            item.id == selectedItem ? setSelectedItem('') : setSelectedItem(item.id)
+                                            item.axisName == selectedItem ? setSelectedItem('') : setSelectedItem(item.axisName)
                                         }}
                                         style={{ color: theme.colors.blue[6] }}
                                     >
@@ -95,17 +95,30 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
                                     </td>
                                 </tr>
 
-                                {selectedItem == item.id &&
-                                    item.planets.map((element) => (
-                                        <tr>
-                                            <td>{element.planetName}</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>
-                                                <Rating readOnly value={item.stars} key={Math.random()} style={{ width: '100px' }} />
-                                            </td>
-                                        </tr>
-                                    ))
+                                {selectedItem === item.axisName ?
+                                    <>
+                                        {
+                                            item.planets?.length > 0 ?
+                                                item.planets.map((element) => (
+                                                    <tr>
+                                                        <td>{element.planetName}</td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td>
+                                                            <Rating readOnly value={item.stars} key={Math.random()} style={{ width: '100px' }} />
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                                :
+                                                <tr>
+                                                    <td colspan={4}>
+                                                        <Text>Sem planetas realizados.</Text>
+                                                    </td>
+                                                </tr>
+                                        }
+                                    </>
+                                    :
+                                    <></>
                                 }
                             </>
                         ))
