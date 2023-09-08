@@ -18,6 +18,7 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
+import { errorNotification } from "~/utils/errorNotification";
 
 export function UserDropdown() {
   const { name: userName, profile } = useUserStore();
@@ -28,6 +29,12 @@ export function UserDropdown() {
     onSuccess: () => {
       updatePwModalHandlers.close();
       successNotification("Operação realizada com sucesso", "Senha alterada com sucesso!");
+    },
+    onError: (error) => {
+      errorNotification(
+        "Erro durante a operação",
+        `${error.message}`
+      );
     },
   });
 
