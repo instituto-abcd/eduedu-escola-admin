@@ -176,7 +176,8 @@ export function UsersListPage() {
     <Stack>
       <PageHeader
         title="Usuários"
-        description={`${users?.pagination?.totalItems} registros` ?? ""}
+        description={loadingUsers ? 'Carregando...' : (`${users?.pagination?.totalItems} registros` ?? "")}
+        gap={0}
       >
         <Button component={Link} to="/usuarios/novo-usuario">
           Novo usuário

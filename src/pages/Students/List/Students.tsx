@@ -100,7 +100,7 @@ export function StudentsListPage() {
     <>
       <PageHeader
         title="Alunos"
-        description={`${data?.pagination.totalItems ?? 0} registros`}
+        description={isLoading ? 'Carregando...' : `${data?.pagination.totalItems ?? 0} registros`}
         gap={0}
       >
         <Group noWrap>
