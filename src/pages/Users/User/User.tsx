@@ -41,8 +41,8 @@ const userInputValidation = z.object({
 export function UserPage() {
   const navigate = useNavigate();
 
-  const editingUser = useLocation().state?.user as User | undefined;
   const params = useParams();
+  const editingUser = useLocation().state?.user as User | undefined;
   const shouldFetchUser = Boolean(!editingUser && params.userId);
 
   const { data, isFetching: isLoadingUser } = useUserGetById(
@@ -53,6 +53,9 @@ export function UserPage() {
         form.setValues(data);
         form.resetDirty();
       },
+      onError: (error) => {
+        errorNotification("Erro", error.message)
+      }
     }
   );
 
