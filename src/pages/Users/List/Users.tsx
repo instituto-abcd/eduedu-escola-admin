@@ -64,7 +64,7 @@ export function UsersListPage() {
     onError: (error) => {
       errorNotification(
         "Erro durante a operação",
-        `${error.message} (cod: ${error.code})`
+        `${error.message}`
       );
     },
   });
@@ -88,7 +88,7 @@ export function UsersListPage() {
       onError: (error) => {
         errorNotification(
           "Erro durante a operação",
-          `${error.message} (cod: ${error.code})`
+          `${error.message}`
         );
       },
     });
@@ -112,7 +112,7 @@ export function UsersListPage() {
       onError: (error) => {
         errorNotification(
           "Erro durante a operação",
-          `${error.message} (cod: ${error.code})`
+          `${error.message}`
         );
       },
     });

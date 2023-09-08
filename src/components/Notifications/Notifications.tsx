@@ -17,7 +17,7 @@ export function Notifications() {
     onError: (error) => {
       errorNotification(
         "Erro durante a operação",
-        `${error.message} (cod: ${error.code})`
+        `${error.message}`
       );
     },
     initialData: [],

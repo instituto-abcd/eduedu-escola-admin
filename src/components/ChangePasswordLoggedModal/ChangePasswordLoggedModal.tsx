@@ -31,7 +31,7 @@ export function ChangePasswordLoggedModal({ opened, onClose, token }: Props) {
       onClose()
     },
     onError: (error) => {
-      errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
+      errorNotification("Erro durante a operação", `${error.message}`);
     },
   });
 

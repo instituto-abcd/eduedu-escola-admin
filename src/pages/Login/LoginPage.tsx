@@ -57,7 +57,7 @@ export function LoginPage() {
     onError: (error) => {
       errorNotification(
         "Erro durante a operação",
-        `${error.message} (cod: ${error.code})`
+        `${error.message}`
       );
     },
     onSuccess: () => {
@@ -86,7 +86,7 @@ export function LoginPage() {
     onError: (error) => {
       errorNotification(
         "Erro durante a operação",
-        `${error.message} (cod: ${error.code})`
+        `${error.message}`
       );
     },
   });
@@ -95,7 +95,7 @@ export function LoginPage() {
 
   useSettingsGetStatus({
     onError: (error) => {
-      errorNotification("Erro", `${error.message} (cod: ${error.code})`);
+      errorNotification("Erro", `${error.message}`);
 
       navigate(PATH.LOGIN);
     },

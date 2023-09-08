@@ -26,7 +26,7 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
         onError: (error) => {
             errorNotification(
                 "Erro durante a operação",
-                `${error.message} (cod: ${error.code})`
+                `${error.message}`
             );
         },
     });
@@ -68,7 +68,7 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
         onError: (error) => {
             errorNotification(
                 "Erro durante a operação",
-                `${error.message} (cod: ${error.code})`
+                `${error.message}`
             );
         },
     });
@@ -102,7 +102,7 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
         onError: (error) => {
             errorNotification(
                 "Erro durante a operação",
-                `${error.message} (cod: ${error.code})`
+                `${error.message}`
             );
         },
     })

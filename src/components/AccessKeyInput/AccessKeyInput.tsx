@@ -26,7 +26,7 @@ export function AccessKeyInput({
 
   const { mutate: updateAccessKey, isLoading: updating } = useUpdateAccessKey({
     onError: (error) => {
-      errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
+      errorNotification("Erro durante a operação", `${error.message}`);
     },
   });
 

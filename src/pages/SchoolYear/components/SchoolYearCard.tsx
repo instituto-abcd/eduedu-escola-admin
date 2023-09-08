@@ -46,7 +46,7 @@ export function SchoolYearCard({ data }: SchoolYearCardProps) {
       onError: (error) => {
         errorNotification(
           "Erro durante a operação",
-          `${error.message} (cod: ${error.code})`
+          `${error.message}`
         );
       },
       onSuccess: deleteModalHandlers.close,
@@ -57,7 +57,7 @@ export function SchoolYearCard({ data }: SchoolYearCardProps) {
       onError: (error) => {
         errorNotification(
           "Erro durante a operação",
-          `${error.message} (cod: ${error.code})`
+          `${error.message}`
         );
       },
     });

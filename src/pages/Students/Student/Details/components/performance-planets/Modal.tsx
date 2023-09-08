@@ -34,7 +34,7 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
         onError: (error) => {
             errorNotification(
                 "Erro durante a operação",
-                `${error.message} (cod: ${error.code})`
+                `${error.message}`
             );
         },
     });
