@@ -1,3 +1,23 @@
+// Utils & Aux:
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { SCHOOL_GRADE_SELECT, SCHOOL_PERIOD_SELECT } from "~/constants";
+import { PATH } from "~/constants/path";
+import {
+  SchoolClass,
+  SchoolClassInput,
+  SchoolGrade,
+  SchoolPeriod,
+  useGetSchoolClass,
+  useSchoolClassCreate,
+  useSchoolClassUpdate,
+} from "~/api/school-class";
+import { useSchoolYearGetAll } from "~/api/school-year";
+import { useUserGetAll } from "~/api/user";
+import { errorNotification } from "~/utils/errorNotification";
+import { successNotification } from "~/utils/successNotification";
+import { z } from "zod";
+
+// Components:
 import {
   Button,
   Divider,
@@ -10,23 +30,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { z } from "zod";
-import {
-  SchoolClassInput,
-  SchoolGrade,
-  SchoolPeriod,
-  useGetSchoolClass,
-  useSchoolClassCreate,
-  useSchoolClassUpdate,
-} from "~/api/school-class";
-import { useSchoolYearGetAll } from "~/api/school-year";
-import { useUserGetAll } from "~/api/user";
 import { PageHeader } from "~/components/PageHeader";
-import { SCHOOL_GRADE_SELECT, SCHOOL_PERIOD_SELECT } from "~/constants";
-import { PATH } from "~/constants/path";
-import { errorNotification } from "~/utils/errorNotification";
-import { successNotification } from "~/utils/successNotification";
 
 const schoolClassInputValidation = z.object({
   name: z.string().min(1, { message: "Nome deve ter no mínimo 1 caracteres" }),
@@ -41,25 +45,34 @@ const schoolClassInputValidation = z.object({
 
 export function NewClassPage() {
   const navigate = useNavigate();
-  const params = useParams();
-  const location = useLocation();
-  const isEditing = Boolean(location.state?.schoolClass || params.classId);
 
-  const { data: schoolClass, isLoading: isLoadingClass } = useGetSchoolClass(
+  const params = useParams();
+  const editingSchoolClass = useLocation().state?.schoolClass as SchoolClass | undefined;
+  const shouldFetch = Boolean(!editingSchoolClass && params.classId);
+
+  const { data: schoolClass, isFetching: isFetchingClass } = useGetSchoolClass(
     params.classId ?? "",
     {
-      enabled: !location.state?.schoolClass && !!params.classId,
-      initialData: location.state?.schoolClass,
+      enabled: shouldFetch,
+      onSuccess: (data) => {
+        form.setValues(data);
+        form.resetDirty();
+      },
+      onError: (error) => {
+        errorNotification("Erro", error.message)
+      }
     }
   );
 
+  const finalSchoolClass = shouldFetch ? schoolClass : editingSchoolClass;
+
   const form = useForm<SchoolClassInput>({
     initialValues: {
-      name: schoolClass?.name ?? "",
-      schoolGrade: schoolClass?.schoolGrade ?? ("" as SchoolGrade),
-      schoolPeriod: schoolClass?.schoolPeriod ?? ("" as SchoolPeriod),
-      schoolYearId: schoolClass?.schoolYear.id ?? "",
-      teacherIds: schoolClass?.teachers.map(({ id }) => id) ?? [],
+      name: finalSchoolClass?.name ?? "",
+      schoolGrade: finalSchoolClass?.schoolGrade ?? ("" as SchoolGrade),
+      schoolPeriod: finalSchoolClass?.schoolPeriod ?? ("" as SchoolPeriod),
+      schoolYearId: finalSchoolClass?.schoolYear.id ?? "",
+      teacherIds: finalSchoolClass?.teachers.map(({ id }) => id) ?? [],
     },
     validate: zodResolver(schoolClassInputValidation),
   });
@@ -109,23 +122,18 @@ export function NewClassPage() {
       },
     });
 
-  function handleSubmit(values: SchoolClassInput) {
-    if (isEditing) {
-      updateSchoolClass({
-        schoolClassId: schoolClass?.id ?? "",
-        input: values,
-      });
-    } else {
-      createSchoolClass(values);
-    }
-  }
-
   return (
     <Stack>
-      <PageHeader title={schoolClass?.name ?? "Nova turma"} />
+      <PageHeader title={finalSchoolClass?.name ?? "Nova turma"} />
       <LoadingOverlay visible={isUpdateLoading || isCreateLoading} />
 
-      <form onSubmit={form.onSubmit(handleSubmit)}>
+      <form onSubmit={form.onSubmit((values) => {
+        if (finalSchoolClass) {
+          updateSchoolClass({ schoolClassId: finalSchoolClass?.id ?? "", input: values });
+        } else {
+          createSchoolClass(values);
+        }
+      })}>
         <Stack spacing={24}>
           <Grid columns={5}>
             <Grid.Col span={1}>
@@ -150,7 +158,7 @@ export function NewClassPage() {
                       },
                     ]
                     : years?.map(({ name, id }) => ({
-                      label: name.toString(), // TODO: request property change to string type
+                      label: name.toString(),
                       value: id,
                     })) ?? []
                 }
