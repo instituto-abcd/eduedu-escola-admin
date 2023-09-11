@@ -96,7 +96,7 @@ export function NewClassPage() {
           "Operação realizada com sucesso",
           "Turma criada com sucesso!"
         );
-        navigate(PATH.CLASSES);
+        form.reset()
       },
       onError: (error) => {
         errorNotification(

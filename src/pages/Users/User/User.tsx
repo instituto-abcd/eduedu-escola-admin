@@ -1,7 +1,6 @@
 // Utils & Aux:
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { PROFILE_SELECT, STATUS_SELECT } from "~/constants";
-import { PATH } from "~/constants/path";
 import {
   User,
   UserInput,
@@ -39,8 +38,6 @@ const userInputValidation = z.object({
 });
 
 export function UserPage() {
-  const navigate = useNavigate();
-
   const params = useParams();
   const editingUser = useLocation().state?.user as User | undefined;
   const shouldFetchUser = Boolean(!editingUser && params.userId);
@@ -67,7 +64,7 @@ export function UserPage() {
         "Operação realizada com sucesso",
         "Usuário criado com sucesso!"
       );
-      navigate(PATH.USERS);
+      form.reset()
     },
     onError: (error) => {
       errorNotification(

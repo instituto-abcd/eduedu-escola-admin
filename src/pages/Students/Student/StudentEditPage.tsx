@@ -70,7 +70,7 @@ export function StudentEditPage() {
           "Operação realizada com sucesso",
           "Aluno criado com sucesso!"
         );
-        navigate(PATH.STUDENTS);
+        form.reset()
       },
       onError: (error) => {
         errorNotification("Erro durante a operação", error.message);
@@ -115,11 +115,7 @@ export function StudentEditPage() {
   return (
     <form onSubmit={form.onSubmit(submitHandler)}>
       <Stack>
-        <PageHeader title="Novo aluno">
-          <Anchor component={Link} to={PATH.STUDENTS}>
-            Voltar
-          </Anchor>
-        </PageHeader>
+        <PageHeader title="Novo aluno" />
         <Grid columns={4}>
           <Grid.Col span={1}>
             <TextInput
