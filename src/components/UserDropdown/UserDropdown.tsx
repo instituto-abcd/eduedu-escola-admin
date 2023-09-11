@@ -19,11 +19,13 @@ import {
   Text,
 } from "@mantine/core";
 import { errorNotification } from "~/utils/errorNotification";
+import { useState } from "react";
 
 export function UserDropdown() {
   const { name: userName, profile } = useUserStore();
   const logout = useUserStore((u) => u.signOut);
   const [updatePwModalOpen, updatePwModalHandlers] = useDisclosure(false);
+  const [passwordStrengthValidationMessage, setpasswordStrengthValidationMessage] = useState('');
 
   const { mutate: updatePassword, isLoading } = useUserUpdatePassword({
     onSuccess: () => {
@@ -31,10 +33,16 @@ export function UserDropdown() {
       successNotification("Operação realizada com sucesso", "Senha alterada com sucesso!");
     },
     onError: (error) => {
-      errorNotification(
-        "Erro durante a operação",
-        `${error.message}`
-      );
+      if (error.code == 'WEAK_PASSWORD') {
+        setpasswordStrengthValidationMessage(() => (
+          error.message
+        ));
+      } else {
+        errorNotification(
+          "Erro durante a operação",
+          `${error.message}`
+        );
+      }
     },
   });
 
@@ -48,7 +56,7 @@ export function UserDropdown() {
       z.object({
         newPassword: z
           .string()
-          .min(5, { message: "Senha deve ter ao menos 5 caracteres" }),
+          .min(6, { message: "Senha deve ter ao menos 6 caracteres" }),
         oldPassword: z.string().min(1, { message: "Nova senha não pode ser igual a senha anterior" }),
       })
     ),
@@ -114,6 +122,11 @@ export function UserDropdown() {
             {...updatePwForm.getInputProps("newPassword")}
           />
           <Divider my="xl" />
+          <Text
+            size={14}
+            dangerouslySetInnerHTML={{ __html: passwordStrengthValidationMessage }}
+            color="red"
+          />
           <Group position="right">
             <Button variant="outline" onClick={updatePwModalHandlers.close}>
               Cancelar

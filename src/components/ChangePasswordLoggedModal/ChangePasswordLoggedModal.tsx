@@ -14,6 +14,8 @@ import {
   PasswordInput,
 } from "@mantine/core";
 import { UpdatePasswordInput, useUserUpdatePassword } from "~/api/user";
+import { Text } from "@mantine/core";
+import { useState } from "react";
 
 type Props = {
   opened: boolean;
@@ -23,6 +25,7 @@ type Props = {
 
 export function ChangePasswordLoggedModal({ opened, onClose, token }: Props) {
   const navigate = useNavigate();
+  const [passwordStrengthValidationMessage, setpasswordStrengthValidationMessage] = useState('');
 
   const { mutate: changePassword, isLoading } = useUserUpdatePassword({
     onSuccess: () => {
@@ -31,7 +34,14 @@ export function ChangePasswordLoggedModal({ opened, onClose, token }: Props) {
       onClose()
     },
     onError: (error) => {
-      errorNotification("Erro durante a operação", `${error.message}`);
+      console.log(error);
+      if (error.code == 'WEAK_PASSWORD') {
+        setpasswordStrengthValidationMessage(() => (
+          error.message
+        ));
+      } else {
+        errorNotification("Erro durante a operação", `${error.message}`);
+      }
     },
   });
 
@@ -75,6 +85,11 @@ export function ChangePasswordLoggedModal({ opened, onClose, token }: Props) {
           {...formChangePassword.getInputProps("passwordConfirmation")}
         />
         <Divider my="xl" />
+        <Text
+            size={14}
+            dangerouslySetInnerHTML={{ __html: passwordStrengthValidationMessage }}
+            color="red"
+        />
         <Group position="right">
           <Button variant="outline" onClick={onClose}>
             Cancelar
