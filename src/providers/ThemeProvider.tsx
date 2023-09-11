@@ -5,6 +5,7 @@ import { DatesProvider } from "@mantine/dates";
 import "dayjs/locale/pt-br";
 
 import {
+  AccordionStyles,
   ButtonStyles,
   CardStyles,
   DividerStyles,
@@ -19,6 +20,7 @@ const theme: MantineThemeOverride = {
   fontFamily: "Inter, sans-serif",
 
   components: {
+    Accordion: AccordionStyles,
     Button: ButtonStyles,
     Card: CardStyles,
     Divider: DividerStyles,

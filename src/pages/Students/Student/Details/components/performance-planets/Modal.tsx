@@ -1,12 +1,16 @@
-import { Box, Flex, Modal, Select, Table, Text, useMantineTheme } from "@mantine/core";
+import { useState } from "react";
+import { useExamsPerformancePlanets } from "~/api/student";
+import { errorNotification } from "~/utils/errorNotification";
+
+// Components:
+import { Flex, Loader, Modal, Select, Table, Text, useMantineTheme } from "@mantine/core";
+
+// Icons:
+import { IconMinus, IconPlus } from "@tabler/icons-react";
 
 // Rating stars:
 import { Rating } from '@smastrom/react-rating'
 import '@smastrom/react-rating/style.css'
-import { IconMinus, IconPlus } from "@tabler/icons-react";
-import { useState } from "react";
-import { useExamsPerformancePlanets } from "~/api/student";
-import { errorNotification } from "~/utils/errorNotification";
 
 type Props = {
     opened: boolean;
@@ -22,7 +26,7 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
     const [selectedItem, setSelectedItem] = useState('');
 
     const [newDateExam, setDateExam] = useState(dateExam);
-    const [examsPerformanceData, setExamsPerformanceData] = useState([])
+    const [examsPerformanceData, setExamsPerformanceData] = useState(performancePlanetsData)
     const { mutate: examsPerformancePlanets, isLoading: isExamsPerformancePlanetsLoading } = useExamsPerformancePlanets({
         onSuccess: (data) => {
             setExamsPerformanceData(data)
@@ -30,10 +34,11 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
         onError: (error) => {
             errorNotification(
                 "Erro durante a operação",
-                `${error.message} (cod: ${error.code})`
+                `${error.message}`
             );
         },
     });
+
     return (
         <Modal
             opened={opened}
@@ -73,42 +78,65 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
                     </tr>
                 </thead>
                 <tbody>
-                    {performancePlanetsData &&
-                        performancePlanetsData.map((item) => (
-                            <>
-                                <tr key={item.id}>
-                                    <td
-                                        onClick={() => {
-                                            item.id == selectedItem ? setSelectedItem('') : setSelectedItem(item.id)
-                                        }}
-                                        style={{ color: theme.colors.blue[6] }}
-                                    >
-                                        <Flex align="center">
-                                            {selectedItem == item.id ? <IconMinus /> : <IconPlus />}
-                                            <Text pl={20} c="blue.6">{item.axisName}</Text>
-                                        </Flex>
-                                    </td>
-                                    <td>{item.offeredPlanets}</td>
-                                    <td>{item.accomplishedPlanets}</td>
-                                    <td>
-                                        <Rating readOnly value={item.averageStars} key={Math.random()} style={{ width: '100px' }} />
-                                    </td>
-                                </tr>
-
-                                {selectedItem == item.id &&
-                                    item.planets.map((element) => (
-                                        <tr>
-                                            <td>{element.planetName}</td>
-                                            <td></td>
-                                            <td></td>
+                    {isExamsPerformancePlanetsLoading ?
+                        <tr>
+                            <td colSpan={4} align="center">
+                                <Loader size="xs" />
+                            </td>
+                        </tr>
+                        :
+                        <>
+                            {examsPerformanceData &&
+                                examsPerformanceData.map((item) => (
+                                    <>
+                                        <tr key={item.axisName}>
+                                            <td
+                                                onClick={() => {
+                                                    item.axisName == selectedItem ? setSelectedItem('') : setSelectedItem(item.axisName)
+                                                }}
+                                                style={{ color: theme.colors.blue[6] }}
+                                            >
+                                                <Flex align="center">
+                                                    {selectedItem == item.id ? <IconMinus /> : <IconPlus />}
+                                                    <Text pl={20} c="blue.6">{item.axisName}</Text>
+                                                </Flex>
+                                            </td>
+                                            <td>{item.offeredPlanets}</td>
+                                            <td>{item.accomplishedPlanets}</td>
                                             <td>
-                                                <Rating readOnly value={item.stars} key={Math.random()} style={{ width: '100px' }} />
+                                                <Rating readOnly value={item.averageStars} key={Math.random()} style={{ width: '100px' }} />
                                             </td>
                                         </tr>
-                                    ))
-                                }
-                            </>
-                        ))
+
+                                        {selectedItem === item.axisName ?
+                                            <>
+                                                {
+                                                    item.planets?.length > 0 ?
+                                                        item.planets.map((element) => (
+                                                            <tr>
+                                                                <td>{element.planetName}</td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td>
+                                                                    <Rating readOnly value={item.stars} key={Math.random()} style={{ width: '100px' }} />
+                                                                </td>
+                                                            </tr>
+                                                        ))
+                                                        :
+                                                        <tr>
+                                                            <td colspan={4}>
+                                                                <Text>Sem planetas realizados.</Text>
+                                                            </td>
+                                                        </tr>
+                                                }
+                                            </>
+                                            :
+                                            <></>
+                                        }
+                                    </>
+                                ))
+                            }
+                        </>
                     }
                 </tbody>
             </Table>

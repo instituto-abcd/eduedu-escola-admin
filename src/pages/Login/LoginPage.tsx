@@ -57,7 +57,7 @@ export function LoginPage() {
     onError: (error) => {
       errorNotification(
         "Erro durante a operação",
-        `${error.message} (cod: ${error.code})`
+        `${error.message}`
       );
     },
     onSuccess: () => {
@@ -76,17 +76,18 @@ export function LoginPage() {
     validate: zodResolver(formRecoveryValidation),
   });
 
-  const { mutate: sendPasswordRecovery } = useRequestPasswordReset({
+  const { mutate: sendPasswordRecovery, isLoading: isSendingPasswordResetEmail } = useRequestPasswordReset({
     onSuccess: () => {
       successNotification(
         "Operação realizada com sucesso",
         "Enviamos um e-mail com as instruções para redefinir sua senha!"
       );
+      resetPasswordModalHandlers.close();
     },
     onError: (error) => {
       errorNotification(
         "Erro durante a operação",
-        `${error.message} (cod: ${error.code})`
+        `${error.message}`
       );
     },
   });
@@ -95,7 +96,7 @@ export function LoginPage() {
 
   useSettingsGetStatus({
     onError: (error) => {
-      errorNotification("Erro", `${error.message} (cod: ${error.code})`);
+      errorNotification("Erro", `${error.message}`);
 
       navigate(PATH.LOGIN);
     },
@@ -189,7 +190,11 @@ export function LoginPage() {
               placeholder="Email"
               {...formRecovery.getInputProps("email")}
             />
-            <Button type="submit" variant="outline" fullWidth>
+            <Button
+              loading={isSendingPasswordResetEmail}
+              type="submit"
+              variant="outline"
+              fullWidth>
               Enviar
             </Button>
           </Stack>

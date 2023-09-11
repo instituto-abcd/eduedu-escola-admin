@@ -31,7 +31,7 @@ export function Step02({ opened, onClose, originSchoolClass }: Props) {
         onError: (error) => {
             errorNotification(
                 "Erro durante a operação",
-                `${error.message} (cod: ${error.code})`
+                `${error.message}`
             );
         },
     });

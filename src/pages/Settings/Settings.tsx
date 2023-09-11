@@ -9,7 +9,7 @@ import {
   Stack,
   TextInput,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "react-router-dom";
 import {
@@ -21,6 +21,7 @@ import { PageHeader } from "~/components/PageHeader";
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
 import { AuditModal } from "./components/AuditModal";
+import { z } from "zod";
 
 export function SettingsPage() {
   const { data, isLoading } = useSettingsGet({
@@ -39,6 +40,20 @@ export function SettingsPage() {
 
   const form = useForm<SettingsUpdateInput>({
     initialValues: data,
+    validate: zodResolver(
+      z.object(
+        {
+          schoolName: z.string().min(1, { message: "Campo obrigatório" }),
+          smtpHostName: z.string().nonempty({ message: "Campo obrigatório" }),
+          smtpUserName: z.string().nonempty({ message: "Campo obrigatório" }),
+          smtpPassword: z.string().nonempty({ message: "Campo obrigatório" }),
+          smtpPort: z.number({
+            required_error: "Campo obrigatório",
+            invalid_type_error: "Digite apenas o número da porta"
+          }),
+        }
+      )
+    )
   });
 
   const [auditModalOpen, auditModalHandlers] = useDisclosure(false);

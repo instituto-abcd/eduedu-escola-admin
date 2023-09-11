@@ -66,7 +66,7 @@ export function StudentsListPage() {
     onError: (error) => {
       errorNotification(
         "Erro durante a operação",
-        `${error.message} (cod: ${error.code})`
+        `${error.message}`
       );
     },
   });
@@ -106,7 +106,7 @@ export function StudentsListPage() {
     <>
       <PageHeader
         title="Alunos"
-        description={`${data?.items.length ?? 0} registros`}
+        description={isLoading ? 'Carregando...' : `${data?.pagination.totalItems ?? 0} registros`}
         gap={0}
       >
         <Group noWrap>
@@ -245,6 +245,7 @@ export function StudentsListPage() {
         opened={deleteModalOpen}
         onClose={deleteModalHandlers.close}
         studentIds={selected}
+        parentCallback={() => setSelected([])}
       />
 
       <UploadStudentsSheet

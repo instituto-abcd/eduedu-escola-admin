@@ -29,12 +29,12 @@ export function TablePerformancePlanets({ examsPerformanceData, studentId, dateE
                 <tbody>
                     {examsPerformanceData &&
                         examsPerformanceData.map((item) => (
-                            <tr>
+                            <tr key={item.axisCode}>
                                 <td
                                     onClick={() => {
                                         modalExamPerformancePlanetsHandler.open()
                                     }}
-                                    style={{ color: theme.colors.blue[6] }}
+                                    style={{ color: theme.colors.blue[6], cursor: 'pointer' }}
                                 >
                                     {item.axisName}
                                 </td>
@@ -47,7 +47,7 @@ export function TablePerformancePlanets({ examsPerformanceData, studentId, dateE
                         ))
                     }
                 </tbody>
-            </Table>
+            </Table >
 
             <ModalPerformancePlanets
                 opened={modalExamPerformancePlanets}

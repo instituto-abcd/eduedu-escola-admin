@@ -32,7 +32,7 @@ export function CreateSchoolForm() {
       form.setValues(data);
     },
     onError: (error) => {
-      errorNotification("Erro", `${error.message} (cod: ${error.code})`);
+      errorNotification("Erro", `${error.message}`);
       navigate(PATH.LOGIN);
     },
   });
@@ -50,6 +50,13 @@ export function CreateSchoolForm() {
           .refine((v) => v !== "EduEdu Escola", {
             message: "Este nome é reservado",
           }),
+        smtpHostName: z.string().nonempty({ message: "Campo obrigatório" }),
+        smtpUserName: z.string().nonempty({ message: "Campo obrigatório" }),
+        smtpPassword: z.string().nonempty({ message: "Campo obrigatório" }),
+        smtpPort: z.number({
+          required_error: "Campo obrigatório",
+          invalid_type_error: "Digite apenas o número da porta"
+        }),
       })
     ),
   });

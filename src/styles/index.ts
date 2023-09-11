@@ -4,5 +4,6 @@ export { DividerStyles } from "./Divider";
 export { PasswordInputStyles } from "./PasswordInput";
 export { TableStyles } from "./Table";
 export { TextStyles } from "./Text";
+export { AccordionStyles } from "./Accordion";
 export { TextInputStyles } from "./TextInput";
 export { TitleStyles } from "./Title";

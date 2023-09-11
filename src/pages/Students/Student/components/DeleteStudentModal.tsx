@@ -14,18 +14,21 @@ type Props = {
   opened: boolean;
   onClose: () => void;
   studentIds: string[];
+  parentCallback: () => void;
 };
 
-export function DeleteStudentModal({ opened, onClose, studentIds }: Props) {
+export function DeleteStudentModal({ opened, onClose, studentIds, parentCallback }: Props) {
   const { mutate, isLoading } = useStudentDelete({
-    onSuccess: onClose,
+    onSuccess: () => {
+      onClose()
+      parentCallback()
+    },
     onError: (error) => errorNotification("Erro durante a operação", error.message),
   });
 
   return (
     <Modal
       opened={opened}
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       onClose={isLoading ? () => { } : onClose}
       title="Excluir"
     >

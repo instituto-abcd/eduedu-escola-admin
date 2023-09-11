@@ -1,3 +1,20 @@
+// Utils & Aux:
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useSchoolClassGetAll } from "~/api/school-class";
+import { SCHOOL_PERIOD_SELECT } from "~/constants";
+import { PATH } from "~/constants/path";
+import { errorNotification } from "~/utils/errorNotification";
+import { successNotification } from "~/utils/successNotification";
+import {
+  Student,
+  StudentInput,
+  useStudentCreate,
+  useStudentGetOne,
+  useStudentUpdate,
+} from "~/api/student";
+import { z } from "zod";
+
+//Components:
 import {
   Anchor,
   Button,
@@ -10,20 +27,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { z } from "zod";
-import { useSchoolClassGetAll } from "~/api/school-class";
-import {
-  StudentInput,
-  useStudentCreate,
-  useStudentGetOne,
-  useStudentUpdate,
-} from "~/api/student";
 import { PageHeader } from "~/components/PageHeader";
-import { SCHOOL_PERIOD_SELECT } from "~/constants";
-import { PATH } from "~/constants/path";
-import { errorNotification } from "~/utils/errorNotification";
-import { successNotification } from "~/utils/successNotification";
 
 const studentInputValidation = z.object({
   name: z.string().nonempty({ message: "Campo obrigatório" }),
@@ -33,14 +37,26 @@ const studentInputValidation = z.object({
 
 export function StudentEditPage() {
   const navigate = useNavigate();
-  const params = useParams();
-  const location = useLocation();
-  const isEditing = Boolean(location.state?.schoolClass || params.studentId);
 
-  const { data: student } = useStudentGetOne(params.studentId ?? "", {
-    enabled: !location.state?.student && !!params.studentId,
-    initialData: location.state?.student,
-  });
+  const params = useParams();
+  const editingStudent = useLocation().state?.schoolClass as Student | undefined;
+  const shouldFetch = Boolean(!editingStudent && params.studentId);
+
+  const { data: student, isFetching: isFetchingStudent } = useStudentGetOne(
+    params.studentId ?? "",
+    {
+      enabled: shouldFetch,
+      onSuccess: (data) => {
+        form.setValues(data);
+        form.resetDirty();
+      },
+      onError: (error) => {
+        errorNotification("Erro", error.message);
+      }
+    }
+  );
+
+  const finalStudent = shouldFetch ? student : editingStudent;
 
   const { data: schoolClasses, isLoading: isLoadingClasses } =
     useSchoolClassGetAll({
@@ -54,7 +70,7 @@ export function StudentEditPage() {
           "Operação realizada com sucesso",
           "Aluno criado com sucesso!"
         );
-        navigate(PATH.STUDENTS);
+        form.reset()
       },
       onError: (error) => {
         errorNotification("Erro durante a operação", error.message);
@@ -78,15 +94,15 @@ export function StudentEditPage() {
 
   const form = useForm<StudentInput>({
     initialValues: {
-      name: student?.name ?? "",
-      registry: student?.registry ?? "",
-      schoolClassId: student?.schoolClassId ?? "",
+      name: finalStudent?.name ?? "",
+      registry: finalStudent?.registry ?? "",
+      schoolClassId: finalStudent?.schoolClassId ?? "",
     },
     validate: zodResolver(studentInputValidation),
   });
 
   function submitHandler(values: StudentInput) {
-    if (isEditing) {
+    if (finalStudent) {
       updateStudent({
         id: student?.id ?? params.studentId ?? "",
         input: values,
@@ -99,11 +115,7 @@ export function StudentEditPage() {
   return (
     <form onSubmit={form.onSubmit(submitHandler)}>
       <Stack>
-        <PageHeader title="Novo aluno">
-          <Anchor component={Link} to={PATH.STUDENTS}>
-            Voltar
-          </Anchor>
-        </PageHeader>
+        <PageHeader title="Novo aluno" />
         <Grid columns={4}>
           <Grid.Col span={1}>
             <TextInput
