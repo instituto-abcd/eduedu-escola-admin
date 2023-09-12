@@ -13,6 +13,8 @@ import { UserChangePassword, useUserChangePassword } from "~/api/auth";
 import { PATH } from "~/constants/path";
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
+import { Text } from "@mantine/core";
+import { useState } from "react";
 
 type Props = {
   opened: boolean;
@@ -22,6 +24,7 @@ type Props = {
 
 export function ChangePasswordModal({ opened, onClose, token }: Props) {
   const navigate = useNavigate();
+  const [passwordStrengthValidationMessage, setpasswordStrengthValidationMessage] = useState('');
 
   const { mutate: changePassword, isLoading } = useUserChangePassword({
     onSuccess: () => {
@@ -30,7 +33,13 @@ export function ChangePasswordModal({ opened, onClose, token }: Props) {
       onClose()
     },
     onError: (error) => {
-      errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
+      if (error.code == 'WEAK_PASSWORD') {
+        setpasswordStrengthValidationMessage(() => (
+          error.message
+        ));
+      } else {
+        errorNotification("Erro durante a operação", `${error.message}`);
+      }
     },
   });
 
@@ -77,6 +86,11 @@ export function ChangePasswordModal({ opened, onClose, token }: Props) {
           {...formChangePassword.getInputProps("passwordConfirmation")}
         />
         <Divider my="xl" />
+        <Text
+            size={14}
+            dangerouslySetInnerHTML={{ __html: passwordStrengthValidationMessage }}
+            color="red"
+        />
         <Group position="right">
           <Button variant="outline" onClick={onClose}>
             Cancelar

@@ -13,7 +13,7 @@ export function SetupPage() {
 
   const { data: status, isLoading } = useSettingsGetStatus({
     onError: (error) => {
-      errorNotification("Erro", `${error.message} (cod: ${error.code})`);
+      errorNotification("Erro", `${error.message}`);
 
       navigate(PATH.LOGIN);
     },

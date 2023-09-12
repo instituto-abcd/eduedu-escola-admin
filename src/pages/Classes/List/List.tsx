@@ -58,8 +58,8 @@ export function ClassesListPage() {
     <Stack>
       <PageHeader
         title="Turmas"
+        description={isLoading ? 'Carregando...' : `${schoolClasses?.pagination?.totalItems ?? 0} registros`}
         gap={0}
-        description={`${schoolClasses?.pagination?.totalItems ?? 0} registros`}
       >
         <Button component={Link} to={PATH.NEW_CLASS}>
           Nova turma

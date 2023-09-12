@@ -18,7 +18,7 @@ type ModalProps = {
 export function CreateSchoolYearModal({ opened, onClose }: ModalProps) {
   const { mutate: createSchoolYear, isLoading } = useSchoolYearCreate({
     onError: (error) => {
-      errorNotification("Erro durante a operação", `${error.message} (cod: ${error.code})`);
+      errorNotification("Erro durante a operação", `${error.message}`);
     },
     onSuccess: onClose,
   });

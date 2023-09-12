@@ -1,7 +1,6 @@
-import { Button, Grid, Group, Select, TextInput } from "@mantine/core";
-import { useForm, zodResolver } from "@mantine/form";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { z } from "zod";
+// Utils & Aux:
+import { Link, useLocation, useParams } from "react-router-dom";
+import { PROFILE_SELECT, STATUS_SELECT } from "~/constants";
 import {
   User,
   UserInput,
@@ -9,12 +8,15 @@ import {
   useUserGetById,
   useUserUpdate,
 } from "~/api/user";
-import { AccessKeyInput } from "~/components/AccessKeyInput";
-import { PageHeader } from "~/components/PageHeader";
-import { PROFILE_SELECT, STATUS_SELECT } from "~/constants";
-import { PATH } from "~/constants/path";
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
+import { z } from "zod";
+
+// Components:
+import { Button, Grid, Group, Select, TextInput } from "@mantine/core";
+import { useForm, zodResolver } from "@mantine/form";
+import { AccessKeyInput } from "~/components/AccessKeyInput";
+import { PageHeader } from "~/components/PageHeader";
 
 const userInputValidation = z.object({
   name: z
@@ -36,10 +38,8 @@ const userInputValidation = z.object({
 });
 
 export function UserPage() {
-  const navigate = useNavigate();
-
-  const editingUser = useLocation().state?.user as User | undefined;
   const params = useParams();
+  const editingUser = useLocation().state?.user as User | undefined;
   const shouldFetchUser = Boolean(!editingUser && params.userId);
 
   const { data, isFetching: isLoadingUser } = useUserGetById(
@@ -50,6 +50,9 @@ export function UserPage() {
         form.setValues(data);
         form.resetDirty();
       },
+      onError: (error) => {
+        errorNotification("Erro", error.message)
+      }
     }
   );
 
@@ -61,12 +64,12 @@ export function UserPage() {
         "Operação realizada com sucesso",
         "Usuário criado com sucesso!"
       );
-      navigate(PATH.USERS);
+      form.reset()
     },
     onError: (error) => {
       errorNotification(
         "Erro durante a operação",
-        `${error.message} (cod: ${error.code})`
+        `${error.message}`
       );
     },
   });
@@ -81,7 +84,7 @@ export function UserPage() {
     onError: (error) => {
       errorNotification(
         "Erro durante a operação",
-        `${error.message} (cod: ${error.code})`
+        `${error.message}`
       );
     },
   });
@@ -143,7 +146,7 @@ export function UserPage() {
               data={PROFILE_SELECT}
               label="Perfil"
               placeholder={isLoadingUser ? "Carregando..." : "Selecione"}
-              disabled={isLoadingUser}
+              disabled={isLoadingUser ? true : (finalUser?.owner == true ? true : false)}
               {...form.getInputProps("profile")}
             />
           </Grid.Col>
