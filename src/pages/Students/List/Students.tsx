@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { IconEdit, IconEye } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthorizeNewExam, useStudentGetAll } from "~/api/student";
 import { PageHeader } from "~/components/PageHeader";
@@ -37,15 +37,10 @@ import { useStudentFilterStore } from "~/stores/filter";
 
 export function StudentsListPage() {
   const theme = useMantineTheme();
-  const initialSearch = useStudentFilterStore();
-  const [search, setSearch] = useState(initialSearch);
+  const { update, data: search } = useStudentFilterStore();
   const [selected, setSelected] = useState<string[]>([]);
 
   const pagination = usePagination();
-
-  useEffect(() => {
-    useStudentFilterStore.setState(search);
-  }, [search]);
 
   function toggleSelected(id: string) {
     if (selected.includes(id)) {
@@ -64,10 +59,7 @@ export function StudentsListPage() {
       setSelected([]);
     },
     onError: (error) => {
-      errorNotification(
-        "Erro durante a operação",
-        `${error.message}`
-      );
+      errorNotification("Erro durante a operação", `${error.message}`);
     },
   });
 
@@ -106,7 +98,11 @@ export function StudentsListPage() {
     <>
       <PageHeader
         title="Alunos"
-        description={isLoading ? 'Carregando...' : `${data?.pagination.totalItems ?? 0} registros`}
+        description={
+          isLoading
+            ? "Carregando..."
+            : `${data?.pagination.totalItems ?? 0} registros`
+        }
         gap={0}
       >
         <Group noWrap>
@@ -180,8 +176,8 @@ export function StudentsListPage() {
                 searchTerm: "",
               },
             ]}
-            initialValues={initialSearch}
-            onValueChange={setSearch}
+            initialValues={search}
+            onValueChange={update}
           />
         </thead>
         <tbody>

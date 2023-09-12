@@ -3,15 +3,13 @@ import {
   Button,
   Checkbox,
   Group,
-  Select,
   Space,
   Stack,
   Table,
-  TextInput,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconEdit, IconEye } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSchoolClassGetAll } from "~/api/school-class";
 import { PageHeader } from "~/components/PageHeader";
@@ -32,12 +30,7 @@ import { useSchoolClassFilterStore } from "~/stores/filter";
 
 export function ClassesListPage() {
   const [selected, setSelected] = useState<string[]>([]);
-  const initialSearch = useSchoolClassFilterStore();
-  const [search, setSearch] = useState(initialSearch);
-
-  useEffect(() => {
-    useSchoolClassFilterStore.setState(search);
-  }, [search]);
+  const { update, data: search } = useSchoolClassFilterStore();
 
   function toggleSelected(id: string) {
     if (selected.includes(id)) {
@@ -64,7 +57,11 @@ export function ClassesListPage() {
     <Stack>
       <PageHeader
         title="Turmas"
-        description={isLoading ? 'Carregando...' : `${schoolClasses?.pagination?.totalItems ?? 0} registros`}
+        description={
+          isLoading
+            ? "Carregando..."
+            : `${schoolClasses?.pagination?.totalItems ?? 0} registros`
+        }
         gap={0}
       >
         <Button component={Link} to={PATH.NEW_CLASS}>
@@ -116,13 +113,15 @@ export function ClassesListPage() {
               },
               { label: "", type: "empty", searchTerm: "" },
             ]}
-            initialValues={initialSearch}
+            initialValues={search}
             onCheckAll={(checked) =>
               checked
                 ? setSelected(schoolClasses?.items.map((u) => u.id) ?? [])
                 : setSelected([])
             }
-            onValueChange={setSearch}
+            onValueChange={(search) => {
+              update(search);
+            }}
           />
         </thead>
         <tbody>

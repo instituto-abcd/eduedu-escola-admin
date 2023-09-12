@@ -35,14 +35,13 @@ export type SchoolClassInput = Pick<
   teacherIds: string[];
 };
 
-type SchoolClassSearch = {
+export type SchoolClassSearch = {
   "page-number"?: number;
   "page-size"?: number;
   name?: string;
   schoolGrade?: string;
   schoolPeriod?: string;
-  schoolYearId?: string;
-  teacherIds?: unknown; // TODO: tipar
+  schoolYearName?: string;
 };
 
 const KEY = {
@@ -69,13 +68,16 @@ const URL = {
   SHEET: "/schoolClass/students/spreadsheet-template",
   UPLOAD_SHEET: (id: string) => `/schoolClass/${id}/students/spreadsheet`,
   DESTINY_STUDENTS: (destinyID: string) => `/schoolClass/${destinyID}/students`,
-  STUDENTS_BY_SCHOOLCLASS: (schoolClassId: string) => `/schoolClass/${schoolClassId}/students`,
+  STUDENTS_BY_SCHOOLCLASS: (schoolClassId: string) =>
+    `/schoolClass/${schoolClassId}/students`,
   PLANET_CHARTS: (id: string) => `/schoolClass/${id}/planets-chart`,
   EXAM_CHARTS: (id: string) => `/schoolClass/${id}/exams-chart`,
   EXAMS_PERFORMANCE: (id: string) => `/schoolClass/${id}/exams-performance`,
   PLANETS_PERFORMANCE: (id: string) => `/schoolClass/${id}/planets-performance`,
-  STUDENTS_PLANETS_PERFORMANCE: (id: string) => `/schoolClass/${id}/planets-performance-students`,
-  STUDENTS_EXAMS_PERFORMANCE: (id: string) => `/schoolClass/${id}/exams-performance-students`,
+  STUDENTS_PLANETS_PERFORMANCE: (id: string) =>
+    `/schoolClass/${id}/planets-performance-students`,
+  STUDENTS_EXAMS_PERFORMANCE: (id: string) =>
+    `/schoolClass/${id}/exams-performance-students`,
   IDEAL_STUDENTS: (id: string) => `/schoolClass/${id}/ideal-students`,
 };
 
@@ -250,7 +252,7 @@ export function useSchoolClassUpdate(
   }) {
     return SchoolClassAPI.update(data.schoolClassId, data.input);
   },
-    []);
+  []);
 
   return useMutation(handler, options);
 }
@@ -294,7 +296,7 @@ export function useStudentsDestiny(
   }) {
     return SchoolClassAPI.studentsDestiny(data.destinationId, data.form);
   },
-    []);
+  []);
 
   return useMutation(handler, {
     ...options,
@@ -317,8 +319,8 @@ export function useGetPlanetsCharts(
       return SchoolClassAPI.getPlanetsCharts(id);
     },
     [id]
-  )
-  return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options)
+  );
+  return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options);
 }
 
 export function useGetExamsCharts(
@@ -330,8 +332,8 @@ export function useGetExamsCharts(
       return SchoolClassAPI.getExamsCharts(id);
     },
     [id]
-  )
-  return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options)
+  );
+  return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options);
 }
 
 export function useGetExamsPerformance(
@@ -364,28 +366,34 @@ export function useGetPlanetsPerformance(
 
 export function useGetStudentsPlanetsPerformance(
   id: string,
-  options?: QueryOptions<Student, [typeof KEY.STUDENTS_PLANETS_PERFORMANCE, string]>
+  options?: QueryOptions<
+    Student,
+    [typeof KEY.STUDENTS_PLANETS_PERFORMANCE, string]
+  >
 ) {
   const handler = useCallback(
     function () {
       return SchoolClassAPI.getStudentsPlanetsPerfomance(id);
     },
     [id]
-  )
-  return useQuery([KEY.STUDENTS_PLANETS_PERFORMANCE, id], handler, options)
+  );
+  return useQuery([KEY.STUDENTS_PLANETS_PERFORMANCE, id], handler, options);
 }
 
 export function useGetStudentsExamsPerformance(
   id: string,
-  options?: QueryOptions<Student, [typeof KEY.STUDENTS_EXAMS_PERFORMANCE, string]>
+  options?: QueryOptions<
+    Student,
+    [typeof KEY.STUDENTS_EXAMS_PERFORMANCE, string]
+  >
 ) {
   const handler = useCallback(
     function () {
       return SchoolClassAPI.getStudentsExamsPerfomance(id);
     },
     [id]
-  )
-  return useQuery([KEY.STUDENTS_EXAMS_PERFORMANCE, id], handler, options)
+  );
+  return useQuery([KEY.STUDENTS_EXAMS_PERFORMANCE, id], handler, options);
 }
 
 export function useGetIdealStudents(
@@ -397,6 +405,6 @@ export function useGetIdealStudents(
       return SchoolClassAPI.getIdealStudents(id);
     },
     [id]
-  )
-  return useQuery([KEY.IDEAL_STUDENTS, id], handler, options)
+  );
+  return useQuery([KEY.IDEAL_STUDENTS, id], handler, options);
 }

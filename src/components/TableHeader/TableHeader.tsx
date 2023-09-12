@@ -32,9 +32,9 @@ export function TableHeader({
   onCheckAll,
   columns,
   onValueChange,
-  initialValues
+  initialValues,
 }: TableHeaderProps) {
-  const form = useForm<any>({initialValues});
+  const form = useForm<any>({ initialValues });
 
   useEffect(() => {
     if (!columns || !form) return;
@@ -61,12 +61,15 @@ export function TableHeader({
   }, []);
 
   useEffect(() => {
-    const dirty: Record<string, any> = {}
+    console.log(form.isDirty("name"));
+  }, [form]);
+
+  useEffect(() => {
+    const dirty: Record<string, any> = {};
     const keys = Object.keys(initialValues);
-    console.log(keys);
-    keys.forEach(k => dirty[k] = Boolean(initialValues[k]))
+    keys.forEach((k) => (dirty[k] = Boolean(initialValues[k])));
     form.setDirty(dirty);
-  }, [initialValues])
+  }, [initialValues]);
 
   function submit(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key !== "Enter") return;
