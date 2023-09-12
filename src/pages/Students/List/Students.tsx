@@ -33,10 +33,11 @@ import {
 import { TableHeader } from "~/components/TableHeader";
 import { successNotification } from "~/utils/successNotification";
 import { errorNotification } from "~/utils/errorNotification";
+import { useStudentFilterStore } from "~/stores/filter";
 
 export function StudentsListPage() {
   const theme = useMantineTheme();
-  const [search, setSearch] = useState({});
+  const { update, data: search } = useStudentFilterStore();
   const [selected, setSelected] = useState<string[]>([]);
 
   const pagination = usePagination();
@@ -58,10 +59,7 @@ export function StudentsListPage() {
       setSelected([]);
     },
     onError: (error) => {
-      errorNotification(
-        "Erro durante a operação",
-        `${error.message}`
-      );
+      errorNotification("Erro durante a operação", `${error.message}`);
     },
   });
 
@@ -100,7 +98,11 @@ export function StudentsListPage() {
     <>
       <PageHeader
         title="Alunos"
-        description={isLoading ? 'Carregando...' : `${data?.pagination.totalItems ?? 0} registros`}
+        description={
+          isLoading
+            ? "Carregando..."
+            : `${data?.pagination.totalItems ?? 0} registros`
+        }
         gap={0}
       >
         <Group noWrap>
@@ -174,7 +176,8 @@ export function StudentsListPage() {
                 searchTerm: "",
               },
             ]}
-            onValueChange={setSearch}
+            initialValues={search}
+            onValueChange={update}
           />
         </thead>
         <tbody>
