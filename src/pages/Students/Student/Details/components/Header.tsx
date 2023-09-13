@@ -53,7 +53,7 @@ export function HeaderStudent({ student, detailedSummary }: componentProps) {
                 </Group>
             </Grid.Col>
 
-            <Grid.Col span={5}>
+            <Grid.Col span={1}>
                 <Button onClick={Print}>Gerar relatório</Button>
                 <div id='printablediv' style={{ display: 'none' }}>
                     <StudentReport
