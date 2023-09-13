@@ -1,4 +1,4 @@
-import { Accordion, Box, Button, Divider, Flex, Select, Text, useMantineTheme } from "@mantine/core";
+import { Accordion, Box, Divider, Flex, Select, Text, useMantineTheme } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { useState } from "react";
 import { useAuthorizeNewExam, useExamsPerformancePlanets, useGetExamExecutions, usePutReleasePlanets } from "~/api/student";

@@ -24,7 +24,10 @@ export function StudentDetailPage() {
 
     return (
         <>
-            <HeaderStudent studentId={params?.studentId ?? ""} />
+            <HeaderStudent
+                student={student}
+                detailedSummary={detailedSummary}
+            />
 
             <Accordion
                 multiple={true}

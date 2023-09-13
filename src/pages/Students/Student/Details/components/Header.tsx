@@ -1,19 +1,21 @@
 import { Button, Grid, Group, Title, Text } from "@mantine/core";
-import { useStudentGetOne } from "~/api/student";
 import { SCHOOL_GRADE, SCHOOL_PERIOD } from "~/constants";
-import { errorNotification } from "~/utils/errorNotification";
+import { StudentReport } from "./report";
 
 type componentProps = {
-    studentId: string;
+    student: Array<{}>;
+    detailedSummary: Array<{}>;
 }
 
-export function HeaderStudent({ studentId }: componentProps) {
+export function HeaderStudent({ student, detailedSummary }: componentProps) {
 
-    const { data: student } = useStudentGetOne(studentId ?? "", {
-        onError: (error) =>
-            errorNotification("Erro ao obter aluno", error.message)
-    
-    });
+    const Print = () => {
+        let printContents = document.getElementById('printablediv').innerHTML;
+        let originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
 
     return (
         <Grid columns={6} align="center">
@@ -51,8 +53,14 @@ export function HeaderStudent({ studentId }: componentProps) {
                 </Group>
             </Grid.Col>
 
-            <Grid.Col span={1}>
-                <Button>Gerar relatório</Button>
+            <Grid.Col span={5}>
+                <Button onClick={Print}>Gerar relatório</Button>
+                <div id='printablediv' style={{ display: 'none' }}>
+                    <StudentReport
+                        student={student}
+                        detailedSummary={detailedSummary}
+                    />
+                </div>
             </Grid.Col>
         </Grid>
     )
