@@ -141,7 +141,6 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
                             Desempenho do aluno por
                         </Text>
                         <Select
-                            onClick={event => event.stopPropagation()}
                             withinPortal
                             data={selectOptions}
                             value={performanceType}
@@ -149,6 +148,7 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
                                 width: '150px'
                             }}
                             onChange={(value) => setPerformanceType(value)}
+                            onClick={event => event.stopPropagation()}
                         />
                     </Flex>
                 </Accordion.Control>

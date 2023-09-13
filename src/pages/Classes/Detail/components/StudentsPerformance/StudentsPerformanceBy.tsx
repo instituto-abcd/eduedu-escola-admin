@@ -27,6 +27,8 @@ export function StudentsPerformanceBy({ studentsPerformanceByExams, studentsPerf
                     <Flex align="center">
                         Desempenho de Alunos por &nbsp;
                         <Select
+                            onClick={event => event.stopPropagation()}
+                            onChange={(value) => setPerformanceType(value)}
                             value={performanceType}
                             withinPortal
                             style={{ width: "100px" }}
