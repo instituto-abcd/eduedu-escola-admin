@@ -141,6 +141,7 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
                             Desempenho do aluno por
                         </Text>
                         <Select
+                            onClick={event => event.stopPropagation()}
                             withinPortal
                             data={selectOptions}
                             value={performanceType}

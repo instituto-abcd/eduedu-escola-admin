@@ -123,6 +123,7 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
                             Desempenho nos planetas disponibilizados após a prova realizada em
                         </Text>
                         <Select
+                            onClick={event => event.stopPropagation()}
                             withinPortal
                             data={dateExamList?.length ? dateExamList : []}
                             value={dateExam}
