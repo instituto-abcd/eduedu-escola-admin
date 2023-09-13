@@ -1,6 +1,6 @@
 import { Button, Grid, Group, Title, Text } from "@mantine/core";
 import { SCHOOL_GRADE, SCHOOL_PERIOD } from "~/constants";
-import { StudentReport } from "./report";
+import { StudentReport } from "./report/Index";
 
 type componentProps = {
     student: Array<{}>;
