@@ -1,4 +1,9 @@
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useCallback } from "react";
 import {
   MutationOptions,
@@ -31,7 +36,7 @@ export type ExamExecutions = [
   }
 ];
 
-type StudentSearch = {
+export type StudentSearch = {
   name?: string;
   schoolClassName?: string;
   schoolPeriod?: SchoolPeriod;
@@ -52,7 +57,8 @@ const URL = {
   EXAM_CHARTS: (id: string) => `/student/${id}/exams-chart`,
   PLANET_CHARTS: (id: string) => `/student/${id}/planets-chart`,
   EXAM_EXECUTIONS: (id: string) => `/student/${id}/exam-executions`,
-  EXAMS_PERFORMANCE_PLANETS: (id: string, studentExamId: string) => `/student/${id}/exam-executions/${studentExamId}/planets-performance?loadPlanets=true`,
+  EXAMS_PERFORMANCE_PLANETS: (id: string, studentExamId: string) =>
+    `/student/${id}/exam-executions/${studentExamId}/planets-performance?loadPlanets=true`,
   RELEASE_PLANETS: (id: string) => `/student/${id}/release-planets`,
 };
 
@@ -103,7 +109,10 @@ class StudentAPI extends API {
   }
 
   static async authorizeNewExam(ids: string[]) {
-    const { data } = await this.api.post<{ success: boolean }>(URL.AUTH_NEW_EXAM, { ids });
+    const { data } = await this.api.post<{ success: boolean }>(
+      URL.AUTH_NEW_EXAM,
+      { ids }
+    );
 
     return data;
   }
@@ -129,7 +138,9 @@ class StudentAPI extends API {
   }
 
   static async getExamsPerformancePlanets(id: string, studentExamId: string) {
-    const { data } = await this.api.get(URL.EXAMS_PERFORMANCE_PLANETS(id, studentExamId));
+    const { data } = await this.api.get(
+      URL.EXAMS_PERFORMANCE_PLANETS(id, studentExamId)
+    );
     return data;
   }
 
@@ -137,7 +148,6 @@ class StudentAPI extends API {
     const { data } = await this.api.put(URL.RELEASE_PLANETS(id));
     return data;
   }
-
 }
 
 export function useStudentGetAll(
@@ -211,7 +221,7 @@ export function useStudentUpdate(
   }) {
     return StudentAPI.update(data.id, data.input);
   },
-    []);
+  []);
 
   return useMutation(handler, {
     ...options,
@@ -249,8 +259,8 @@ export function useGetDetailedSummary(
       return StudentAPI.getDetailedSummary(id);
     },
     [id]
-  )
-  return useQuery([KEY.DEITALED_SUMMARY_BY_ID, id], handler, options)
+  );
+  return useQuery([KEY.DEITALED_SUMMARY_BY_ID, id], handler, options);
 }
 
 export function useGetExamCharts(
@@ -262,8 +272,8 @@ export function useGetExamCharts(
       return StudentAPI.getExamCharts(id);
     },
     [id]
-  )
-  return useQuery([KEY.EXAM_CHART_BY_ID, id], handler, options)
+  );
+  return useQuery([KEY.EXAM_CHART_BY_ID, id], handler, options);
 }
 
 export function useGetPlanetsCharts(
@@ -275,8 +285,8 @@ export function useGetPlanetsCharts(
       return StudentAPI.getPlanetsCharts(id);
     },
     [id]
-  )
-  return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options)
+  );
+  return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options);
 }
 
 export function useGetExamExecutions(
@@ -288,8 +298,8 @@ export function useGetExamExecutions(
       return StudentAPI.getExamExecutions(id);
     },
     [id]
-  )
-  return useQuery([KEY.EXAM_EXECUTIONS, id], handler, options)
+  );
+  return useQuery([KEY.EXAM_EXECUTIONS, id], handler, options);
 }
 
 export function useExamsPerformancePlanets(
@@ -304,14 +314,12 @@ export function useExamsPerformancePlanets(
   }) {
     return StudentAPI.getExamsPerformancePlanets(data.id, data.studentExamId);
   },
-    []);
+  []);
 
   return useMutation(handler, {
     ...options,
     async onSuccess(data, variables, ctx) {
-      await queryClient.invalidateQueries([
-        KEY.EXAMS_PERFORMANCE_PLANETS
-      ]);
+      await queryClient.invalidateQueries([KEY.EXAMS_PERFORMANCE_PLANETS]);
       options?.onSuccess?.(data, variables, ctx);
     },
   });
@@ -322,12 +330,9 @@ export function usePutReleasePlanets(
 ) {
   const queryClient = useQueryClient();
 
-  const handler = useCallback(function (data: {
-    id: string;
-  }) {
+  const handler = useCallback(function (data: { id: string }) {
     return StudentAPI.putReleasePlanets(data);
-  },
-    []);
+  }, []);
 
   return useMutation(handler, {
     ...options,

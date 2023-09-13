@@ -25,14 +25,16 @@ export type TableHeaderProps = {
   onCheckAll?: (checked: boolean) => void;
   columns: Column[];
   onValueChange: (value: any) => void;
+  initialValues: any;
 };
 
 export function TableHeader({
   onCheckAll,
   columns,
   onValueChange,
+  initialValues,
 }: TableHeaderProps) {
-  const form = useForm();
+  const form = useForm<any>({ initialValues });
 
   useEffect(() => {
     if (!columns || !form) return;
@@ -57,6 +59,17 @@ export function TableHeader({
       form.reset();
     });
   }, []);
+
+  useEffect(() => {
+    console.log(form.isDirty("name"));
+  }, [form]);
+
+  useEffect(() => {
+    const dirty: Record<string, any> = {};
+    const keys = Object.keys(initialValues);
+    keys.forEach((k) => (dirty[k] = Boolean(initialValues[k])));
+    form.setDirty(dirty);
+  }, [initialValues]);
 
   function submit(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key !== "Enter") return;

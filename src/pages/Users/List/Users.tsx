@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useGetAllUsersMutation, useUserActivate, useUserDelete, useUserGetAll, useUserInactivate } from "~/api/user";
+import {
+  useGetAllUsersMutation,
+  useUserActivate,
+  useUserDelete,
+  useUserGetAll,
+  useUserInactivate,
+} from "~/api/user";
 import { PROFILE_SELECT, STATUS_SELECT, USER_PROFILE } from "~/constants";
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
@@ -24,12 +30,12 @@ import { IconEdit } from "@tabler/icons-react";
 import { PATH } from "~/constants/path";
 import { TableLoader } from "~/components/TableLoader";
 import { TableHeader } from "~/components/TableHeader";
+import { useUserFilterStore } from "~/stores/filter";
 
 export function UsersListPage() {
-
   const theme = useMantineTheme();
   const [selected, setSelected] = useState<string[]>([]);
-  const [search, setSearch] = useState({});
+  const { data: search, update } = useUserFilterStore();
 
   function toggleSelected(id: string) {
     if (selected.includes(id)) {
@@ -42,16 +48,17 @@ export function UsersListPage() {
   const pagination = usePagination();
   const [users, setUsers] = useState({});
 
-  const { mutate: getUsersMutation, isLoading: loadingUsers } = useGetAllUsersMutation({
-    search: {
-      ...search,
-      "page-number": pagination.page,
-      "page-size": pagination.pageSize,
-    },
-    onSuccess(data, variables, context) {
-      setUsers(data)
-    },
-  })
+  const { mutate: getUsersMutation, isLoading: loadingUsers } =
+    useGetAllUsersMutation({
+      search: {
+        ...search,
+        "page-number": pagination.page,
+        "page-size": pagination.pageSize,
+      },
+      onSuccess(data, variables, context) {
+        setUsers(data);
+      },
+    });
 
   const { mutate: deleteUser, isLoading: isDeleting } = useUserDelete({
     onSuccess: () => {
@@ -62,10 +69,7 @@ export function UsersListPage() {
       setSelected([]);
     },
     onError: (error) => {
-      errorNotification(
-        "Erro durante a operação",
-        `${error.message}`
-      );
+      errorNotification("Erro durante a operação", `${error.message}`);
     },
   });
 
@@ -83,39 +87,32 @@ export function UsersListPage() {
             "page-number": pagination.page,
             "page-size": pagination.pageSize,
           },
-        })
+        });
       },
       onError: (error) => {
-        errorNotification(
-          "Erro durante a operação",
-          `${error.message}`
-        );
+        errorNotification("Erro durante a operação", `${error.message}`);
       },
     });
 
-  const { mutate: activateUser, isLoading: isActivating } =
-    useUserActivate({
-      onSuccess: () => {
-        successNotification(
-          "Operação realizada com sucesso",
-          `${selected.length} Usuário(s) ativado(s) com sucesso!`
-        );
-        setSelected([]);
-        getUsersMutation({
-          search: {
-            ...search,
-            "page-number": pagination.page,
-            "page-size": pagination.pageSize,
-          },
-        })
-      },
-      onError: (error) => {
-        errorNotification(
-          "Erro durante a operação",
-          `${error.message}`
-        );
-      },
-    });
+  const { mutate: activateUser, isLoading: isActivating } = useUserActivate({
+    onSuccess: () => {
+      successNotification(
+        "Operação realizada com sucesso",
+        `${selected.length} Usuário(s) ativado(s) com sucesso!`
+      );
+      setSelected([]);
+      getUsersMutation({
+        search: {
+          ...search,
+          "page-number": pagination.page,
+          "page-size": pagination.pageSize,
+        },
+      });
+    },
+    onError: (error) => {
+      errorNotification("Erro durante a operação", `${error.message}`);
+    },
+  });
 
   useEffect(() => {
     getUsersMutation({
@@ -124,7 +121,7 @@ export function UsersListPage() {
         "page-number": pagination.page,
         "page-size": pagination.pageSize,
       },
-    })
+    });
   }, []);
 
   const openModalDeleteUser = () =>
@@ -166,8 +163,8 @@ export function UsersListPage() {
       ),
       labels: { confirm: "Sim", cancel: "Não" },
       onConfirm: () => {
-        selected.forEach(element => {
-          activateUser(element)
+        selected.forEach((element) => {
+          activateUser(element);
         });
       },
     });
@@ -176,7 +173,11 @@ export function UsersListPage() {
     <Stack>
       <PageHeader
         title="Usuários"
-        description={loadingUsers ? 'Carregando...' : (`${users?.pagination?.totalItems} registros` ?? "")}
+        description={
+          loadingUsers
+            ? "Carregando..."
+            : `${users?.pagination?.totalItems} registros` ?? ""
+        }
         gap={0}
       >
         <Button component={Link} to="/usuarios/novo-usuario">
@@ -221,7 +222,6 @@ export function UsersListPage() {
       <Table horizontalSpacing="sm" verticalSpacing="md">
         <thead>
           <TableHeader
-            onValueChange={setSearch}
             columns={[
               {
                 label: "Nome",
@@ -260,11 +260,13 @@ export function UsersListPage() {
                 searchTerm: "",
               },
             ]}
+            initialValues={search}
+            onValueChange={update}
             onCheckAll={(checked) =>
               checked
                 ? setSelected(
-                  users?.items?.filter((u) => !u.owner).map((u) => u.id) ?? []
-                )
+                    users?.items?.filter((u) => !u.owner).map((u) => u.id) ?? []
+                  )
                 : setSelected([])
             }
           />
