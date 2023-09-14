@@ -1,6 +1,7 @@
 import { Button, Grid, Group, Title, Text } from "@mantine/core";
 import { SCHOOL_GRADE, SCHOOL_PERIOD } from "~/constants";
 import { StudentReport } from "./report/Index";
+import { Print } from "~/utils/pdfDownload";
 
 type componentProps = {
     student: Array<{}>;
@@ -8,14 +9,6 @@ type componentProps = {
 }
 
 export function HeaderStudent({ student, detailedSummary }: componentProps) {
-
-    const Print = () => {
-        let printContents = document.getElementById('printablediv').innerHTML;
-        let originalContents = document.body.innerHTML;
-        document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
-    }
 
     return (
         <Grid columns={6} align="center">

@@ -1,10 +1,13 @@
 import { Grid, Group, Title, Text, Button } from "@mantine/core";
 import { SCHOOL_GRADE } from "~/constants";
+import { SchoolClassReport } from "../../Report/SchoolClassReport";
+import { Print } from "~/utils/pdfDownload";
 
 type componentProps = {
     schoolClass: Array<{}>
 }
 export function SchoolClassHeader({ schoolClass }: componentProps) {
+
     return (
         <Grid columns={5}>
             <Grid.Col span={1}>
@@ -44,8 +47,10 @@ export function SchoolClassHeader({ schoolClass }: componentProps) {
             </Grid.Col>
 
             <Grid.Col span={1}>
-                {/* TODO: implement this endpoint */}
-                <Button>Gerar relatório</Button>
+                <Button onClick={Print}>Gerar relatório</Button>
+                <div id='printablediv' style={{ display: 'none' }}>
+                    <SchoolClassReport />
+                </div>
             </Grid.Col>
         </Grid>
     )

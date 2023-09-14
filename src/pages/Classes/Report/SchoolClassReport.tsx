@@ -1,0 +1,90 @@
+// Utils & Aux:
+import { useParams } from "react-router-dom";
+import { useGetExamsCharts, useGetExamsPerformance, useGetPlanetsPerformance, useGetSchoolClass } from "~/api/school-class";
+
+// Components:
+import { Box, Divider, Flex, Grid, Title, Text, Image } from "@mantine/core";
+import { PlanetPerformanceTable } from "../Detail/components/planets-performance/Table";
+import { Chart } from "../Detail/components/ExamsChart/Chart";
+import { ExamPerformance } from "~/components/ExamPerformance/ExamPerformance";
+
+// Images:
+import eduEduLogo from '~/assets/logos/eduedu-preta.svg'
+
+export function SchoolClassReport() {
+
+    // Getting the id of the schoolClass:
+    const params = useParams();
+
+    // Getting info about the schoolClass:
+    const { data: schoolClass } = useGetSchoolClass(params.classId ?? "", {});
+
+    // Getting the info about performance at exams:
+    const { data: schoolClassPerformanceExams } = useGetExamsPerformance(params.classId ?? "", {});
+    const { data: schoolClassPerformancePlanets } = useGetPlanetsPerformance(params.classId ?? "", {});
+    const { data: schoolClassExamsChart } = useGetExamsCharts(params.classId ?? "", {});
+
+    return (
+        <Box p={20}>
+
+            <Grid columns={6} pb={30}>
+                <Grid.Col span={1}>
+                    <Image src={eduEduLogo} width={90} />
+                </Grid.Col>
+
+                <Grid.Col span={5} my="auto">
+                    <Box>
+                        <Title order={3}>Relatório de turma</Title>
+                        <Grid pt={10}>
+                            <Grid.Col span="content">
+                                <Flex>
+                                    <Text fz="sm" fw={600} pr={5}>Turma:</Text>
+                                    <Text fz="sm">{schoolClass?.name} - {schoolClass?.schoolYear?.name}</Text>
+                                </Flex>
+                            </Grid.Col>
+
+                            <Grid.Col span="content">
+                                <Flex>
+                                    <Text fz="sm" fw={600} pr={5}>Professores:</Text>
+                                    {schoolClass?.teachers &&
+                                        schoolClass?.teachers.map((teacher) => (
+                                            <Text fz="sm">{teacher.name}</Text>
+                                        ))
+                                    }
+                                </Flex>
+                            </Grid.Col>
+                        </Grid>
+                    </Box>
+                </Grid.Col>
+            </Grid>
+
+            <Box pb={30}>
+                <Title order={4} p={30} pl={0}>Desempenho da turma em provas</Title>
+                <Flex justify="space-around">
+                    {schoolClassPerformanceExams &&
+                        schoolClassPerformanceExams?.map((item, i) => (
+                            <>
+                                <Box key={item.axisCode}>
+                                    <ExamPerformance item={item} />
+                                    {(i + 1) != schoolClassPerformanceExams.length &&
+                                        <Divider orientation="vertical" variant="solid" />
+                                    }
+                                </Box>
+                            </>
+                        ))
+                    }
+                </Flex>
+            </Box>
+
+            <Box pb={30}>
+                <Title order={4} p={30} pl={0}>Desempenho da turma em planetas</Title>
+                <PlanetPerformanceTable schoolClassPerformancePlanets={schoolClassPerformancePlanets} />
+            </Box>
+
+            <Box>
+                <Title order={4} p={30} pl={0}>Histórico do resultado de provas da turma</Title>
+                <Chart schoolClassExamsChart={schoolClassExamsChart} />
+            </Box>
+        </Box>
+    )
+}
