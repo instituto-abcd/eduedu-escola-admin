@@ -61,10 +61,6 @@ export function TableHeader({
   }, []);
 
   useEffect(() => {
-    console.log(form.isDirty("name"));
-  }, [form]);
-
-  useEffect(() => {
     const dirty: Record<string, any> = {};
     const keys = Object.keys(initialValues);
     keys.forEach((k) => (dirty[k] = Boolean(initialValues[k])));

@@ -111,10 +111,13 @@ class UserAPI extends API {
     return data;
   }
 
-  static async activate(userId: string[]) {
-    const { data } = await this.api.patch<{ success: boolean }>(URL.ACTIVATE(userId), {
-      status: 'ACTIVE'
-    });
+  static async activate(userId: string) {
+    const { data } = await this.api.patch<{ success: boolean }>(
+      URL.ACTIVATE(userId),
+      {
+        status: "ACTIVE",
+      }
+    );
     return data;
   }
 
@@ -150,17 +153,6 @@ export function useUserGetAll(
   return useQuery([KEY.ALL, options?.search], handler, options);
 }
 
-export function useGetAllUsersMutation(
-  options?: MutationOptions<{ search?: UserSearch; }>
-) {
-  const handler = useCallback(function (options: Array<{}>) {
-    return UserAPI.getAll(options?.search);
-  },
-    []);
-
-  return useMutation(handler, options);
-}
-
 export function useUserGetById(
   userId: string,
   options?: QueryOptions<User, [typeof KEY.BY_ID, string]>
@@ -192,7 +184,7 @@ export function useUserUpdate(
   }) {
     return UserAPI.update(data.userId, data.input);
   },
-    []);
+  []);
 
   return useMutation(handler, options);
 }
@@ -261,30 +253,29 @@ export function useUserInactivate(
   return useMutation(handler, {
     ...options,
     onSuccess: async (data, vars, ctx) => {
-      await queryClient.invalidateQueries([KEY.INACTIVATE_USER]);
+      await queryClient.invalidateQueries([KEY.ALL, KEY.BY_ID]);
       options?.onSuccess?.(data, vars, ctx);
     },
   });
 }
 
 export function useUserActivate(
-  options?: MutationOptions<string[], { success: boolean }>
+  options?: MutationOptions<string, { success: boolean }>
 ) {
   const queryClient = useQueryClient();
 
-  const handler = useCallback(function (id: string[]) {
+  const handler = useCallback(function (id: string) {
     return UserAPI.activate(id);
   }, []);
 
   return useMutation(handler, {
     ...options,
     onSuccess: async (data, vars, ctx) => {
-      await queryClient.invalidateQueries([KEY.ACTIVATE_USER]);
+      await queryClient.invalidateQueries([KEY.ALL, KEY.BY_ID]);
       options?.onSuccess?.(data, vars, ctx);
     },
   });
 }
-
 
 export function useUserUpdatePassword(
   options?: MutationOptions<UpdatePasswordInput, LoginResponse>
@@ -301,7 +292,7 @@ export function useUserUpdatePassword(
         email: z.string().email(),
         profile: z.enum(["DIRECTOR", "TEACHER"], {
           errorMap: () => {
-            return { message: 'Por favor, selecione uma opção' };
+            return { message: "Por favor, selecione uma opção" };
           },
         }),
         iat: z.number(),
