@@ -9,6 +9,8 @@ import { UsersRoutes } from "./Users";
 import { ClassesRoutes } from "./Classes";
 import { AuthRoutes } from "./Auth";
 import { SetupRoutes } from "./Setup";
+import { Fragment } from "react";
+import { Notification } from "@mantine/core";
 
 export function AppRoutes() {
   function nested(route: string) {
@@ -16,20 +18,33 @@ export function AppRoutes() {
   }
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" Component={Layout}>
-          <Route index element={<Navigate to={PATH.DASHBOARD} />} />
-          <Route path={nested(PATH.DASHBOARD)} Component={DashboardRoutes} />
-          <Route path={nested(PATH.USERS)} Component={UsersRoutes} />
-          <Route path={nested(PATH.STUDENTS)} Component={StudentsRoutes} />
-          <Route path={nested(PATH.SETTINGS)} Component={SettingsRoutes} />
-          <Route path={nested(PATH.SCHOOL_YEAR)} Component={SchoolYearRoutes} />
-          <Route path={nested(PATH.CLASSES)} Component={ClassesRoutes} />
-        </Route>
-        <Route path={nested(PATH.LOGIN)} Component={AuthRoutes} />
-        <Route path={nested(PATH.SETUP)} Component={SetupRoutes} />
-      </Routes>
-    </BrowserRouter>
+    <Fragment>
+      <Notification
+        title="Sincronizando planetas"
+        loading
+        withCloseButton={false}
+        style={{ position: "absolute", bottom: 44, right: 44 }}
+      >
+        Isso pode levar alguns minutos
+      </Notification>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" Component={Layout}>
+            <Route index element={<Navigate to={PATH.DASHBOARD} />} />
+            <Route path={nested(PATH.DASHBOARD)} Component={DashboardRoutes} />
+            <Route path={nested(PATH.USERS)} Component={UsersRoutes} />
+            <Route path={nested(PATH.STUDENTS)} Component={StudentsRoutes} />
+            <Route path={nested(PATH.SETTINGS)} Component={SettingsRoutes} />
+            <Route
+              path={nested(PATH.SCHOOL_YEAR)}
+              Component={SchoolYearRoutes}
+            />
+            <Route path={nested(PATH.CLASSES)} Component={ClassesRoutes} />
+          </Route>
+          <Route path={nested(PATH.LOGIN)} Component={AuthRoutes} />
+          <Route path={nested(PATH.SETUP)} Component={SetupRoutes} />
+        </Routes>
+      </BrowserRouter>
+    </Fragment>
   );
 }
