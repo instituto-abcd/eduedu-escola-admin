@@ -29,7 +29,11 @@ export function AppRoutes() {
       duration: "00:00:00",
     },
     onSuccess: (data) => {
-      if (data.syncedFiles > 0 && data.syncedFiles === data.totalFiles) {
+      if (
+        data.syncedFiles > 0 &&
+        data.percent < 100 &&
+        data.syncedFiles === data.totalFiles
+      ) {
         successNotification(
           "Sincronização concluída",
           "Todos os planetas e seus artefatos foram sincronizados com sucesso"
