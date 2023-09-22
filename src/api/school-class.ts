@@ -65,7 +65,7 @@ const URL = {
   DELETE: "/schoolClass",
   GET: (id: string) => `/schoolClass/${id}`,
   UPDATE: (id: string) => `/schoolClass/${id}`,
-  SHEET: "/schoolClass/students/spreadsheet-template",
+  SHEET: "schoolClass/students/spreadsheet-template",
   UPLOAD_SHEET: (id: string) => `/schoolClass/${id}/students/spreadsheet`,
   DESTINY_STUDENTS: (destinyID: string) => `/schoolClass/${destinyID}/students`,
   STUDENTS_BY_SCHOOLCLASS: (schoolClassId: string) =>

@@ -1,3 +1,20 @@
+// Utils & Aux:
+import { useDisclosure } from "@mantine/hooks";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  RequestPasswordResetInput,
+  UserLogin,
+  useAuthLogin,
+  useRequestPasswordReset,
+} from "~/api/auth";
+import { useSettingsGetStatus } from "~/api/settings";
+import { PATH } from "~/constants/path";
+import { errorNotification } from "~/utils/errorNotification";
+import { successNotification } from "~/utils/successNotification";
+import { z } from "zod";
+
+// Components:
+import { useForm, zodResolver } from "@mantine/form";
 import {
   Anchor,
   BackgroundImage,
@@ -12,23 +29,11 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { useForm, zodResolver } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { z } from "zod";
-import {
-  RequestPasswordResetInput,
-  UserLogin,
-  useAuthLogin,
-  useRequestPasswordReset,
-} from "~/api/auth";
-import { useSettingsGetStatus } from "~/api/settings";
+import { ChangePasswordModal } from "~/components/ChangePasswordModal";
+
+// Images
 import bg from "~/assets/backgrounds/login-1920w.png";
 import logo from "~/assets/logos/eduedu-branca.svg";
-import { ChangePasswordModal } from "~/components/ChangePasswordModal";
-import { PATH } from "~/constants/path";
-import { errorNotification } from "~/utils/errorNotification";
-import { successNotification } from "~/utils/successNotification";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -71,7 +76,7 @@ export function LoginPage() {
 
   const formRecovery = useForm<RequestPasswordResetInput>({
     initialValues: {
-      email: "",
+      email: form?.values?.email ?? "",
     },
     validate: zodResolver(formRecoveryValidation),
   });
@@ -187,7 +192,7 @@ export function LoginPage() {
           <Stack py={12} spacing="xl">
             <TextInput
               label="Email de cadastro"
-              placeholder="Email"
+              placeholder={form?.values?.email ?? "Email"}
               {...formRecovery.getInputProps("email")}
             />
             <Button

@@ -148,6 +148,7 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
                                 width: '150px'
                             }}
                             onChange={(value) => setPerformanceType(value)}
+                            onClick={event => event.stopPropagation()}
                         />
                     </Flex>
                 </Accordion.Control>

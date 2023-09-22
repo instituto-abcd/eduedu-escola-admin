@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  useGetAllUsersMutation,
   useUserActivate,
   useUserDelete,
   useUserGetAll,
@@ -46,19 +45,14 @@ export function UsersListPage() {
   }
 
   const pagination = usePagination();
-  const [users, setUsers] = useState({});
 
-  const { mutate: getUsersMutation, isLoading: loadingUsers } =
-    useGetAllUsersMutation({
-      search: {
-        ...search,
-        "page-number": pagination.page,
-        "page-size": pagination.pageSize,
-      },
-      onSuccess(data, variables, context) {
-        setUsers(data);
-      },
-    });
+  const { data: users, isLoading: loadingUsers } = useUserGetAll({
+    search: {
+      ...search,
+      "page-number": pagination.page,
+      "page-size": pagination.pageSize,
+    },
+  });
 
   const { mutate: deleteUser, isLoading: isDeleting } = useUserDelete({
     onSuccess: () => {
@@ -81,13 +75,6 @@ export function UsersListPage() {
           `${selected.length} Usuário(s) inativado(s) com sucesso!`
         );
         setSelected([]);
-        getUsersMutation({
-          search: {
-            ...search,
-            "page-number": pagination.page,
-            "page-size": pagination.pageSize,
-          },
-        });
       },
       onError: (error) => {
         errorNotification("Erro durante a operação", `${error.message}`);
@@ -101,28 +88,11 @@ export function UsersListPage() {
         `${selected.length} Usuário(s) ativado(s) com sucesso!`
       );
       setSelected([]);
-      getUsersMutation({
-        search: {
-          ...search,
-          "page-number": pagination.page,
-          "page-size": pagination.pageSize,
-        },
-      });
     },
     onError: (error) => {
       errorNotification("Erro durante a operação", `${error.message}`);
     },
   });
-
-  useEffect(() => {
-    getUsersMutation({
-      search: {
-        ...search,
-        "page-number": pagination.page,
-        "page-size": pagination.pageSize,
-      },
-    });
-  }, []);
 
   const openModalDeleteUser = () =>
     modals.openConfirmModal({

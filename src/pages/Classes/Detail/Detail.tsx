@@ -13,7 +13,7 @@ import { useParams } from "react-router-dom";
 // Components:
 import { Accordion } from "@mantine/core";
 import { SchoolClassHeader } from "./components/Header";
-import { PlanetsPerformance } from "./components/PlanetsPerformance";
+import { PlanetsPerformance } from "./components/planets-performance/PlanetsPerformance";
 import { ExamsPerformance } from "./components/exams-performance/ExamsPerformance";
 import { StudentsPerformanceBy } from "./components/StudentsPerformance/StudentsPerformanceBy";
 import { ExamsChart } from "./components/ExamsChart/ExamsChart";

@@ -7,13 +7,13 @@ import { PATH } from "~/constants/path";
 import { useUserStore } from "~/stores/user";
 
 export function CardDashboard({ getReportData }) {
-    const navigate = useNavigate();
-
     const userProfile = useUserStore((u) => u.profile)
     const isTeacher = () => { return userProfile === "TEACHER" ? false : true }
 
     const params = useParams();
-    const [schoolYear, setSchoolYear] = useState(params.year ?? '');
+
+    const [schoolYear, setSchoolYear] = useState(params.year);
+
     const { data: years, isLoading: isLoadingYears } = useSchoolYearGetAll({
         pageSize: 999,
         onSuccess(data) {
@@ -21,13 +21,26 @@ export function CardDashboard({ getReportData }) {
                 const element = data[index];
 
                 if (element.status == 'ACTIVE') {
-                    return navigate(`${PATH.DASHBOARD}/${element.name}`);
+                    setSchoolYear(element.name)
                 }
+
             }
         }
     });
-    const { data: schoolYearReport } = useGetBySchoolYear(schoolYear);
-    getReportData(schoolYearReport);
+
+    const shouldEnabled = Boolean(schoolYear);
+
+    const { data: schoolYearReport } = useGetBySchoolYear(schoolYear,
+        {
+            enabled: shouldEnabled,
+            onSuccess(data) {
+                getReportData(data);
+            },
+            onError: (error) => {
+                errorNotification("Erro", error.message)
+            }
+        }
+    );
 
     return (
         <Card mb={20}>
@@ -56,7 +69,7 @@ export function CardDashboard({ getReportData }) {
                                         <Select
                                             withinPortal
                                             maw={120}
-                                            placeholder={params.year ?? 'Selecione'}
+                                            placeholder={params.year ?? (schoolYear ?? 'Selecione')}
                                             data={
                                                 isLoadingYears
                                                     ? [

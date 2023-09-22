@@ -1,9 +1,11 @@
 import { useCallback } from "react";
 import { API } from "./base";
-import { useQuery } from "@tanstack/react-query";
+import { QueryOptions, useQuery } from "@tanstack/react-query";
+import { SchoolClass } from "./school-class";
 
 const KEY = {
-  ALL: 'DASHBOARD_ALL'
+  ALL: 'DASHBOARD_ALL',
+  REPORT_BY_SCHOOL_CLASS: 'REPORT_BY_SCHOOL_CLASS'
 }
 
 const URL = {
@@ -17,7 +19,9 @@ class DashboardAPI extends API {
   }
 }
 
-export function useGetBySchoolYear(schoolYear: string
+export function useGetBySchoolYear(
+  schoolYear: string,
+  options?: QueryOptions<SchoolClass, [typeof KEY.REPORT_BY_SCHOOL_CLASS, string]>
 ) {
   const handler = useCallback(
     function () {
@@ -26,5 +30,5 @@ export function useGetBySchoolYear(schoolYear: string
     [schoolYear]
   );
 
-  return useQuery([KEY.ALL, schoolYear], handler);
+  return useQuery([KEY.ALL, schoolYear], handler, options);
 }
