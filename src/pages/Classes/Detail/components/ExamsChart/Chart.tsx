@@ -8,15 +8,15 @@ import {
     Legend,
 } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, Text } from "@mantine/core";
 
 type componentProps = {
-    schoolClassExamsChart: Array<[]>
+    schoolClassExamsChart: Array<{}>
 }
+
 export function Chart({ schoolClassExamsChart }: componentProps) {
 
-    // Graphic stuff:
     ChartJS.register(
         CategoryScale,
         LinearScale,
@@ -64,11 +64,17 @@ export function Chart({ schoolClassExamsChart }: componentProps) {
         datasets: schoolClassExamsChart?.datasets ?? []
     });
 
-    console.log('schoolClassExamsChart\n', examsChart)
+    useEffect(() => {
+        setExamsChart({
+            labels: schoolClassExamsChart?.labels ?? [],
+            datasets: schoolClassExamsChart?.datasets ?? []
+        });
+    }, [schoolClassExamsChart]);
+
     return (
         <Box>
-            {examsChart.datasets.length != 0 &&
-                <div className="chart-container" style={{ position: 'relative', height: '35vh', width: '60vw' }}>
+            {examsChart.datasets.length !== 0 &&
+                <div className="chart-container" style={{ position: 'relative', height: '35vh', width: '70vw' }}>
                     <Line options={options} data={examsChart} />
                 </div>
             }

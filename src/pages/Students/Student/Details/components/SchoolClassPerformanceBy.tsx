@@ -1,5 +1,5 @@
 // Components:
-import { Accordion, Box, Flex, Select, Stack, Text, useMantineTheme } from "@mantine/core";
+import { Accordion, Box, Center, Flex, Select, Stack, Text, useMantineTheme } from "@mantine/core";
 
 // Charts:
 import {
@@ -155,28 +155,29 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
             </Box>
 
             <Accordion.Panel>
-                <Flex>
+                <Center>
                     {performanceType == "Planetas" &&
-                        <Stack w={200}>
-                            <Rating readOnly value={5} key={Math.random()} style={{ width: '150px' }} />
-                            <Rating readOnly value={4} key={Math.random()} style={{ width: '150px' }} />
-                            <Rating readOnly value={3} key={Math.random()} style={{ width: '150px' }} />
-                            <Rating readOnly value={2} key={Math.random()} style={{ width: '150px' }} />
-                            <Rating readOnly value={1} key={Math.random()} style={{ width: '150px' }} />
-                            <Rating readOnly value={0} key={Math.random()} style={{ width: '150px' }} />
-                        </Stack>
+                        schoolClassPerformanceByPlanets &&
+                        <Flex>
+                            <Stack pr={10}>
+                                <Rating readOnly value={5} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly value={4} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly value={3} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly value={2} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly value={1} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly value={0} key={Math.random()} style={{ width: '100px' }} />
+                            </Stack>
+                            <div className="chart-container" style={{ position: 'relative', height: 'auto', width: '60vw' }}>
+                                <Bar options={options} data={schoolClassPerformanceByPlanets} />
+                            </div>
+                        </Flex>
                     }
 
                     {performanceType == "Provas" &&
                         schoolClassPerformanceByExams &&
                         <Bar options={options} data={schoolClassPerformanceByExams} />
                     }
-
-                    {performanceType == "Planetas" &&
-                        schoolClassPerformanceByPlanets &&
-                        <Bar options={options} data={schoolClassPerformanceByPlanets} />
-                    }
-                </Flex>
+                </Center>
             </Accordion.Panel>
         </Accordion.Item>
     )

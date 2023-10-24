@@ -1,4 +1,4 @@
-import { Accordion, Box, Flex, Select, Stack, Text, useMantineTheme } from "@mantine/core";
+import { Accordion, Box, Center, Flex, Select, Stack, Text, useMantineTheme } from "@mantine/core";
 
 // Chart:
 import {
@@ -156,31 +156,30 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
             </Box>
 
             <Accordion.Panel>
-                <Flex>
+                <Center>
                     {performanceType == "Planetas" &&
-                        <Stack w={200}>
-                            <Rating readOnly value={5} key={Math.random()} style={{ width: '140px' }} />
-                            <Rating readOnly value={4} key={Math.random()} style={{ width: '140px' }} />
-                            <Rating readOnly value={3} key={Math.random()} style={{ width: '140px' }} />
-                            <Rating readOnly value={2} key={Math.random()} style={{ width: '140px' }} />
-                            <Rating readOnly value={1} key={Math.random()} style={{ width: '140px' }} />
-                        </Stack>
+                        studentPerformanceByPlanets &&
+                        <Flex>
+                            <Stack pr={10}>
+                                <Rating readOnly value={5} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly value={4} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly value={3} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly value={2} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly value={1} key={Math.random()} style={{ width: '100px' }} />
+                            </Stack>
+                            <div className="chart-container" style={{ position: 'relative', height: 'auto', width: '60vw' }}>
+                                <Line options={options} data={studentPerformanceByPlanets ?? [{ labels: [], datasets: [] }]} />
+                            </div>
+                        </Flex>
                     }
 
                     {performanceType == "Provas" &&
                         studentPerformanceByExam &&
-                        <div className="chart-container" style={{ position: 'relative', height: '35vh', width: '70vw' }}>
+                        <div className="chart-container" style={{ position: 'relative', height: 'auto', width: '70vw' }}>
                             <Line options={options} data={studentPerformanceByExam ?? [{ labels: [], datasets: [] }]} />
                         </div>
                     }
-
-                    {performanceType == "Planetas" &&
-                        studentPerformanceByPlanets &&
-                        <div className="chart-container" style={{ position: 'relative', height: '35vh', width: '70vw' }}>
-                            <Line options={options} data={studentPerformanceByPlanets ?? [{ labels: [], datasets: [] }]} />
-                        </div>
-                    }
-                </Flex>
+                </Center>
             </Accordion.Panel>
         </Accordion.Item>
     )
