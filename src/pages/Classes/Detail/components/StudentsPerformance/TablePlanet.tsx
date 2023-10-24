@@ -45,7 +45,7 @@ export function TablePlanet({ data }: componentProps) {
                             <td>
                                 <ActionIcon
                                     component={Link}
-                                    to={`/`}
+                                    to={`/alunos/${item.studentId}/detalhes`}
                                     color="blue.9"
                                 >
                                     <IconEye />

@@ -40,7 +40,7 @@ export function SchoolClassHeader({ schoolClass }: componentProps) {
                         {schoolClass.teachers &&
                             schoolClass.teachers.map((item) => (
                                 item.name
-                            ))
+                            )).join(', ')
                         }
                     </Text>
                 </Group>

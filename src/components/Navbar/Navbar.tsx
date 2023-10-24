@@ -68,8 +68,10 @@ export function Navbar() {
         h="100%"
         px={150}
       >
-        <Image src={logo} alt="EduEdu Escola" width={50} mx={40} />
-
+        <Link to="/dashboard">
+          <Image src={logo} alt="EduEdu Escola" width={50} mx={40} />
+        </Link>
+        
         <Group noWrap>
           <Group spacing={16}>
             {usedLinks.map((link) => (
