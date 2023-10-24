@@ -169,12 +169,16 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
 
                     {performanceType == "Provas" &&
                         studentPerformanceByExam &&
-                        <Line options={options} data={studentPerformanceByExam ?? [{ labels: [], datasets: [] }]} />
+                        <div className="chart-container" style={{ position: 'relative', height: '35vh', width: '70vw' }}>
+                            <Line options={options} data={studentPerformanceByExam ?? [{ labels: [], datasets: [] }]} />
+                        </div>
                     }
 
                     {performanceType == "Planetas" &&
                         studentPerformanceByPlanets &&
-                        <Line options={options} data={studentPerformanceByPlanets ?? [{ labels: [], datasets: [] }]} />
+                        <div className="chart-container" style={{ position: 'relative', height: '35vh', width: '70vw' }}>
+                            <Line options={options} data={studentPerformanceByPlanets ?? [{ labels: [], datasets: [] }]} />
+                        </div>
                     }
                 </Flex>
             </Accordion.Panel>

@@ -2,6 +2,8 @@ import { useDisclosure } from "@mantine/hooks";
 import { AXIS_ENUM } from "~/constants";
 import { Box, Button, Collapse, Flex, Group, useMantineTheme, Text } from "@mantine/core";
 import { IconFileDescription, IconMinus, IconPlus, IconUsers } from "@tabler/icons-react";
+import { PATH } from "~/constants/path";
+import { Link } from "react-router-dom";
 
 type componentsProps = {
     schoolClass: any;
@@ -78,17 +80,27 @@ export function ButtonCollapse({ schoolClass }: componentsProps) {
                         ))}
                     </Group>
 
-                    <Flex my={20}>
-                        <Text
-                            mb={20}
-                            size="sm"
-                            fw={600}
-                            c="blue.6"
-                        >
-                            Mais Detalhes da Turma&nbsp;
-                        </Text>
-                        <IconFileDescription size="1.2rem" style={{ color: theme.colors.blue[6] }} />
-                    </Flex>
+                    <Link
+                        to={`${PATH.CLASSES}/${schoolClass.id}`}
+                        search=""
+                        style={{
+                            color: '#000',
+                            fontWeight: 'bold',
+                            textDecoration: 'none'
+                        }}
+                    >
+                        <Flex my={20}>
+                            <Text
+                                mb={20}
+                                size="sm"
+                                fw={600}
+                                c="blue.6"
+                            >
+                                Mais Detalhes da Turma&nbsp;
+                            </Text>
+                            <IconFileDescription size="1.2rem" style={{ color: theme.colors.blue[6] }} />
+                        </Flex>
+                    </Link>
                 </Box>
             </Collapse>
         </Box>

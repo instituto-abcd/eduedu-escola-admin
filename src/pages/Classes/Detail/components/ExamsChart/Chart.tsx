@@ -9,6 +9,7 @@ import {
 } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
 import { useState } from "react";
+import { Box, Text } from "@mantine/core";
 
 type componentProps = {
     schoolClassExamsChart: Array<[]>
@@ -63,7 +64,17 @@ export function Chart({ schoolClassExamsChart }: componentProps) {
         datasets: schoolClassExamsChart?.datasets ?? []
     });
 
+    console.log('schoolClassExamsChart\n', examsChart)
     return (
-        <Line options={options} data={examsChart} />
+        <Box>
+            {examsChart.datasets.length != 0 &&
+                <div className="chart-container" style={{ position: 'relative', height: '35vh', width: '60vw' }}>
+                    <Line options={options} data={examsChart} />
+                </div>
+            }
+            {!examsChart.datasets.length &&
+                <Text my={20} align="center">Sem dados registrados em Histórico de Resultado de Provas.</Text>
+            }
+        </Box>
     )
 }
