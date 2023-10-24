@@ -19,6 +19,7 @@ import { Rating } from '@smastrom/react-rating'
 import '@smastrom/react-rating/style.css'
 import { useGetExamsCharts, useGetPlanetsCharts } from "~/api/school-class";
 import { errorNotification } from "~/utils/errorNotification";
+import { processChartData } from "~/utils/chartMap";
 
 type componentProps = {
     schoolClassId: string;
@@ -85,29 +86,8 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
         }
     )
 
-    const processChartData = (datasets) => {
-        if (!datasets) return [];
-
-        return datasets.map(element => {
-            const colorMapping = {
-                "Consciência Fonológica": theme.colors.cyan[3],
-                "Sistema de Escrita Alfabética": theme.colors.violet[2],
-            };
-
-            const backgroundColor = colorMapping[element.label] || theme.colors.orange[3];
-            const borderColor = colorMapping[element.label] || theme.colors.orange[3];
-
-            return {
-                ...element,
-                backgroundColor,
-                borderColor,
-                yAxisID: 'y'
-            };
-        });
-    };
-
-    const processedExamData = processChartData(schoolClassPerformanceByExams?.datasets);
-    const processedPlanetsData = processChartData(schoolClassPerformanceByPlanets?.datasets);
+    const processedExamData = processChartData(schoolClassPerformanceByExams?.datasets, theme);
+    const processedPlanetsData = processChartData(schoolClassPerformanceByPlanets?.datasets, theme);
 
     const [performanceType, setPerformanceType] = useState('Provas');
     const selectOptions = [

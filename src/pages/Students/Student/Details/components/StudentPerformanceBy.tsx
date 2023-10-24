@@ -18,6 +18,7 @@ import { Rating } from '@smastrom/react-rating'
 import '@smastrom/react-rating/style.css'
 import { errorNotification } from "~/utils/errorNotification";
 import { useGetExamCharts, useGetPlanetsCharts } from "~/api/student";
+import { processChartData } from "~/utils/chartMap";
 
 type componentProps = {
     studentId: string;
@@ -97,29 +98,8 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
         },
     };
 
-    const processChartData = (datasets) => {
-        if (!datasets) return [];
-
-        return datasets.map(element => {
-            const colorMapping = {
-                "Consciência Fonológica": theme.colors.cyan[3],
-                "Sistema de Escrita Alfabética": theme.colors.violet[2],
-            };
-
-            const backgroundColor = colorMapping[element.label] || theme.colors.orange[3];
-            const borderColor = colorMapping[element.label] || theme.colors.orange[3];
-
-            return {
-                ...element,
-                backgroundColor,
-                borderColor,
-                yAxisID: 'y'
-            };
-        });
-    };
-
-    const processedExamData = processChartData(studentPerformanceByExam?.datasets);
-    const processedPlanetsData = processChartData(studentPerformanceByPlanets?.datasets);
+    const processedExamData = processChartData(studentPerformanceByExam?.datasets, theme);
+    const processedPlanetsData = processChartData(studentPerformanceByPlanets?.datasets, theme);
 
     return (
         <Accordion.Item value="studentPerformanceBy">

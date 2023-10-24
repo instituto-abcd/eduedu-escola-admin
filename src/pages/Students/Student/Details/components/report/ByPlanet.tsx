@@ -15,7 +15,9 @@ import {
     Tooltip,
     Legend,
 } from "chart.js/auto";
-import { Line } from "react-chartjs-2";;
+import { Line } from "react-chartjs-2";
+import { processChartData } from "~/utils/chartMap";
+;
 
 type componentProps = {
     studentId: string;
@@ -74,25 +76,14 @@ export function ByPlanet({ studentId }: componentProps) {
         },
     };
 
-    studentPerformanceByPlanets?.datasets.forEach(element => {
-        if (element.label == "Consciência Fonológica") {
-            element.backgroundColor = theme.colors.cyan[3]
-            element.borderColor = theme.colors.cyan[3]
-        } else if (element.label == "Sistema de Escrita Alfabética") {
-            element.backgroundColor = theme.colors.violet[2]
-            element.borderColor = theme.colors.violet[2]
-        } else {
-            element.backgroundColor = theme.colors.orange[3]
-            element.borderColor = theme.colors.orange[3]
-        }
-        element.yAxisID = 'y'
-    });
+    const processedPlanetsData = processChartData(studentPerformanceByPlanets?.datasets, theme);
+
     return (
         <Box mt={40}>
             <Title order={4} pb={20}>Desempenho do aluno por planeta:</Title>
             {
-                studentPerformanceByPlanets &&
-                <Line options={options} data={studentPerformanceByPlanets ?? [{ labels: [], datasets: [] }]} />
+                processedPlanetsData &&
+                <Line options={options} data={{ labels: studentPerformanceByPlanets?.labels, datasets: processedPlanetsData }} />
             }
         </Box>
 
