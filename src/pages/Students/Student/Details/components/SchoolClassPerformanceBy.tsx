@@ -85,33 +85,29 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
         }
     )
 
-    schoolClassPerformanceByPlanets?.datasets.forEach(element => {
-        if (element.label == "Consciência Fonológica") {
-            element.backgroundColor = theme.colors.cyan[3]
-            element.borderColor = theme.colors.cyan[3]
-        } else if (element.label == "Sistema de Escrita Alfabética") {
-            element.backgroundColor = theme.colors.violet[2]
-            element.borderColor = theme.colors.violet[2]
-        } else {
-            element.backgroundColor = theme.colors.orange[3]
-            element.borderColor = theme.colors.orange[3]
-        }
-        element.yAxisID = 'y'
-    });
+    const processChartData = (datasets) => {
+        if (!datasets) return [];
 
-    schoolClassPerformanceByExams?.datasets.forEach(element => {
-        if (element.label == "Consciência Fonológica") {
-            element.backgroundColor = theme.colors.cyan[3]
-            element.borderColor = theme.colors.cyan[3]
-        } else if (element.label == "Sistema de Escrita Alfabética") {
-            element.backgroundColor = theme.colors.violet[2]
-            element.borderColor = theme.colors.violet[2]
-        } else {
-            element.backgroundColor = theme.colors.orange[3]
-            element.borderColor = theme.colors.orange[3]
-        }
-        element.yAxisID = 'y'
-    });
+        return datasets.map(element => {
+            const colorMapping = {
+                "Consciência Fonológica": theme.colors.cyan[3],
+                "Sistema de Escrita Alfabética": theme.colors.violet[2],
+            };
+
+            const backgroundColor = colorMapping[element.label] || theme.colors.orange[3];
+            const borderColor = colorMapping[element.label] || theme.colors.orange[3];
+
+            return {
+                ...element,
+                backgroundColor,
+                borderColor,
+                yAxisID: 'y'
+            };
+        });
+    };
+
+    const processedExamData = processChartData(schoolClassPerformanceByExams?.datasets);
+    const processedPlanetsData = processChartData(schoolClassPerformanceByPlanets?.datasets);
 
     const [performanceType, setPerformanceType] = useState('Provas');
     const selectOptions = [
@@ -151,13 +147,12 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
                         />
                     </Flex>
                 </Accordion.Control>
-
             </Box>
 
             <Accordion.Panel>
                 <Center>
                     {performanceType == "Planetas" &&
-                        schoolClassPerformanceByPlanets &&
+                        processedPlanetsData &&
                         <Flex>
                             <Stack pr={10}>
                                 <Rating readOnly value={5} key={Math.random()} style={{ width: '100px' }} />
@@ -168,14 +163,14 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
                                 <Rating readOnly value={0} key={Math.random()} style={{ width: '100px' }} />
                             </Stack>
                             <div className="chart-container" style={{ position: 'relative', height: 'auto', width: '60vw' }}>
-                                <Bar options={options} data={schoolClassPerformanceByPlanets} />
+                                <Bar options={options} data={{ labels: schoolClassPerformanceByPlanets?.labels, datasets: processedPlanetsData }} />
                             </div>
                         </Flex>
                     }
 
                     {performanceType == "Provas" &&
-                        schoolClassPerformanceByExams &&
-                        <Bar options={options} data={schoolClassPerformanceByExams} />
+                        processedExamData &&
+                        <Bar options={options} data={{ labels: schoolClassPerformanceByExams?.labels, datasets: processedExamData }} />
                     }
                 </Center>
             </Accordion.Panel>

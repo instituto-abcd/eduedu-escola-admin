@@ -1,7 +1,11 @@
 export const Print = () => {
-    let printContents = document.getElementById('printablediv').innerHTML;
-    let originalContents = document.body.innerHTML;
-    document.body.innerHTML = printContents;
-    window.print();
-    document.body.innerHTML = originalContents;
+    const printableDiv = document.getElementById('printablediv').innerHTML;
+
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write('<html><head><title>Print</title></head><body>');
+    printWindow.document.write(printableDiv);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+    printWindow.close();
 }
