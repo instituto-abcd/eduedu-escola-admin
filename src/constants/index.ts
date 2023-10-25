@@ -105,4 +105,15 @@ export const AXIS_ENUM = {
   PHONOLOGICAL_AWARENESS: 'Consciência fonológica',
   ALPHABETIC_WRITING_SYSTEM: 'Sistema de escrita alfabética',
   READING_AND_TEXT_COMPREHENSION: 'Leitura e compreensão de texto',
+
+  ES: 'Consciência fonológica',
+  EA: 'Sistema de escrita alfabética',
+  LC: 'Leitura e compreensão de texto',
+
+  ES_ABREV: 'Consc. Fonológica',
+  EA_ABREV: 'Sistema de Escrita alfab.',
+
+  // Existe a variação LC e LS vindo do banco, não apague isso aqui pufavôzim
+  LC_ABREV: 'Leitura e Comp. de Texto',
+  LS_ABREV: 'Leitura e Comp. de Texto',
 } as const;
