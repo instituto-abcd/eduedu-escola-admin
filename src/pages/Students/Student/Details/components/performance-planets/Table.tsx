@@ -28,8 +28,8 @@ export function TablePerformancePlanets({ examsPerformanceData, studentId, dateE
                 </thead>
                 <tbody>
                     {examsPerformanceData &&
-                        examsPerformanceData.map((item) => (
-                            <tr key={item.axisCode}>
+                        examsPerformanceData.map((item, index) => (
+                            <tr key={index}>
                                 <td
                                     onClick={() => {
                                         modalExamPerformancePlanetsHandler.open()

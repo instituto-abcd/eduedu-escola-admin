@@ -9,42 +9,25 @@ type componentProps = {
 }
 
 export function HeaderStudent({ student, detailedSummary }: componentProps) {
+    // Desestruturação de propriedades:
+    const { name, registry, schoolGrade, schoolClassName, schoolPeriod } = student || {};
 
+    // Componentes separados:
+    const InfoItem = ({ label, value }) => (
+        <Grid.Col span="content">
+            <Group>
+                <Title order={5}>{label}:</Title>
+                <Text>{value}</Text>
+            </Group>
+        </Grid.Col>
+    );
     return (
-        <Grid columns={6} align="center">
-            <Grid.Col span={1}>
-                <Group>
-                    <Title order={5}>{student?.name}</Title>
-                </Group>
-            </Grid.Col>
-
-            <Grid.Col span={1}>
-                <Group>
-                    <Title order={5}>Matrícula:</Title>
-                    <Text>{student?.registry}</Text>
-                </Group>
-            </Grid.Col>
-
-            <Grid.Col span={1}>
-                <Group>
-                    <Title order={5}>Série:</Title>
-                    <Text>{SCHOOL_GRADE[student?.schoolGrade ?? "CHILDREN"]}</Text>
-                </Group>
-            </Grid.Col>
-
-            <Grid.Col span={1}>
-                <Group>
-                    <Title order={5}>Turma:</Title>
-                    <Text>{student?.schoolClassName}</Text>
-                </Group>
-            </Grid.Col>
-
-            <Grid.Col span={1}>
-                <Group>
-                    <Title order={5}>Período</Title>
-                    <Text>{SCHOOL_PERIOD[student?.schoolPeriod ?? "FULL"]}</Text>
-                </Group>
-            </Grid.Col>
+        <Grid columns={6} align="center" justify="space-between">
+            <InfoItem label="Nome" value={name} />
+            <InfoItem label="Série" value={registry} />
+            <InfoItem label="Turma" value={schoolClassName} />
+            <InfoItem label="Matrícula" value={SCHOOL_GRADE[schoolGrade ?? "Indisponível"]} />
+            <InfoItem label="Matrícula" value={SCHOOL_PERIOD[schoolPeriod ?? "Indisponível"]} />
 
             <Grid.Col span={1}>
                 <Button onClick={Print}>Gerar relatório</Button>

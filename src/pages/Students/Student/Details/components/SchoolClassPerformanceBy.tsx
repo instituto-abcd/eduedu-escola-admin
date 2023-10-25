@@ -26,6 +26,37 @@ type componentProps = {
 }
 export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
     const theme = useMantineTheme();
+    const [performanceType, setPerformanceType] = useState('Provas');
+
+    const selectOptions = [
+        {
+            label: 'Provas',
+            value: 'Provas'
+        },
+        {
+            label: 'Planetas',
+            value: 'Planetas'
+        }
+    ]
+
+    const { data: schoolClassPerformanceByPlanets } = useGetPlanetsCharts(
+        schoolClassId ?? "",
+        {
+            onError: (error) =>
+                errorNotification("Erro durante a operação", error.message)
+        }
+    )
+
+    const { data: schoolClassPerformanceByExams } = useGetExamsCharts(
+        schoolClassId ?? "",
+        {
+            onError: (error) =>
+                errorNotification("Erro durante a operação", error.message)
+        }
+    )
+
+    const processedExamData = processChartData(schoolClassPerformanceByExams?.datasets, theme);
+    const processedPlanetsData = processChartData(schoolClassPerformanceByPlanets?.datasets, theme);
 
     // Graphic stuff:
     ChartJS.register(
@@ -69,37 +100,6 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
             },
         },
     };
-
-    const { data: schoolClassPerformanceByPlanets } = useGetPlanetsCharts(
-        schoolClassId ?? "",
-        {
-            onError: (error) =>
-                errorNotification("Erro durante a operação", error.message)
-        }
-    )
-
-    const { data: schoolClassPerformanceByExams } = useGetExamsCharts(
-        schoolClassId ?? "",
-        {
-            onError: (error) =>
-                errorNotification("Erro durante a operação", error.message)
-        }
-    )
-
-    const processedExamData = processChartData(schoolClassPerformanceByExams?.datasets, theme);
-    const processedPlanetsData = processChartData(schoolClassPerformanceByPlanets?.datasets, theme);
-
-    const [performanceType, setPerformanceType] = useState('Provas');
-    const selectOptions = [
-        {
-            label: 'Provas',
-            value: 'Provas'
-        },
-        {
-            label: 'Planetas',
-            value: 'Planetas'
-        }
-    ]
     return (
         <Accordion.Item value="schoolClassPerformanceBy">
             <Box sx={{ display: 'flex', alignItems: 'center' }}>

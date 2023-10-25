@@ -11,7 +11,7 @@ import {
     Legend,
 } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Stars:
 import { Rating } from '@smastrom/react-rating'
@@ -23,26 +23,8 @@ import { processChartData } from "~/utils/chartMap";
 type componentProps = {
     studentId: string;
 }
-
 export function StudentPerformanceBy({ studentId }: componentProps) {
     const theme = useMantineTheme();
-
-    const { data: studentPerformanceByExam } = useGetExamCharts(
-        studentId ?? "",
-        {
-            onError: (error) =>
-                errorNotification("Erro durante a operação", error.message)
-        }
-    )
-
-    const { data: studentPerformanceByPlanets } = useGetPlanetsCharts(
-        studentId ?? "",
-        {
-            onError: (error) =>
-                errorNotification("Erro durante a operação", error.message)
-        }
-    )
-
     const [performanceType, setPerformanceType] = useState('Provas');
     const selectOptions = [
         {
@@ -53,7 +35,17 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
             label: 'Planetas',
             value: 'Planetas'
         }
-    ]
+    ];
+
+    const { data: studentPerformanceByExam, error: examError } = useGetExamCharts(studentId);
+    const { data: studentPerformanceByPlanets, error: planetsError } = useGetPlanetsCharts(studentId);
+
+    const processedExamData = processChartData(studentPerformanceByExam?.datasets, theme);
+    const processedPlanetsData = processChartData(studentPerformanceByPlanets?.datasets, theme);
+
+    if (examError || planetsError) {
+        errorNotification("Erro durante a operação", examError?.message || planetsError?.message);
+    }
 
     // Graphic stuff:
     ChartJS.register(
@@ -97,9 +89,6 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
             },
         },
     };
-
-    const processedExamData = processChartData(studentPerformanceByExam?.datasets, theme);
-    const processedPlanetsData = processChartData(studentPerformanceByPlanets?.datasets, theme);
 
     return (
         <Accordion.Item value="studentPerformanceBy">

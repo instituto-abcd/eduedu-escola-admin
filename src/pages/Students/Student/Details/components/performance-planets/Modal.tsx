@@ -1,16 +1,11 @@
 import { useState } from "react";
 import { useExamsPerformancePlanets } from "~/api/student";
 import { errorNotification } from "~/utils/errorNotification";
-
-// Components:
 import { Flex, Loader, Modal, Select, Table, Text, useMantineTheme } from "@mantine/core";
-
-// Icons:
 import { IconMinus, IconPlus } from "@tabler/icons-react";
-
-// Rating stars:
-import { Rating } from '@smastrom/react-rating'
-import '@smastrom/react-rating/style.css'
+import { Rating } from '@smastrom/react-rating';
+import '@smastrom/react-rating/style.css';
+import React, { useEffect } from "react"; // Adicionei o React importado
 
 type Props = {
     opened: boolean;
@@ -38,6 +33,9 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
             );
         },
     });
+
+    useEffect(() => {
+    }, [studentId]);
 
     return (
         <Modal
@@ -87,9 +85,9 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
                         :
                         <>
                             {examsPerformanceData &&
-                                examsPerformanceData.map((item) => (
-                                    <>
-                                        <tr key={item.axisName}>
+                                examsPerformanceData.map((item, index) => (
+                                    <React.Fragment key={index}>
+                                        <tr>
                                             <td
                                                 onClick={() => {
                                                     item.axisName == selectedItem ? setSelectedItem('') : setSelectedItem(item.axisName)
@@ -113,7 +111,7 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
                                                 {
                                                     item.planets?.length > 0 ?
                                                         item.planets.map((element) => (
-                                                            <tr>
+                                                            <tr key={element.planetName}>
                                                                 <td>{element.planetName}</td>
                                                                 <td></td>
                                                                 <td></td>
@@ -124,7 +122,7 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
                                                         ))
                                                         :
                                                         <tr>
-                                                            <td colspan={4}>
+                                                            <td colSpan={4}>
                                                                 <Text>Sem planetas realizados.</Text>
                                                             </td>
                                                         </tr>
@@ -133,7 +131,7 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
                                             :
                                             <></>
                                         }
-                                    </>
+                                    </React.Fragment>
                                 ))
                             }
                         </>
