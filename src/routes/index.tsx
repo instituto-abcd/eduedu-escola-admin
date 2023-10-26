@@ -44,7 +44,7 @@ export function AppRoutes() {
 
   return (
     <Fragment>
-      {syncStatus?.syncedFiles! < syncStatus?.totalFiles! && (
+      {syncStatus && syncStatus.syncedFiles < syncStatus.totalFiles && (
         <Notification
           title="Sincronizando planetas"
           loading
