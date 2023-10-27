@@ -30,9 +30,9 @@ export function StudentReport() {
     const performanceByArea = detailedSummary?.performanceByArea;
 
     useEffect(() => {
-        window.alert('Baixar PDF aqui');
-
-        window.print();
+        setTimeout(() => {
+            window.print();
+        }, 2000);
     }, []);
     return (
         <>

@@ -3,6 +3,8 @@ import { SCHOOL_GRADE, SCHOOL_PERIOD } from "~/constants";
 
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PDFFile from "./PDFFile";
+import { Link } from "react-router-dom";
+import { PATH } from "~/constants/path";
 
 
 type componentProps = {
@@ -12,7 +14,7 @@ type componentProps = {
 
 export function HeaderStudent({ student }: componentProps) {
     // Desestruturação de propriedades:
-    const { name, registry, schoolGrade, schoolClassName, schoolPeriod } = student || {};
+    const { id, name, registry, schoolGrade, schoolClassName, schoolPeriod } = student || {};
 
     // Componentes separados:
     const InfoItem = ({ label, value }) => (
@@ -34,6 +36,7 @@ export function HeaderStudent({ student }: componentProps) {
             <InfoItem label="Período" value={schoolPeriod ? SCHOOL_PERIOD[schoolPeriod] : "-"} />
 
             <Grid.Col span={1}>
+                <label style={{ fontSize: '12px' }}>PDFDownloadLink:</label>
                 <PDFDownloadLink document={<PDFFile />} filename="FORM">
                     {({ loading }) => (loading ?
                         <Button>Carregando relatório...</Button>
@@ -41,6 +44,18 @@ export function HeaderStudent({ student }: componentProps) {
                         <Button>Gerar relatório</Button>
                     )}
                 </PDFDownloadLink>
+
+                <br />
+                <br />
+                <label style={{ fontSize: '12px' }}>Gambiarra relatório react:</label>
+                <Link
+                    to={`${PATH.STUDENTS}/${id}/relatorio`}
+                    target="_blank" rel="noopener noreferrer"
+                    style={{ textDecoration: 'none' }}
+                >
+                    <Button>Gerar relatório</Button>
+                </Link>
+
             </Grid.Col>
         </Grid>
     )
