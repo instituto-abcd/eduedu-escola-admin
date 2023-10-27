@@ -8,6 +8,7 @@ import { ByPlanetsAfterExams } from "./ByPlanetsAfterExams";
 import { useParams } from "react-router-dom";
 import { useGetDetailedSummary, useStudentGetOne } from "~/api/student";
 import { errorNotification } from "~/utils/errorNotification";
+import { useEffect } from "react";
 
 export function StudentReport() {
     // Getting student ID from params:
@@ -27,6 +28,12 @@ export function StudentReport() {
 
     const studentId = student?.id;
     const performanceByArea = detailedSummary?.performanceByArea;
+
+    useEffect(() => {
+        window.alert('Baixar PDF aqui');
+
+        window.print();
+    }, []);
     return (
         <>
             {studentId &&
