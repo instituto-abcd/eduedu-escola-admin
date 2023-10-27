@@ -33,6 +33,12 @@ export function StudentReport() {
         setTimeout(() => {
             window.print();
         }, 2000);
+
+
+        window.addEventListener("afterprint", () => {
+            window.close()
+            self.close()
+        })
     }, []);
     return (
         <>
