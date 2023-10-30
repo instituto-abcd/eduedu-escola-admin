@@ -2,7 +2,7 @@ import { Outlet, Route, Routes } from "react-router-dom";
 import { StudentsListPage } from "../pages/Students/List";
 import { StudentEditPage } from "../pages/Students/Student";
 import { StudentDetailPage } from "../pages/Students/Student";
-import { StudentReport } from "~/pages/Students/Student/Report/Index";
+import { StudentReport } from "~/pages/Reports/Student/Index";
 
 export function StudentsRoutes() {
   return (

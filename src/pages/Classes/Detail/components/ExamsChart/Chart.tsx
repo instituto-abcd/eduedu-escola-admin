@@ -12,10 +12,11 @@ import { useState, useEffect } from "react";
 import { Box, Text } from "@mantine/core";
 
 type componentProps = {
-    schoolClassExamsChart: Array<{}>
+    schoolClassExamsChart: Array<{}>,
+    maxWidth?: string;
 }
 
-export function Chart({ schoolClassExamsChart }: componentProps) {
+export function Chart({ schoolClassExamsChart, maxWidth }: componentProps) {
 
     ChartJS.register(
         CategoryScale,
@@ -75,7 +76,7 @@ export function Chart({ schoolClassExamsChart }: componentProps) {
         <Box>
             {examsChart.datasets.length !== 0 &&
                 <div className="chart-container" style={{ position: 'relative', height: '35vh', width: '70vw' }}>
-                    <Line options={options} data={examsChart} />
+                    <Line options={options} data={examsChart} style={{ maxWidth: maxWidth ?? 'auto' }} />
                 </div>
             }
             {!examsChart.datasets.length &&

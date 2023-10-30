@@ -26,7 +26,6 @@ export function HeaderStudent({ student }: componentProps) {
         </Grid.Col>
     );
 
-
     return (
         <Grid columns={6} align="center" justify="space-between">
             <InfoItem label="Nome" value={name} />
@@ -36,20 +35,8 @@ export function HeaderStudent({ student }: componentProps) {
             <InfoItem label="Período" value={schoolPeriod ? SCHOOL_PERIOD[schoolPeriod] : "-"} />
 
             <Grid.Col span={1}>
-                <label style={{ fontSize: '12px' }}>PDFDownloadLink:</label>
-                <PDFDownloadLink document={<PDFFile />} filename="FORM">
-                    {({ loading }) => (loading ?
-                        <Button>Carregando relatório...</Button>
-                        :
-                        <Button>Gerar relatório</Button>
-                    )}
-                </PDFDownloadLink>
-
-                <br />
-                <br />
-                <label style={{ fontSize: '12px' }}>Gambiarra relatório react:</label>
                 <Link
-                    to={`${PATH.STUDENTS}/${id}/relatorio`}
+                    to={`${PATH.REPORTS}/aluno/${id}`}
                     target="_blank" rel="noopener noreferrer"
                     style={{ textDecoration: 'none' }}
                 >

@@ -43,7 +43,7 @@ export function StudentReport() {
     return (
         <>
             {studentId &&
-                <Box p={40}>
+                <Box p={20} style={{ maxWidth: '900px' }}>
                     <HeaderReport student={student} />
 
                     {performanceByArea &&
@@ -53,8 +53,8 @@ export function StudentReport() {
                         </>
                     }
 
-                    <ByExam studentId={student?.id} />
-                    <ByPlanet studentId={student?.id} />
+                    <ByExam studentId={student?.id} maxWidth="900px" />
+                    <ByPlanet studentId={student?.id} maxWidth="900px" />
                     <ByPlanetsAfterExams studentId={student?.id} />
                 </Box>
             }
