@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useExamsPerformancePlanets, useGetExamExecutions } from "~/api/student";
 import { monthsAbbreviation } from "~/constants";
 import { errorNotification } from "~/utils/errorNotification";
-import { TablePerformancePlanets } from "../performance-planets/Table";
+import { TablePerformancePlanets } from "../../Students/Student/Details/components/performance-planets/Table";
 
 type componentProps = {
     studentId: string;

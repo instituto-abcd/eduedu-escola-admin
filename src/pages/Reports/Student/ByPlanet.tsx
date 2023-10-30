@@ -22,8 +22,9 @@ import { useEffect, useState } from "react";
 
 type componentProps = {
     studentId: string;
+    maxWidth?: string;
 }
-export function ByPlanet({ studentId }: componentProps) {
+export function ByPlanet({ studentId, maxWidth }: componentProps) {
     const theme = useMantineTheme();
     const [studentPerformanceByPlanets, setStudentPerformanceByPlanets] = useState(null);
 
@@ -95,7 +96,11 @@ export function ByPlanet({ studentId }: componentProps) {
         <Box mt={40}>
             <Title order={4} pb={20}>Desempenho do aluno por planeta:</Title>
             {processedPlanetsData &&
-                <Line options={options} data={{ labels: studentPerformanceByPlanets?.labels, datasets: processedPlanetsData }} />
+                <Line
+                    options={options}
+                    data={{ labels: studentPerformanceByPlanets?.labels, datasets: processedPlanetsData }}
+                    style={{ maxWidth: maxWidth ?? 'auto' }}
+                />
             }
         </Box>
 

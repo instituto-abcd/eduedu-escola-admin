@@ -20,8 +20,9 @@ import { processChartData } from "~/utils/chartMap";
 
 type componentProps = {
     studentId: string;
+    maxWidth?: string;
 }
-export function ByExam({ studentId }: componentProps) {
+export function ByExam({ studentId, maxWidth }: componentProps) {
     const theme = useMantineTheme();
 
     const { data: studentPerformanceByExam } = useGetExamCharts(
@@ -82,7 +83,11 @@ export function ByExam({ studentId }: componentProps) {
             <Title order={4} pb={20}>Desempenho do aluno por prova:</Title>
 
             {processedExamData &&
-                <Line options={options} data={{ labels: studentPerformanceByExam?.labels, datasets: processedExamData }} />
+                <Line
+                    options={options}
+                    data={{ labels: studentPerformanceByExam?.labels, datasets: processedExamData }}
+                    style={{ maxWidth: maxWidth ?? 'auto' }}
+                />
             }
         </Box>
     )
