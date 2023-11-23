@@ -29,6 +29,7 @@ export function AppRoutes() {
       syncedFiles: 0,
       percent: 0,
       duration: "00:00:00",
+      running: false,
     },
     onSuccess: (data) => {
       if (
@@ -46,7 +47,7 @@ export function AppRoutes() {
 
   return (
     <Fragment>
-      {syncStatus && syncStatus.syncedFiles < syncStatus.totalFiles && (
+      {syncStatus && syncStatus.running && (
         <Notification
           title="Sincronizando planetas"
           loading

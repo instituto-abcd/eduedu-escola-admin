@@ -22,6 +22,7 @@ type SyncStatus = {
   syncedFiles: number;
   percent: number;
   duration: string;
+  running: boolean;
 };
 
 const URL = {
