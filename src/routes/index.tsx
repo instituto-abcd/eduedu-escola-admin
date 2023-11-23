@@ -8,11 +8,13 @@ import { StudentsRoutes } from "./Students";
 import { UsersRoutes } from "./Users";
 import { ClassesRoutes } from "./Classes";
 import { AuthRoutes } from "./Auth";
+import { ReportRoutes } from "./Report";
 import { SetupRoutes } from "./Setup";
 import { Fragment } from "react";
 import { Notification, Progress, Stack, Text } from "@mantine/core";
 import { useSyncStatus } from "~/api/sync";
 import { successNotification } from "~/utils/successNotification";
+import { LayoutReport } from "~/components/Layout/LayoutReport";
 
 export function AppRoutes() {
   function nested(route: string) {
@@ -74,6 +76,8 @@ export function AppRoutes() {
             />
             <Route path={nested(PATH.CLASSES)} Component={ClassesRoutes} />
           </Route>
+
+          <Route path={nested(PATH.REPORTS)} Component={ReportRoutes} />
           <Route path={nested(PATH.LOGIN)} Component={AuthRoutes} />
           <Route path={nested(PATH.SETUP)} Component={SetupRoutes} />
         </Routes>

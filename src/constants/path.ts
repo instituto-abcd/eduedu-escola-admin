@@ -11,4 +11,5 @@ export const PATH = {
   NEW_CLASS: "/turmas/nova-turma",
   EDIT_CLASS: "/turmas/editar",
   SETUP: "/setup",
+  REPORTS: "/relatorio",
 };

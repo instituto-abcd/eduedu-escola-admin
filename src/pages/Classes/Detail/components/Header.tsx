@@ -1,7 +1,9 @@
 import { Grid, Group, Title, Text, Button } from "@mantine/core";
 import { SCHOOL_GRADE } from "~/constants";
-import { SchoolClassReport } from "../../Report/SchoolClassReport";
+import { SchoolClassReport } from "../../../Reports/SchoolClass/SchoolClassReport";
 import { Print } from "~/utils/pdfDownload";
+import { Link } from "react-router-dom";
+import { PATH } from "~/constants/path";
 
 type componentProps = {
     schoolClass: Array<{}>
@@ -47,10 +49,13 @@ export function SchoolClassHeader({ schoolClass }: componentProps) {
             </Grid.Col>
 
             <Grid.Col span={1}>
-                <Button onClick={Print}>Gerar relatório</Button>
-                <div id='printablediv' style={{ display: 'none' }}>
-                    <SchoolClassReport />
-                </div>
+                <Link
+                    to={`${PATH.REPORTS}/turma/${schoolClass.id}`}
+                    target="_blank" rel="noopener noreferrer"
+                    style={{ textDecoration: 'none' }}
+                >
+                    <Button>Gerar relatório</Button>
+                </Link>
             </Grid.Col>
         </Grid>
     )
