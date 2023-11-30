@@ -30,6 +30,7 @@ export function AppRoutes() {
       percent: 0,
       duration: "00:00:00",
       running: false,
+      currentOperation: "",
     },
     onSuccess: (data) => {
       if (
@@ -47,21 +48,26 @@ export function AppRoutes() {
 
   return (
     <Fragment>
-      {syncStatus && syncStatus.running && (
-        <Notification
-          title="Sincronizando planetas"
-          loading
-          withCloseButton={false}
-          style={{ position: "absolute", bottom: 44, right: 44 }}
-        >
-          <Stack spacing={6}>
-            <Progress value={syncStatus?.percent} my={6} />
-            <Text size="xs" color="dark.3">
-              Artefatos: {syncStatus?.syncedFiles}/{syncStatus?.totalFiles}
-            </Text>
-          </Stack>
-        </Notification>
-      )}
+      {syncStatus &&
+        syncStatus.running &&
+        syncStatus.syncedFiles < syncStatus.totalFiles && (
+          <Notification
+            title="Sincronização de Planetas"
+            loading
+            withCloseButton={false}
+            style={{ position: "absolute", bottom: 44, right: 44 }}
+          >
+            <Stack spacing={6}>
+              <Progress value={syncStatus?.percent} my={6} />
+              <Text size="xs" color="dark.2">
+                {syncStatus?.currentOperation}
+              </Text>
+              <Text size="xs" color="dark.3">
+                Artefatos baixados: {syncStatus?.syncedFiles}/{syncStatus?.totalFiles}
+              </Text>
+            </Stack>
+          </Notification>
+        )}
 
       <BrowserRouter>
         <Routes>

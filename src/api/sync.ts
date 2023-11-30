@@ -23,6 +23,7 @@ type SyncStatus = {
   percent: number;
   duration: string;
   running: boolean;
+  currentOperation: string;
 };
 
 const URL = {
