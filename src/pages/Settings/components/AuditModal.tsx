@@ -51,6 +51,7 @@ export function AuditModal({ opened, onClose }: ModalProps) {
               { label: "Data", type: "date", searchTerm: "createdAt" },
             ]}
             onValueChange={setSearch}
+            initialValues={search}
           />
         </thead>
         <tbody>
