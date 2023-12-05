@@ -11,10 +11,11 @@ import { AuthRoutes } from "./Auth";
 import { ReportRoutes } from "./Report";
 import { SetupRoutes } from "./Setup";
 import { Fragment } from "react";
-import { Notification, Progress, Stack, Text } from "@mantine/core";
+import { Notification, Stack, Text } from "@mantine/core";
 import { useSyncStatus } from "~/api/sync";
 import { successNotification } from "~/utils/successNotification";
 import { LayoutReport } from "~/components/Layout/LayoutReport";
+import { CustomProgress } from "~/components/CustomProgress/CustomProgress";
 
 export function AppRoutes() {
   function nested(route: string) {
@@ -58,13 +59,13 @@ export function AppRoutes() {
             style={{ position: "absolute", bottom: 44, right: 44 }}
           >
             <Stack spacing={6}>
-              <Progress value={syncStatus?.percent} my={6} />
+              <CustomProgress value={syncStatus?.percent} label={syncStatus?.percent?.toFixed(2)}/>
               <Text size="xs" color="dark.2">
                 {syncStatus?.currentOperation}
               </Text>
-              <Text size="xs" color="dark.3">
+              {/* <Text size="xs" color="dark.3">
                 Artefatos baixados: {syncStatus?.syncedFiles}/{syncStatus?.totalFiles}
-              </Text>
+              </Text> */}
             </Stack>
           </Notification>
         )}
