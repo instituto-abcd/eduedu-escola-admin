@@ -1,5 +1,5 @@
 import { Table } from "@mantine/core";
-import { Rating } from '@smastrom/react-rating'
+import { Rating } from "@mantine/core";
 
 type componentProps = {
     schoolClassPerformancePlanets: Array<[]>
@@ -30,7 +30,7 @@ export function PlanetPerformanceTable({ schoolClassPerformancePlanets }: compon
                             <td>{item.offeredPlanets}</td>
                             <td>{item.accomplishedPlanets}</td>
                             <td>
-                                <Rating readOnly value={item.averageStars} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly defaultValue={item.averageStars ?? 0} value={item.averageStars} key={Math.random()} style={{ width: '100px' }} />
                             </td>
                         </tr>
                     ))}
