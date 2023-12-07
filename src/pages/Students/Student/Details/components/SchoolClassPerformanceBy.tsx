@@ -81,22 +81,15 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
                 display: false,
             },
             legend: {
-                display: false,
+                display: true,
             }
         },
         scales: {
             y: {
                 type: 'linear' as const,
-                display: true,
+                display: true, 
                 position: 'left' as const,
-            },
-            y1: {
-                type: 'linear' as const,
-                display: true,
-                position: 'right' as const,
-                grid: {
-                    drawOnChartArea: false,
-                },
+                max: performanceType === 'Provas' ? 100 : 5,
             },
         },
     };
@@ -134,13 +127,12 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
                     {performanceType == "Planetas" &&
                         processedPlanetsData &&
                         <Flex>
-                            <Stack pr={10}>
+                            <Stack pr={5} mt={20} p={5} style={{gap:21}}>
                                 <Rating readOnly value={5} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={4} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={3} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={2} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={1} key={Math.random()} style={{ width: '100px' }} />
-                                <Rating readOnly value={0} key={Math.random()} style={{ width: '100px' }} />
                             </Stack>
                             <div className="chart-container" style={{ position: 'relative', height: 'auto', width: '60vw' }}>
                                 <Bar options={options} data={{ labels: schoolClassPerformanceByPlanets?.labels, datasets: processedPlanetsData }} />

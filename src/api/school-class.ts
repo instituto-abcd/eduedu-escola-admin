@@ -325,7 +325,7 @@ export function useGetPlanetsCharts(
 
 export function useGetExamsCharts(
   id: string,
-  options?: QueryOptions<Student, [typeof KEY.PLANETS_CHART_BY_ID, string]>
+  options?: QueryOptions<Student, [typeof KEY.EXAMS_CHART_BY_ID, string]>
 ) {
   const handler = useCallback(
     function () {
@@ -333,7 +333,7 @@ export function useGetExamsCharts(
     },
     [id]
   );
-  return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options);
+  return useQuery([KEY.EXAMS_CHART_BY_ID, id], handler, options);
 }
 
 export function useGetExamsPerformance(
