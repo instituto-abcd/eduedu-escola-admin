@@ -1,6 +1,7 @@
 import { ActionIcon, Table, Select, TextInput } from "@mantine/core";
 import { IconEye } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
+import { Rating } from "@mantine/core";
 
 type componentProps = {
     data: Array<[]>;
@@ -39,9 +40,15 @@ export function TablePlanet({ data }: componentProps) {
                         <tr>
                             <td>{item.studentName}</td>
                             <td>{item.lastExamDate}</td>
-                            <td>{item.cfo.averageStars}</td>
-                            <td>{item.sea.averageStars}</td>
-                            <td>{item.lct.averageStars}</td>
+                            <td>
+                                <Rating readOnly defaultValue={item?.cfo?.averageStars ?? 0} value={item?.cfo?.averageStars} key={Math.random()} style={{ width: '100px' }} />
+                            </td>
+                            <td>
+                                <Rating readOnly defaultValue={item?.sea?.averageStars ?? 0} value={item?.sea?.averageStars} key={Math.random()} style={{ width: '100px' }} />
+                            </td>
+                            <td>
+                                <Rating readOnly defaultValue={item?.lct?.averageStars ?? 0} value={item?.lct?.averageStars} key={Math.random()} style={{ width: '100px' }} />
+                            </td>
                             <td>
                                 <ActionIcon
                                     component={Link}
