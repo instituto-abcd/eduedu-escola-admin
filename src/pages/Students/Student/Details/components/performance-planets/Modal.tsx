@@ -1,11 +1,10 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useExamsPerformancePlanets } from "~/api/student";
 import { errorNotification } from "~/utils/errorNotification";
 import { Flex, Loader, Modal, Select, Table, Text, useMantineTheme } from "@mantine/core";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
-import { Rating } from '@smastrom/react-rating';
+import { Rating } from "@mantine/core";
 import '@smastrom/react-rating/style.css';
-import React, { useEffect } from "react"; // Adicionei o React importado
 
 type Props = {
     opened: boolean;
@@ -33,9 +32,6 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
             );
         },
     });
-
-    useEffect(() => {
-    }, [studentId]);
 
     return (
         <Modal
@@ -116,7 +112,7 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
                                                                 <td></td>
                                                                 <td></td>
                                                                 <td>
-                                                                    <Rating readOnly value={item.stars} key={Math.random()} style={{ width: '100px' }} />
+                                                                    <Rating readOnly defaultValue={element.stars ?? 0} value={element.stars} key={Math.random()} style={{ width: '100px' }} />
                                                                 </td>
                                                             </tr>
                                                         ))
