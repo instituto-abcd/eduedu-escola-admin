@@ -90,6 +90,10 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
                 display: true, 
                 position: 'left' as const,
                 max: performanceType === 'Provas' ? 100 : 5,
+                min: performanceType === 'Provas' ? 0 : 1,
+                ticks: {
+                    stepSize: performanceType === 'Provas' ? 20 : 1
+                }
             },
         },
     };

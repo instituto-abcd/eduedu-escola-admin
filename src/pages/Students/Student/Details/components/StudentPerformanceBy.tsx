@@ -70,22 +70,19 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
                 display: false,
             },
             legend: {
-                display: false,
+                display: true,
             }
         },
         scales: {
             y: {
                 type: 'linear' as const,
-                display: true,
+                display: true, 
                 position: 'left' as const,
-            },
-            y1: {
-                type: 'linear' as const,
-                display: true,
-                position: 'right' as const,
-                grid: {
-                    drawOnChartArea: false,
-                },
+                max: performanceType === 'Provas' ? 100 : 5,
+                min: performanceType === 'Provas' ? 0 : 1,
+                ticks: {
+                    stepSize: performanceType === 'Provas' ? 20 : 1
+                }
             },
         },
     };
@@ -125,7 +122,7 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
                     {performanceType == "Planetas" &&
                         processedPlanetsData &&
                         <Flex>
-                            <Stack pr={10}>
+                            <Stack pr={5} mt={20} p={5} style={{gap:21}}>
                                 <Rating readOnly value={5} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={4} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={3} key={Math.random()} style={{ width: '100px' }} />

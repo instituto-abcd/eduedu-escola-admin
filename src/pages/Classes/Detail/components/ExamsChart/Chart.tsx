@@ -9,7 +9,8 @@ import {
 } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
 import { useState, useEffect } from "react";
-import { Box, Text } from "@mantine/core";
+import { Box, Text, useMantineTheme } from "@mantine/core";
+import { processChartData } from "~/utils/chartMap";
 
 type componentProps = {
     schoolClassExamsChart: Array<{}>,
@@ -17,6 +18,7 @@ type componentProps = {
 }
 
 export function Chart({ schoolClassExamsChart, maxWidth }: componentProps) {
+    const theme = useMantineTheme();
 
     ChartJS.register(
         CategoryScale,
@@ -48,27 +50,24 @@ export function Chart({ schoolClassExamsChart, maxWidth }: componentProps) {
                 type: 'linear' as const,
                 display: true,
                 position: 'left' as const,
-            },
-            y1: {
-                type: 'linear' as const,
-                display: true,
-                position: 'right' as const,
-                grid: {
-                    drawOnChartArea: false,
-                },
+                max: 100,
+                min: 0,
+                ticks: {
+                    stepSize: 20
+                  }
             },
         },
     };
 
     const [examsChart, setExamsChart] = useState({
         labels: schoolClassExamsChart?.labels ?? [],
-        datasets: schoolClassExamsChart?.datasets ?? []
+        datasets: processChartData(schoolClassExamsChart?.datasets, theme) ?? []
     });
 
     useEffect(() => {
         setExamsChart({
             labels: schoolClassExamsChart?.labels ?? [],
-            datasets: schoolClassExamsChart?.datasets ?? []
+            datasets:  processChartData(schoolClassExamsChart?.datasets, theme) ?? []
         });
     }, [schoolClassExamsChart]);
 
