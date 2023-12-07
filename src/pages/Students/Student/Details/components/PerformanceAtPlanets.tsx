@@ -17,6 +17,7 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
 
     const [examsPerformanceData, setExamsPerformanceData] = useState([]);
     const [dateExam, setDateExam] = useState('-');
+    const [dateExamList, setDateExamList] = useState([])
 
     const { mutate: examsPerformancePlanets } = useExamsPerformancePlanets({
         onSuccess: (data) => {
@@ -29,7 +30,7 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
             );
         },
     });
-    const { data: dateExamList } = useGetExamExecutions(
+    const { data } = useGetExamExecutions(
         studentId,
         {
             onSuccess: (data) => {
@@ -45,6 +46,7 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
                 });
 
                 if (formattedData.length > 0) {
+                    setDateExamList(formattedData)
                     setDateExam(formattedData[0].value);
                     examsPerformancePlanets({
                         id: studentId,
