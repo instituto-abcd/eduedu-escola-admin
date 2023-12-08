@@ -1,6 +1,6 @@
 import { useDisclosure } from "@mantine/hooks";
 import { AXIS_ENUM } from "~/constants";
-import { Box, Button, Collapse, Flex, Group, useMantineTheme, Text, createStyles } from "@mantine/core";
+import { Box, Button, Collapse, Flex, Group, useMantineTheme, Text, createStyles, Rating } from "@mantine/core";
 import { IconFileDescription, IconMinus, IconPlus, IconUsers } from "@tabler/icons-react";
 import { PATH } from "~/constants/path";
 import { Link } from "react-router-dom";
@@ -8,6 +8,11 @@ import { Link } from "react-router-dom";
 type componentsProps = {
     schoolClass: any;
 }
+
+type PerformanceItem = {
+    axis: string;
+    percentage: number;
+  };
 
 const useStyles = createStyles({
     linkDetailClass: {
@@ -23,7 +28,11 @@ export function ButtonCollapse({ schoolClass }: componentsProps) {
 
     const [opened, { toggle }] = useDisclosure(false);
 
-    function renderDesempenho(title, performanceData) {
+    const renderDesempenho = (
+        title: string,
+        performanceData: PerformanceItem[] | null,
+        type: string,
+      ) => {
         return (
             <Group style={performanceData ? {} : { display: "none" }} pb={20}>
                 <Text size="sm" fw={700}>
@@ -31,10 +40,16 @@ export function ButtonCollapse({ schoolClass }: componentsProps) {
                 </Text>
                 {performanceData.map((item) => (
                     <Text size="sm" c="dimmed" key={item.axis}>
-                        {AXIS_ENUM[`${item.axis}_ABREV`]}&nbsp;
-                        <span style={{ color: theme.colors.orange[4] }}>
-                            {item.percentage}%
-                        </span>
+                        <Box style={{ display:'flex' }}>
+                            {AXIS_ENUM[`${item.axis}_ABREV`]}&nbsp;
+                            {type === 'Provas' ? (
+                            <span style={{ color: theme.colors.orange[4] }}>
+                                {item.percentage}%
+                            </span>
+                            ): 
+                                <Rating readOnly defaultValue={item.percentage ?? 0} value={item.percentage} style={{alignItems:'center'}} />
+                            }
+                        </Box>
                     </Text>
                 ))}
                 {!performanceData || performanceData.length === 0 && (
@@ -82,8 +97,8 @@ export function ButtonCollapse({ schoolClass }: componentsProps) {
                     pt={10}
                     px={20}
                 >
-                    {renderDesempenho('Desempenho em Provas (%)', schoolClass.examPerformance)}
-                    {renderDesempenho('Desempenho em Planetas (%)', schoolClass.planetPerformance)}
+                    {renderDesempenho('Desempenho em Provas (%)', schoolClass.examPerformance, 'Provas')}
+                    {renderDesempenho('Desempenho em Planetas (%)', schoolClass.planetPerformance, 'Planetas')}
 
                     <Link
                         to={`${PATH.CLASSES}/${schoolClass.id}`}
