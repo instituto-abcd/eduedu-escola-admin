@@ -37,6 +37,9 @@ const userInputValidation = z.object({
       return { message: 'Por favor, selecione uma opção' };
     },
   }),
+  password: z
+    .string()
+    .min(1, { message: "Senha não pode ser vazia" })
 });
 
 export function CreateMasterForm() {
@@ -59,6 +62,8 @@ export function CreateMasterForm() {
       email: "",
       document: "",
       profile: "DIRECTOR",
+      password: "",
+
     },
     validate: zodResolver(userInputValidation),
   });
