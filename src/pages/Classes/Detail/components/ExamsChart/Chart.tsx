@@ -74,7 +74,7 @@ export function Chart({ schoolClassExamsChart, maxWidth }: componentProps) {
     return (
         <Box>
             {examsChart.datasets.length !== 0 &&
-                <div className="chart-container" style={{ position: 'relative', height: '35vh', width: '70vw' }}>
+                <div className="chart-container" style={{ position: 'relative', height: '35vh', width: '100%' }}>
                     <Line options={options} data={examsChart} style={{ maxWidth: maxWidth ?? 'auto' }} />
                 </div>
             }

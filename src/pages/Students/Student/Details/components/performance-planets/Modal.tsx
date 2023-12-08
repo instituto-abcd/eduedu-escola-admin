@@ -88,7 +88,7 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
                                                 onClick={() => {
                                                     item.axisName == selectedItem ? setSelectedItem('') : setSelectedItem(item.axisName)
                                                 }}
-                                                style={{ color: theme.colors.blue[6] }}
+                                                style={{ color: theme.colors.blue[6], cursor: 'pointer' }}
                                             >
                                                 <Flex align="center">
                                                     {selectedItem == item.id ? <IconMinus /> : <IconPlus />}

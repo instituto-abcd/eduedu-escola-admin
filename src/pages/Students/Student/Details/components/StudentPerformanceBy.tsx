@@ -79,7 +79,7 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
                 display: true, 
                 position: 'left' as const,
                 max: performanceType === 'Provas' ? 100 : 5,
-                min: performanceType === 'Provas' ? 0 : 1,
+                min: performanceType === 'Provas' ? 0 : 0,
                 ticks: {
                     stepSize: performanceType === 'Provas' ? 20 : 1
                 }
@@ -121,15 +121,16 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
                 <Center>
                     {performanceType == "Planetas" &&
                         processedPlanetsData &&
-                        <Flex>
-                            <Stack pr={5} mt={20} p={5} style={{gap:21}}>
+                        <Flex style={{width: '100%'}}>
+                            <Stack pr={5} mt={15} p={5} style={{gap:16}}>
                                 <Rating readOnly value={5} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={4} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={3} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={2} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={1} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly value={0} key={Math.random()} style={{ width: '100px' }} />
                             </Stack>
-                            <div className="chart-container" style={{ position: 'relative', height: 'auto', width: '60vw' }}>
+                            <div className="chart-container" style={{ position: 'relative', height: 'auto', width: '100%' }}>
                                 <Line options={options} data={{ labels: studentPerformanceByPlanets?.labels, datasets: processedPlanetsData }} />
                             </div>
                         </Flex>
@@ -137,7 +138,7 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
 
                     {performanceType == "Provas" &&
                         processedExamData &&
-                        <div className="chart-container" style={{ position: 'relative', height: 'auto', width: '70vw' }}>
+                        <div className="chart-container" style={{ position: 'relative', height: 'auto', width: '100%' }}>
                             <Line options={options} data={{ labels: studentPerformanceByExam?.labels, datasets: processedExamData }} />
                         </div>
                     }
