@@ -4,12 +4,13 @@ import { useGetExamsCharts, useGetExamsPerformance, useGetPlanetsPerformance, us
 
 // Components:
 import { Box, Divider, Flex, Grid, Title, Text, Image } from "@mantine/core";
-import { PlanetPerformanceTable } from "../Detail/components/planets-performance/Table";
-import { Chart } from "../Detail/components/ExamsChart/Chart";
+import { PlanetPerformanceTable } from "../../Classes/Detail/components/planets-performance/Table";
+import { Chart } from "../../Classes/Detail/components/ExamsChart/Chart";
 import { ExamPerformance } from "~/components/ExamPerformance/ExamPerformance";
 
 // Images:
 import eduEduLogo from '~/assets/logos/eduedu-preta.svg'
+import { useEffect } from "react";
 
 export function SchoolClassReport() {
 
@@ -24,8 +25,19 @@ export function SchoolClassReport() {
     const { data: schoolClassPerformancePlanets } = useGetPlanetsPerformance(params.classId ?? "", {});
     const { data: schoolClassExamsChart } = useGetExamsCharts(params.classId ?? "", {});
 
+    useEffect(() => {
+        setTimeout(() => {
+            window.print();
+        }, 2000);
+
+
+        window.addEventListener("afterprint", () => {
+            window.close()
+            self.close()
+        })
+    }, []);
     return (
-        <Box p={20}>
+        <Box p={20} style={{ maxWidth: '900px' }}>
 
             <Grid columns={6} pb={30}>
                 <Grid.Col span={1}>
@@ -83,7 +95,7 @@ export function SchoolClassReport() {
 
             <Box>
                 <Title order={4} p={30} pl={0}>Histórico do resultado de provas da turma</Title>
-                <Chart schoolClassExamsChart={schoolClassExamsChart} />
+                <Chart schoolClassExamsChart={schoolClassExamsChart} maxWidth="900px" />
             </Box>
         </Box>
     )

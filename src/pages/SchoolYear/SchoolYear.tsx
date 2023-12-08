@@ -15,7 +15,9 @@ export function SchoolYearPage() {
   });
 
   const [createModalVisible, createModalHandlers] = useDisclosure(false);
-  const [promoteStudentsModal, promoteStudentsModalHandlers] = useDisclosure(false)
+  const [promoteStudentsModal, promoteStudentsModalHandlers] = useDisclosure(false);
+  const currentYear = new Date().getFullYear();
+
   return (
     <Stack spacing="xl">
       <PageHeader
@@ -24,9 +26,11 @@ export function SchoolYearPage() {
                     Só é possível existir o ano letivo atual e um ano letivo futuro, porém apenas um ano letivo pode estar ativo por vez.
                     Durante o final do ano letivo (31 de dezembro) o ano que estava vigente automáticamente se torna finalizado."
       >
-        <Button onClick={promoteStudentsModalHandlers.open}>
-          Promover Alunos
-        </Button>
+        {schoolYears && schoolYears.find((year) => year.name > currentYear) && (
+          <Button onClick={promoteStudentsModalHandlers.open}>
+            Promover Alunos
+          </Button>
+        )}
       </PageHeader>
 
       {!isLoading && (

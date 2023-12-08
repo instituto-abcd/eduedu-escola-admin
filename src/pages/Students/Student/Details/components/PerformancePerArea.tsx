@@ -22,9 +22,7 @@ export function PerformancePerArea({ performanceByArea }: componentProps) {
                         performanceByArea.map((item, i) => (
                             <Box key={item?.axisCode}>
                                 <Text>{item?.axisName}: <span style={{ color: `${item?.color}` }}>{item?.description}</span></Text>
-                                {(i + 1) != performanceByArea.length &&
-                                    <Divider orientation="vertical" variant="solid" />
-                                }
+                                {(i + 1) !== performanceByArea.length && <Divider orientation="vertical" variant="solid" />}
                             </Box>
                         ))
                     }

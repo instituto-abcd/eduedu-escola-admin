@@ -1,59 +1,48 @@
 import { Button, Grid, Group, Title, Text } from "@mantine/core";
 import { SCHOOL_GRADE, SCHOOL_PERIOD } from "~/constants";
-import { StudentReport } from "./report/Index";
-import { Print } from "~/utils/pdfDownload";
+
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import PDFFile from "./PDFFile";
+import { Link } from "react-router-dom";
+import { PATH } from "~/constants/path";
+
 
 type componentProps = {
     student: Array<{}>;
     detailedSummary: Array<{}>;
 }
 
-export function HeaderStudent({ student, detailedSummary }: componentProps) {
+export function HeaderStudent({ student }: componentProps) {
+    // Desestruturação de propriedades:
+    const { id, name, registry, schoolGrade, schoolClassName, schoolPeriod } = student || {};
+
+    // Componentes separados:
+    const InfoItem = ({ label, value }) => (
+        <Grid.Col span="content">
+            <Group>
+                <Title order={5}>{label}:</Title>
+                <Text>{value}</Text>
+            </Group>
+        </Grid.Col>
+    );
 
     return (
-        <Grid columns={6} align="center">
-            <Grid.Col span={1}>
-                <Group>
-                    <Title order={5}>{student?.name}</Title>
-                </Group>
-            </Grid.Col>
+        <Grid columns={6} align="center" justify="space-between">
+            <InfoItem label="Nome" value={name} />
+            <InfoItem label="Série" value={registry} />
+            <InfoItem label="Turma" value={schoolClassName} />
+            <InfoItem label="Matrícula" value={schoolGrade ? SCHOOL_GRADE[schoolGrade] : "-"} />
+            <InfoItem label="Período" value={schoolPeriod ? SCHOOL_PERIOD[schoolPeriod] : "-"} />
 
             <Grid.Col span={1}>
-                <Group>
-                    <Title order={5}>Matrícula:</Title>
-                    <Text>{student?.registry}</Text>
-                </Group>
-            </Grid.Col>
+                <Link
+                    to={`${PATH.REPORTS}/aluno/${id}`}
+                    target="_blank" rel="noopener noreferrer"
+                    style={{ textDecoration: 'none' }}
+                >
+                    <Button>Gerar relatório</Button>
+                </Link>
 
-            <Grid.Col span={1}>
-                <Group>
-                    <Title order={5}>Série:</Title>
-                    <Text>{SCHOOL_GRADE[student?.schoolGrade ?? "CHILDREN"]}</Text>
-                </Group>
-            </Grid.Col>
-
-            <Grid.Col span={1}>
-                <Group>
-                    <Title order={5}>Turma:</Title>
-                    <Text>{student?.schoolClassName}</Text>
-                </Group>
-            </Grid.Col>
-
-            <Grid.Col span={1}>
-                <Group>
-                    <Title order={5}>Período</Title>
-                    <Text>{SCHOOL_PERIOD[student?.schoolPeriod ?? "FULL"]}</Text>
-                </Group>
-            </Grid.Col>
-
-            <Grid.Col span={1}>
-                <Button onClick={Print}>Gerar relatório</Button>
-                <div id='printablediv' style={{ display: 'none' }}>
-                    <StudentReport
-                        student={student}
-                        detailedSummary={detailedSummary}
-                    />
-                </div>
             </Grid.Col>
         </Grid>
     )

@@ -3,25 +3,13 @@ import { API } from "./base";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { MutationOptions, QueryOptions } from "./api-types";
 
-// type Settings = {
-//   id: string;
-//   schoolName?: string;
-//   synchronizationPlanets: boolean;
-//   smtpHostName: string;
-//   smtpUserName: string;
-//   smtpPassword: string;
-//   smtpPort: string;
-//   sslIsActive: boolean;
-//   schoolId: string;
-//   createdAt: string;
-//   updatedAt: string;
-// };
-
 type SyncStatus = {
   totalFiles: number;
   syncedFiles: number;
   percent: number;
   duration: string;
+  running: boolean;
+  currentOperation: string;
 };
 
 const URL = {
@@ -76,5 +64,5 @@ export function useSyncStatus(
     return SyncAPI.getSyncStatus();
   }, []);
 
-  return useQuery([KEY.PLANETS], handler, options);
+  return useQuery([KEY.SYNCSTATUS], handler, options);
 }

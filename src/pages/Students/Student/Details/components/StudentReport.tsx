@@ -8,11 +8,7 @@ export function StudentReport({ summaries }: componentProps) {
     const theme = useMantineTheme();
     return (
         <Accordion.Item value="studentReport">
-            <Accordion.Control
-                style={{
-                    maxWidth: '85%'
-                }}
-            >
+            <Accordion.Control style={{ maxWidth: '85%' }}>
                 <Text color={theme.colors.indigo[9]}>Relatório do aluno</Text>
             </Accordion.Control>
 

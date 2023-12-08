@@ -1,6 +1,7 @@
 // Utils & Aux:
 import { useGetPlanetsCharts } from "~/api/student";
 import { errorNotification } from "~/utils/errorNotification";
+import { processChartData } from "~/utils/chartMap";
 
 // Components:
 import { Box, Title, useMantineTheme } from "@mantine/core";
@@ -15,21 +16,36 @@ import {
     Tooltip,
     Legend,
 } from "chart.js/auto";
-import { Line } from "react-chartjs-2";;
+import { Line } from "react-chartjs-2";
+import { useEffect, useState } from "react";
+;
 
 type componentProps = {
     studentId: string;
+    maxWidth?: string;
 }
-export function ByPlanet({ studentId }: componentProps) {
+export function ByPlanet({ studentId, maxWidth }: componentProps) {
     const theme = useMantineTheme();
+    const [studentPerformanceByPlanets, setStudentPerformanceByPlanets] = useState(null);
 
-    const { data: studentPerformanceByPlanets } = useGetPlanetsCharts(
-        studentId ?? "",
-        {
-            onError: (error) =>
-                errorNotification("Erro durante a operação", error.message)
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // const data = await useGetPlanetsCharts(studentId);
+                // setStudentPerformanceByPlanets(data);
+            } catch (error) {
+                errorNotification("Erro durante a operação", error.message);
+            }
+        };
+
+        if (studentId) {
+            fetchData();
         }
-    )
+    }, [studentId]);
+
+    if (!studentId) {
+        return null; // Renderiza algo diferente ou apenas não renderiza nada enquanto studentId é nulo
+    }
 
     // Graphic stuff:
     ChartJS.register(
@@ -74,25 +90,17 @@ export function ByPlanet({ studentId }: componentProps) {
         },
     };
 
-    studentPerformanceByPlanets?.datasets.forEach(element => {
-        if (element.label == "Consciência Fonológica") {
-            element.backgroundColor = theme.colors.cyan[3]
-            element.borderColor = theme.colors.cyan[3]
-        } else if (element.label == "Sistema de Escrita Alfabética") {
-            element.backgroundColor = theme.colors.violet[2]
-            element.borderColor = theme.colors.violet[2]
-        } else {
-            element.backgroundColor = theme.colors.orange[3]
-            element.borderColor = theme.colors.orange[3]
-        }
-        element.yAxisID = 'y'
-    });
+    const processedPlanetsData = processChartData(studentPerformanceByPlanets?.datasets, theme);
+
     return (
         <Box mt={40}>
             <Title order={4} pb={20}>Desempenho do aluno por planeta:</Title>
-            {
-                studentPerformanceByPlanets &&
-                <Line options={options} data={studentPerformanceByPlanets ?? [{ labels: [], datasets: [] }]} />
+            {processedPlanetsData &&
+                <Line
+                    options={options}
+                    data={{ labels: studentPerformanceByPlanets?.labels, datasets: processedPlanetsData }}
+                    style={{ maxWidth: maxWidth ?? 'auto' }}
+                />
             }
         </Box>
 

@@ -1,6 +1,6 @@
 import { Table, useMantineTheme } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Rating } from '@smastrom/react-rating'
+import { Rating } from "@mantine/core";
 import '@smastrom/react-rating/style.css'
 import { ModalPerformancePlanets } from "./Modal";
 
@@ -28,8 +28,8 @@ export function TablePerformancePlanets({ examsPerformanceData, studentId, dateE
                 </thead>
                 <tbody>
                     {examsPerformanceData &&
-                        examsPerformanceData.map((item) => (
-                            <tr key={item.axisCode}>
+                        examsPerformanceData.map((item, index) => (
+                            <tr key={index}>
                                 <td
                                     onClick={() => {
                                         modalExamPerformancePlanetsHandler.open()
@@ -41,7 +41,7 @@ export function TablePerformancePlanets({ examsPerformanceData, studentId, dateE
                                 <td>{item.offeredPlanets}</td>
                                 <td>{item.accomplishedPlanets}</td>
                                 <td>
-                                    <Rating readOnly value={item.averageStars} key={Math.random()} style={{ width: '100px' }} />
+                                    <Rating readOnly defaultValue={item.averageStars ?? 0} value={item.averageStars} key={Math.random()} style={{ width: '100px' }} />
                                 </td>
                             </tr>
                         ))

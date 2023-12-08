@@ -1,5 +1,5 @@
 // Components:
-import { Accordion, Box, Flex, Select, Stack, Text, useMantineTheme } from "@mantine/core";
+import { Accordion, Box, Center, Flex, Select, Stack, Text, useMantineTheme } from "@mantine/core";
 
 // Charts:
 import {
@@ -19,12 +19,44 @@ import { Rating } from '@smastrom/react-rating'
 import '@smastrom/react-rating/style.css'
 import { useGetExamsCharts, useGetPlanetsCharts } from "~/api/school-class";
 import { errorNotification } from "~/utils/errorNotification";
+import { processChartData } from "~/utils/chartMap";
 
 type componentProps = {
     schoolClassId: string;
 }
 export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
     const theme = useMantineTheme();
+    const [performanceType, setPerformanceType] = useState('Provas');
+
+    const selectOptions = [
+        {
+            label: 'Provas',
+            value: 'Provas'
+        },
+        {
+            label: 'Planetas',
+            value: 'Planetas'
+        }
+    ]
+
+    const { data: schoolClassPerformanceByPlanets } = useGetPlanetsCharts(
+        schoolClassId ?? "",
+        {
+            onError: (error) =>
+                errorNotification("Erro durante a operação", error.message)
+        }
+    )
+
+    const { data: schoolClassPerformanceByExams } = useGetExamsCharts(
+        schoolClassId ?? "",
+        {
+            onError: (error) =>
+                errorNotification("Erro durante a operação", error.message)
+        }
+    )
+
+    const processedExamData = processChartData(schoolClassPerformanceByExams?.datasets, theme);
+    const processedPlanetsData = processChartData(schoolClassPerformanceByPlanets?.datasets, theme);
 
     // Graphic stuff:
     ChartJS.register(
@@ -49,81 +81,22 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
                 display: false,
             },
             legend: {
-                display: false,
+                display: true,
             }
         },
         scales: {
             y: {
                 type: 'linear' as const,
-                display: true,
+                display: true, 
                 position: 'left' as const,
-            },
-            y1: {
-                type: 'linear' as const,
-                display: true,
-                position: 'right' as const,
-                grid: {
-                    drawOnChartArea: false,
-                },
+                max: performanceType === 'Provas' ? 100 : 5,
+                min: performanceType === 'Provas' ? 0 : 0,
+                ticks: {
+                    stepSize: performanceType === 'Provas' ? 20 : 1
+                }
             },
         },
     };
-
-    const { data: schoolClassPerformanceByPlanets } = useGetPlanetsCharts(
-        schoolClassId ?? "",
-        {
-            onError: (error) =>
-                errorNotification("Erro durante a operação", error.message)
-        }
-    )
-
-    const { data: schoolClassPerformanceByExams } = useGetExamsCharts(
-        schoolClassId ?? "",
-        {
-            onError: (error) =>
-                errorNotification("Erro durante a operação", error.message)
-        }
-    )
-
-    schoolClassPerformanceByPlanets?.datasets.forEach(element => {
-        if (element.label == "Consciência Fonológica") {
-            element.backgroundColor = theme.colors.cyan[3]
-            element.borderColor = theme.colors.cyan[3]
-        } else if (element.label == "Sistema de Escrita Alfabética") {
-            element.backgroundColor = theme.colors.violet[2]
-            element.borderColor = theme.colors.violet[2]
-        } else {
-            element.backgroundColor = theme.colors.orange[3]
-            element.borderColor = theme.colors.orange[3]
-        }
-        element.yAxisID = 'y'
-    });
-
-    schoolClassPerformanceByExams?.datasets.forEach(element => {
-        if (element.label == "Consciência Fonológica") {
-            element.backgroundColor = theme.colors.cyan[3]
-            element.borderColor = theme.colors.cyan[3]
-        } else if (element.label == "Sistema de Escrita Alfabética") {
-            element.backgroundColor = theme.colors.violet[2]
-            element.borderColor = theme.colors.violet[2]
-        } else {
-            element.backgroundColor = theme.colors.orange[3]
-            element.borderColor = theme.colors.orange[3]
-        }
-        element.yAxisID = 'y'
-    });
-
-    const [performanceType, setPerformanceType] = useState('Provas');
-    const selectOptions = [
-        {
-            label: 'Provas',
-            value: 'Provas'
-        },
-        {
-            label: 'Planetas',
-            value: 'Planetas'
-        }
-    ]
     return (
         <Accordion.Item value="schoolClassPerformanceBy">
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -151,32 +124,32 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
                         />
                     </Flex>
                 </Accordion.Control>
-
             </Box>
 
             <Accordion.Panel>
-                <Flex>
+                <Center>
                     {performanceType == "Planetas" &&
-                        <Stack w={200}>
-                            <Rating readOnly value={5} key={Math.random()} style={{ width: '150px' }} />
-                            <Rating readOnly value={4} key={Math.random()} style={{ width: '150px' }} />
-                            <Rating readOnly value={3} key={Math.random()} style={{ width: '150px' }} />
-                            <Rating readOnly value={2} key={Math.random()} style={{ width: '150px' }} />
-                            <Rating readOnly value={1} key={Math.random()} style={{ width: '150px' }} />
-                            <Rating readOnly value={0} key={Math.random()} style={{ width: '150px' }} />
-                        </Stack>
+                        processedPlanetsData &&
+                        <Flex style={{width: '100%'}}>
+                            <Stack pr={5} mt={15} p={5} style={{gap:16}}>
+                                <Rating readOnly value={5} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly value={4} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly value={3} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly value={2} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly value={1} key={Math.random()} style={{ width: '100px' }} />
+                                <Rating readOnly value={0} key={Math.random()} style={{ width: '100px' }} />
+                            </Stack>
+                            <div className="chart-container" style={{ position: 'relative', height: 'auto', width: '100%' }}>
+                                <Bar options={options} data={{ labels: schoolClassPerformanceByPlanets?.labels, datasets: processedPlanetsData }} />
+                            </div>
+                        </Flex>
                     }
 
                     {performanceType == "Provas" &&
-                        schoolClassPerformanceByExams &&
-                        <Bar options={options} data={schoolClassPerformanceByExams} />
+                        processedExamData &&
+                        <Bar options={options} data={{ labels: schoolClassPerformanceByExams?.labels, datasets: processedExamData }} />
                     }
-
-                    {performanceType == "Planetas" &&
-                        schoolClassPerformanceByPlanets &&
-                        <Bar options={options} data={schoolClassPerformanceByPlanets} />
-                    }
-                </Flex>
+                </Center>
             </Accordion.Panel>
         </Accordion.Item>
     )

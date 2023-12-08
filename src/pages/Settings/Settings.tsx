@@ -22,6 +22,7 @@ import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
 import { AuditModal } from "./components/AuditModal";
 import { z } from "zod";
+import { useSyncPlanets, useSyncStatus } from "~/api/sync";
 
 export function SettingsPage() {
   const { data, isLoading } = useSettingsGet({
@@ -41,30 +42,53 @@ export function SettingsPage() {
   const form = useForm<SettingsUpdateInput>({
     initialValues: data,
     validate: zodResolver(
-      z.object(
-        {
-          schoolName: z.string().min(1, { message: "Campo obrigatório" }),
-          smtpHostName: z.string().nonempty({ message: "Campo obrigatório" }),
-          smtpUserName: z.string().nonempty({ message: "Campo obrigatório" }),
-          smtpPassword: z.string().nonempty({ message: "Campo obrigatório" }),
-          smtpPort: z.number({
-            required_error: "Campo obrigatório",
-            invalid_type_error: "Digite apenas o número da porta"
-          }),
-        }
-      )
-    )
+      z.object({
+        schoolName: z.string().min(1, { message: "Campo obrigatório" }),
+        smtpHostName: z.string().nonempty({ message: "Campo obrigatório" }),
+        smtpUserName: z.string().nonempty({ message: "Campo obrigatório" }),
+        smtpPassword: z.string().nonempty({ message: "Campo obrigatório" }),
+        smtpPort: z.number({
+          required_error: "Campo obrigatório",
+          invalid_type_error: "Digite apenas o número da porta",
+        }),
+      })
+    ),
   });
 
   const [auditModalOpen, auditModalHandlers] = useDisclosure(false);
+
+  const { mutate: mutateSyncPlanets } = useSyncPlanets();
+  const { data: syncStatus } = useSyncStatus({
+    cacheTime: 10 * 1000,
+    refetchInterval: 10 * 1000,
+    initialData: {
+      totalFiles: 0,
+      syncedFiles: 0,
+      percent: 0,
+      duration: "00:00:00",
+    },
+  });
+
+  const disableSync = syncStatus
+    ? syncStatus.percent < 99.9 && syncStatus.percent > 0
+    : false;
 
   return (
     <form onSubmit={form.onSubmit((v) => mutate(v))}>
       <Stack>
         <PageHeader title="Configurações">
-          <Button variant="outline" onClick={auditModalHandlers.open}>
-            Gestão de Auditoria
-          </Button>
+          <Group noWrap>
+            <Button
+              variant="outline"
+              onClick={() => mutateSyncPlanets()}
+              loading={disableSync}
+            >
+              Sincronizar Planetas
+            </Button>
+            <Button variant="outline" onClick={auditModalHandlers.open}>
+              Gestão de Auditoria
+            </Button>
+          </Group>
         </PageHeader>
 
         <Grid columns={8}>

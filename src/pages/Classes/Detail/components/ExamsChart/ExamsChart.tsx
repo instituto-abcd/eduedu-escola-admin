@@ -5,6 +5,7 @@ type componentProps = {
     schoolClassExamsChart: Array<[]>;
 }
 export function ExamsChart({ schoolClassExamsChart }: componentProps) {
+
     return (
         <Accordion.Item value="testResultsHistory">
             <Box sx={{ display: 'flex', alignItems: 'center' }}>

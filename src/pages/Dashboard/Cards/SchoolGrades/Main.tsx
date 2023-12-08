@@ -14,9 +14,9 @@ export function SchoolGradeCard({
 }: componentProps) {
 
     return (
-        <Card h="100%" pb={40}>
+        <Card h="100%" pb={20}>
             <Card.Section>
-                <Box p={20} pb={0}>
+                <Box p={10} pb={0}>
                     <Header schoolGrade={schoolGrade} />
 
                     {schoolGrade.schoolClasses?.map((schoolClass) => (

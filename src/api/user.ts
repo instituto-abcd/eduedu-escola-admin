@@ -27,11 +27,12 @@ export type User = {
   role: UserRole;
   school: School;
   owner: boolean;
+  password: string;
   createdAt: string;
   updatedAt: string;
 };
 
-export type UserInput = Pick<User, "name" | "email" | "document" | "profile">;
+export type UserInput = Pick<User, "name" | "email" | "document" | "profile" | "password">;
 
 export type UserSearch = {
   "page-number"?: number;

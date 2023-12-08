@@ -8,14 +8,18 @@ import {
     Legend,
 } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Box, Text, useMantineTheme } from "@mantine/core";
+import { processChartData } from "~/utils/chartMap";
 
 type componentProps = {
-    schoolClassExamsChart: Array<[]>
+    schoolClassExamsChart: Array<{}>,
+    maxWidth?: string;
 }
-export function Chart({ schoolClassExamsChart }: componentProps) {
 
-    // Graphic stuff:
+export function Chart({ schoolClassExamsChart, maxWidth }: componentProps) {
+    const theme = useMantineTheme();
+
     ChartJS.register(
         CategoryScale,
         LinearScale,
@@ -46,24 +50,37 @@ export function Chart({ schoolClassExamsChart }: componentProps) {
                 type: 'linear' as const,
                 display: true,
                 position: 'left' as const,
-            },
-            y1: {
-                type: 'linear' as const,
-                display: true,
-                position: 'right' as const,
-                grid: {
-                    drawOnChartArea: false,
-                },
+                max: 100,
+                min: 0,
+                ticks: {
+                    stepSize: 20
+                  }
             },
         },
     };
 
     const [examsChart, setExamsChart] = useState({
         labels: schoolClassExamsChart?.labels ?? [],
-        datasets: schoolClassExamsChart?.datasets ?? []
+        datasets: processChartData(schoolClassExamsChart?.datasets, theme) ?? []
     });
 
+    useEffect(() => {
+        setExamsChart({
+            labels: schoolClassExamsChart?.labels ?? [],
+            datasets:  processChartData(schoolClassExamsChart?.datasets, theme) ?? []
+        });
+    }, [schoolClassExamsChart]);
+
     return (
-        <Line options={options} data={examsChart} />
+        <Box>
+            {examsChart.datasets.length !== 0 &&
+                <div className="chart-container" style={{ position: 'relative', height: '35vh', width: '100%' }}>
+                    <Line options={options} data={examsChart} style={{ maxWidth: maxWidth ?? 'auto' }} />
+                </div>
+            }
+            {!examsChart.datasets.length &&
+                <Text my={20} align="center">Sem dados registrados em Histórico de Resultado de Provas.</Text>
+            }
+        </Box>
     )
 }

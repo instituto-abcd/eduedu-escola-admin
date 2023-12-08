@@ -16,11 +16,13 @@ import {
     Legend,
 } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
+import { processChartData } from "~/utils/chartMap";
 
 type componentProps = {
     studentId: string;
+    maxWidth?: string;
 }
-export function ByExam({ studentId }: componentProps) {
+export function ByExam({ studentId, maxWidth }: componentProps) {
     const theme = useMantineTheme();
 
     const { data: studentPerformanceByExam } = useGetExamCharts(
@@ -74,26 +76,18 @@ export function ByExam({ studentId }: componentProps) {
         },
     };
 
-    studentPerformanceByExam?.datasets.forEach(element => {
-        if (element.label == "Consciência Fonológica") {
-            element.backgroundColor = theme.colors.cyan[3]
-            element.borderColor = theme.colors.cyan[3]
-        } else if (element.label == "Sistema de Escrita Alfabética") {
-            element.backgroundColor = theme.colors.violet[2]
-            element.borderColor = theme.colors.violet[2]
-        } else {
-            element.backgroundColor = theme.colors.orange[3]
-            element.borderColor = theme.colors.orange[3]
-        }
-        element.yAxisID = 'y'
-    });
+    const processedExamData = processChartData(studentPerformanceByExam?.datasets, theme);
 
     return (
         <Box mt={40}>
             <Title order={4} pb={20}>Desempenho do aluno por prova:</Title>
 
-            {studentPerformanceByExam &&
-                <Line options={options} data={studentPerformanceByExam ?? [{ labels: [], datasets: [] }]} />
+            {processedExamData &&
+                <Line
+                    options={options}
+                    data={{ labels: studentPerformanceByExam?.labels, datasets: processedExamData }}
+                    style={{ maxWidth: maxWidth ?? 'auto' }}
+                />
             }
         </Box>
     )

@@ -6,9 +6,7 @@ import {
   Group,
   Divider,
   createStyles,
-  ActionIcon,
 } from "@mantine/core";
-import { IconBell } from "@tabler/icons-react";
 import logo from "~/assets/logos/eduedu-azul.svg";
 import { UserDropdown } from "../UserDropdown";
 import { useUserStore } from "~/stores/user";
@@ -71,7 +69,7 @@ export function Navbar() {
         <Link to="/dashboard">
           <Image src={logo} alt="EduEdu Escola" width={50} mx={40} />
         </Link>
-        
+
         <Group noWrap>
           <Group spacing={16}>
             {usedLinks.map((link) => (

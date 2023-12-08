@@ -6,7 +6,7 @@ import { IconAlertTriangle } from "@tabler/icons-react";
 export const errorNotification = (title: string, message: string) =>
   showNotification({
     title,
-    message,
+    message: <div dangerouslySetInnerHTML={{ __html: message }} />,
     color: "red",
     icon: <IconAlertTriangle />,
   });

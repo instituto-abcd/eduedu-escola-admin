@@ -15,10 +15,10 @@ type componentProps = {
 export function PerformanceAtPlanets({ studentId }: componentProps) {
     const theme = useMantineTheme();
 
-    // Get and manage the list of exams executed:
+    const [examsPerformanceData, setExamsPerformanceData] = useState([]);
     const [dateExam, setDateExam] = useState('-');
+    const [dateExamList, setDateExamList] = useState([])
 
-    const [examsPerformanceData, setExamsPerformanceData] = useState([])
     const { mutate: examsPerformancePlanets } = useExamsPerformancePlanets({
         onSuccess: (data) => {
             setExamsPerformanceData(data)
@@ -30,26 +30,28 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
             );
         },
     });
-
-    const { data: dateExamList } = useGetExamExecutions(
+    const { data } = useGetExamExecutions(
         studentId,
         {
             onSuccess: (data) => {
-                data?.forEach(element => {
-                    let d = new Date(element.examDate)
+                const formattedData = data.map(element => {
+                    let d = new Date(element.examDate);
                     let month = monthsAbbreviation[d.getMonth()];
                     let day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
 
-                    element.label = `${day}/${month}`;
-                    element.value = element.id
+                    return {
+                        label: `${day}/${month}`,
+                        value: element.id
+                    };
                 });
 
-                if (data[0]) {
-                    setDateExam(data[0].id)
+                if (formattedData.length > 0) {
+                    setDateExamList(formattedData)
+                    setDateExam(formattedData[0].value);
                     examsPerformancePlanets({
-                        id: data[0].studentId,
-                        studentExamId: data[0].id,
-                    })
+                        id: studentId,
+                        studentExamId: formattedData[0].value,
+                    });
                 }
             },
             onError: (error) => {
@@ -57,7 +59,6 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
             }
         }
     )
-
     const { mutate: authorizeNewExam } = useAuthorizeNewExam({
         onSuccess: () => {
             successNotification(
@@ -72,6 +73,20 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
             );
         },
     });
+    const { mutate: releasePlanets } = usePutReleasePlanets({
+        onSuccess: () => {
+            successNotification(
+                "Operação realizada com sucesso",
+                "Planetas liberados."
+            );
+        },
+        onError: (error) => {
+            errorNotification(
+                "Erro durante a operação",
+                `${error.message}`
+            );
+        },
+    })
 
     const openModalAuthorizeNewExam = () => {
         modals.openConfirmModal({
@@ -92,29 +107,10 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
         });
     };
 
-    const { mutate: releasePlanets } = usePutReleasePlanets({
-        onSuccess: () => {
-            successNotification(
-                "Operação realizada com sucesso",
-                "Planetas liberados."
-            );
-        },
-        onError: (error) => {
-            errorNotification(
-                "Erro durante a operação",
-                `${error.message}`
-            );
-        },
-    })
-
     return (
         <Accordion.Item value="planetsPerformance">
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Accordion.Control
-                    style={{
-                        maxWidth: '70%'
-                    }}
-                >
+                <Accordion.Control style={{ maxWidth: '70%' }}>
                     <Flex align="center">
                         <Text
                             color={theme.colors.indigo[9]}
@@ -156,7 +152,7 @@ export function PerformanceAtPlanets({ studentId }: componentProps) {
             </Box>
 
             <Accordion.Panel>
-                {examsPerformanceData.length != 0 &&
+                {examsPerformanceData.length !== 0 &&
                     <TablePerformancePlanets
                         examsPerformanceData={examsPerformanceData}
                         studentId={studentId}

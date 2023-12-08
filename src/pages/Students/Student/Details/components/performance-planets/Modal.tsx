@@ -1,16 +1,10 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useExamsPerformancePlanets } from "~/api/student";
 import { errorNotification } from "~/utils/errorNotification";
-
-// Components:
 import { Flex, Loader, Modal, Select, Table, Text, useMantineTheme } from "@mantine/core";
-
-// Icons:
 import { IconMinus, IconPlus } from "@tabler/icons-react";
-
-// Rating stars:
-import { Rating } from '@smastrom/react-rating'
-import '@smastrom/react-rating/style.css'
+import { Rating } from "@mantine/core";
+import '@smastrom/react-rating/style.css';
 
 type Props = {
     opened: boolean;
@@ -87,14 +81,14 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
                         :
                         <>
                             {examsPerformanceData &&
-                                examsPerformanceData.map((item) => (
-                                    <>
-                                        <tr key={item.axisName}>
+                                examsPerformanceData.map((item, index) => (
+                                    <React.Fragment key={index}>
+                                        <tr>
                                             <td
                                                 onClick={() => {
                                                     item.axisName == selectedItem ? setSelectedItem('') : setSelectedItem(item.axisName)
                                                 }}
-                                                style={{ color: theme.colors.blue[6] }}
+                                                style={{ color: theme.colors.blue[6], cursor: 'pointer' }}
                                             >
                                                 <Flex align="center">
                                                     {selectedItem == item.id ? <IconMinus /> : <IconPlus />}
@@ -113,18 +107,18 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
                                                 {
                                                     item.planets?.length > 0 ?
                                                         item.planets.map((element) => (
-                                                            <tr>
+                                                            <tr key={element.planetName}>
                                                                 <td>{element.planetName}</td>
                                                                 <td></td>
                                                                 <td></td>
                                                                 <td>
-                                                                    <Rating readOnly value={item.stars} key={Math.random()} style={{ width: '100px' }} />
+                                                                    <Rating readOnly defaultValue={element.stars ?? 0} value={element.stars} key={Math.random()} style={{ width: '100px' }} />
                                                                 </td>
                                                             </tr>
                                                         ))
                                                         :
                                                         <tr>
-                                                            <td colspan={4}>
+                                                            <td colSpan={4}>
                                                                 <Text>Sem planetas realizados.</Text>
                                                             </td>
                                                         </tr>
@@ -133,7 +127,7 @@ export function ModalPerformancePlanets({ opened, onClose, performancePlanetsDat
                                             :
                                             <></>
                                         }
-                                    </>
+                                    </React.Fragment>
                                 ))
                             }
                         </>
