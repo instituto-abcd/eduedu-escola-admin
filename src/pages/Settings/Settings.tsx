@@ -75,7 +75,7 @@ export function SettingsPage() {
     setSyncClicked(true);
     setTimeout(() => {
       setSyncClicked(false);
-    }, 10000);
+    }, 20000);
   };
 
   const disableSync = syncStatus
