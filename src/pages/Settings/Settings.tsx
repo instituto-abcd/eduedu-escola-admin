@@ -23,8 +23,10 @@ import { successNotification } from "~/utils/successNotification";
 import { AuditModal } from "./components/AuditModal";
 import { z } from "zod";
 import { useSyncPlanets, useSyncStatus } from "~/api/sync";
+import { useState } from "react";
 
 export function SettingsPage() {
+  const [syncClicked, setSyncClicked] = useState(false);
   const { data, isLoading } = useSettingsGet({
     onError: (error) =>
       errorNotification("Erro durante a operação", error.message),
@@ -69,8 +71,15 @@ export function SettingsPage() {
     },
   });
 
+  const onClickSyncButton = () => {
+    setSyncClicked(true);
+    setTimeout(() => {
+      setSyncClicked(false);
+    }, 10000);
+  };
+
   const disableSync = syncStatus
-    ? syncStatus.percent < 99.9 && syncStatus.percent > 0
+    ? (syncStatus.percent < 99.9 && syncStatus.percent > 0 || syncClicked)
     : false;
 
   return (
@@ -80,7 +89,7 @@ export function SettingsPage() {
           <Group noWrap>
             <Button
               variant="outline"
-              onClick={() => mutateSyncPlanets()}
+              onClick={() => {mutateSyncPlanets(); onClickSyncButton()}}
               loading={disableSync}
             >
               Sincronizar Planetas
