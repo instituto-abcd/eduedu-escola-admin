@@ -26,6 +26,7 @@ export type LoginResponse = {
   email: string;
   document: string;
   accessToken: string;
+  schoolName: string;
 };
 
 const URL = {
