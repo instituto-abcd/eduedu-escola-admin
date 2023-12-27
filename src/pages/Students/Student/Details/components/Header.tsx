@@ -1,4 +1,4 @@
-import { Button, Grid, Group, Title, Text } from "@mantine/core";
+import { Button, Grid, Group, Title, Text, Flex } from "@mantine/core";
 import { SCHOOL_GRADE, SCHOOL_PERIOD } from "~/constants";
 
 import { PDFDownloadLink } from "@react-pdf/renderer";
@@ -35,14 +35,15 @@ export function HeaderStudent({ student }: componentProps) {
             <InfoItem label="Período" value={schoolPeriod ? SCHOOL_PERIOD[schoolPeriod] : "-"} />
 
             <Grid.Col span={1}>
-                <Link
-                    to={`${PATH.REPORTS}/aluno/${id}`}
-                    target="_blank" rel="noopener noreferrer"
-                    style={{ textDecoration: 'none' }}
-                >
-                    <Button>Gerar relatório</Button>
-                </Link>
-
+                <Flex justify="flex-end">
+                    <Link
+                        to={`${PATH.REPORTS}/aluno/${id}`}
+                        target="_blank" rel="noopener noreferrer"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <Button>Gerar relatório</Button>
+                    </Link>
+                </Flex>
             </Grid.Col>
         </Grid>
     )

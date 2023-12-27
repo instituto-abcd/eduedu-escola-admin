@@ -1,4 +1,4 @@
-import { Grid, Group, Title, Text, Button } from "@mantine/core";
+import { Grid, Group, Title, Text, Button, Flex } from "@mantine/core";
 import { SCHOOL_GRADE } from "~/constants";
 import { SchoolClassReport } from "../../../Reports/SchoolClass/SchoolClassReport";
 import { Print } from "~/utils/pdfDownload";
@@ -11,7 +11,7 @@ type componentProps = {
 export function SchoolClassHeader({ schoolClass }: componentProps) {
 
     return (
-        <Grid columns={5}>
+        <Grid columns={5} justify="space-between" align="center">
             <Grid.Col span={1}>
                 <Group>
                     <Title order={5}>Turma:</Title>
@@ -49,13 +49,15 @@ export function SchoolClassHeader({ schoolClass }: componentProps) {
             </Grid.Col>
 
             <Grid.Col span={1}>
-                <Link
-                    to={`${PATH.REPORTS}/turma/${schoolClass.id}`}
-                    target="_blank" rel="noopener noreferrer"
-                    style={{ textDecoration: 'none' }}
-                >
-                    <Button>Gerar relatório</Button>
-                </Link>
+                <Flex justify="flex-end">
+                    <Link
+                        to={`${PATH.REPORTS}/turma/${schoolClass.id}`}
+                        target="_blank" rel="noopener noreferrer"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <Button>Gerar relatório</Button>
+                    </Link>
+                </Flex>
             </Grid.Col>
         </Grid>
     )
