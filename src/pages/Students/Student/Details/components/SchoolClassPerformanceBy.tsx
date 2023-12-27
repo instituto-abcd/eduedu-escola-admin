@@ -131,7 +131,7 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
                     {performanceType == "Planetas" &&
                         processedPlanetsData &&
                         <Flex style={{width: '100%'}}>
-                            <Stack pr={5} mt={15} p={5} style={{gap:16}}>
+                            <Stack pr={5} mt={15} mb={20} p={5} style={{gap:16}} justify="space-between" >
                                 <Rating readOnly value={5} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={4} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={3} key={Math.random()} style={{ width: '100px' }} />
