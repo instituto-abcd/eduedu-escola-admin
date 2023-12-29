@@ -64,6 +64,11 @@ export function ByExam({ studentId, maxWidth }: componentProps) {
                 type: 'linear' as const,
                 display: true,
                 position: 'left' as const,
+                ticks: {
+                    callback: function(value: any) {
+                        return value + '%';
+                    }
+                }
             },
             y1: {
                 type: 'linear' as const,
@@ -74,7 +79,7 @@ export function ByExam({ studentId, maxWidth }: componentProps) {
                 },
                 ticks: {
                     callback: function(value: any) {
-                        return value * 100;
+                        return (value * 100) + '%';
                     }
                 }
             },
