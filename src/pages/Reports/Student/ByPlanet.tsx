@@ -69,6 +69,11 @@ export function ByPlanet({ studentId, maxWidth }: componentProps) {
                 type: 'linear' as const,
                 display: true,
                 position: 'left' as const,
+                ticks: {
+                    callback: function(value: any) {
+                        return value.toFixed(1);
+                    }
+                }
             },
             y1: {
                 type: 'linear' as const,
@@ -77,6 +82,11 @@ export function ByPlanet({ studentId, maxWidth }: componentProps) {
                 grid: {
                     drawOnChartArea: false,
                 },
+                ticks: {
+                    callback: function(value: any) {
+                        return (value * 5).toFixed(1);
+                    }
+                }
             },
         },
     };
