@@ -72,6 +72,11 @@ export function ByExam({ studentId, maxWidth }: componentProps) {
                 grid: {
                     drawOnChartArea: false,
                 },
+                ticks: {
+                    callback: function(value: any) {
+                        return value * 100;
+                    }
+                }
             },
         },
     };
@@ -84,6 +89,7 @@ export function ByExam({ studentId, maxWidth }: componentProps) {
 
             {processedExamData &&
                 <Line
+                    datasetIdKey={Math.random().toString()}
                     options={options}
                     data={{ labels: studentPerformanceByExam?.labels, datasets: processedExamData }}
                     style={{ maxWidth: maxWidth ?? 'auto' }}
