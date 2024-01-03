@@ -53,8 +53,11 @@ export function Chart({ schoolClassExamsChart, maxWidth }: componentProps) {
                 max: 100,
                 min: 0,
                 ticks: {
-                    stepSize: 20
-                  }
+                    stepSize: 20,
+                    callback: function(value: any) {
+                        return value + '%';
+                    }
+                }
             },
         },
     };
