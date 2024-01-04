@@ -28,13 +28,7 @@ export function Layout() {
   if (!isUserAuthenticated) return <Navigate to={PATH.LOGIN} />;
 
   return (
-    <AppShell
-      maw={1440}
-      padding="md"
-      mx="auto"
-      header={<Navbar />}
-      footer={<Footer />}
-    >
+    <AppShell header={<Navbar />} footer={<Footer />}>
       <Stack px={150} spacing={24} py={24}>
         <Outlet />
       </Stack>

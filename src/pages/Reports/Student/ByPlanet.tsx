@@ -17,31 +17,22 @@ import {
     Legend,
 } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
-import { useEffect, useState } from "react";
-;
 
 type componentProps = {
     studentId: string;
     maxWidth?: string;
 }
+
 export function ByPlanet({ studentId, maxWidth }: componentProps) {
     const theme = useMantineTheme();
-    const [studentPerformanceByPlanets, setStudentPerformanceByPlanets] = useState(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // const data = await useGetPlanetsCharts(studentId);
-                // setStudentPerformanceByPlanets(data);
-            } catch (error) {
-                errorNotification("Erro durante a operação", error.message);
-            }
-        };
-
-        if (studentId) {
-            fetchData();
+    const { data: studentPerformanceByPlanets } = useGetPlanetsCharts(
+        studentId ?? "",
+        {
+            onError: (error) =>
+                errorNotification("Erro durante a operação", error.message)
         }
-    }, [studentId]);
+    );
 
     if (!studentId) {
         return null; // Renderiza algo diferente ou apenas não renderiza nada enquanto studentId é nulo
@@ -78,6 +69,11 @@ export function ByPlanet({ studentId, maxWidth }: componentProps) {
                 type: 'linear' as const,
                 display: true,
                 position: 'left' as const,
+                ticks: {
+                    callback: function(value: any) {
+                        return value.toFixed(1);
+                    }
+                }
             },
             y1: {
                 type: 'linear' as const,
@@ -86,6 +82,11 @@ export function ByPlanet({ studentId, maxWidth }: componentProps) {
                 grid: {
                     drawOnChartArea: false,
                 },
+                ticks: {
+                    callback: function(value: any) {
+                        return (value * 5).toFixed(1);
+                    }
+                }
             },
         },
     };
@@ -93,7 +94,7 @@ export function ByPlanet({ studentId, maxWidth }: componentProps) {
     const processedPlanetsData = processChartData(studentPerformanceByPlanets?.datasets, theme);
 
     return (
-        <Box mt={40}>
+        <Box mt={10}>
             <Title order={4} pb={20}>Desempenho do aluno por planeta:</Title>
             {processedPlanetsData &&
                 <Line
