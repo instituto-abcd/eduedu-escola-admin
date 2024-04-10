@@ -1,4 +1,3 @@
-// Utils & Aux:
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { SCHOOL_GRADE_SELECT, SCHOOL_PERIOD_SELECT } from "~/constants";
 import { PATH } from "~/constants/path";
@@ -17,7 +16,6 @@ import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
 import { z } from "zod";
 
-// Components:
 import {
   Button,
   Divider,
@@ -47,22 +45,21 @@ export function NewClassPage() {
   const navigate = useNavigate();
 
   const params = useParams();
-  const editingSchoolClass = useLocation().state?.schoolClass as SchoolClass | undefined;
+  const editingSchoolClass = useLocation().state?.schoolClass as
+    | SchoolClass
+    | undefined;
   const shouldFetch = Boolean(!editingSchoolClass && params.classId);
 
-  const { data: schoolClass, isFetching: isFetchingClass } = useGetSchoolClass(
-    params.classId ?? "",
-    {
-      enabled: shouldFetch,
-      onSuccess: (data) => {
-        form.setValues(data);
-        form.resetDirty();
-      },
-      onError: (error) => {
-        errorNotification("Erro", error.message)
-      }
-    }
-  );
+  const { data: schoolClass } = useGetSchoolClass(params.classId ?? "", {
+    enabled: shouldFetch,
+    onSuccess: (data) => {
+      form.setValues(data);
+      form.resetDirty();
+    },
+    onError: (error) => {
+      errorNotification("Erro", error.message);
+    },
+  });
 
   const finalSchoolClass = shouldFetch ? schoolClass : editingSchoolClass;
 
@@ -83,8 +80,8 @@ export function NewClassPage() {
   });
 
   const { data: teachers, isLoading: isLoadingTeachers } = useUserGetAll({
-    pageSize: 999,
     search: {
+      "page-size": 999,
       profile: "TEACHER",
     },
   });
@@ -94,15 +91,12 @@ export function NewClassPage() {
       onSuccess: () => {
         successNotification(
           "Operação realizada com sucesso",
-          "Turma criada com sucesso!"
+          "Turma criada com sucesso!",
         );
-        form.reset()
+        form.reset();
       },
       onError: (error) => {
-        errorNotification(
-          "Erro durante a operação",
-          `${error.message}`
-        );
+        errorNotification("Erro durante a operação", `${error.message}`);
       },
     });
 
@@ -111,14 +105,11 @@ export function NewClassPage() {
       onSuccess: () => {
         successNotification(
           "Operação realizada com sucesso",
-          "Turma alterada com sucesso!"
+          "Turma alterada com sucesso!",
         );
       },
       onError: (error) => {
-        errorNotification(
-          "Erro durante a operação",
-          `${error.message}`
-        );
+        errorNotification("Erro durante a operação", `${error.message}`);
       },
     });
 
@@ -127,13 +118,18 @@ export function NewClassPage() {
       <PageHeader title={finalSchoolClass?.name ?? "Nova turma"} />
       <LoadingOverlay visible={isUpdateLoading || isCreateLoading} />
 
-      <form onSubmit={form.onSubmit((values) => {
-        if (finalSchoolClass) {
-          updateSchoolClass({ schoolClassId: finalSchoolClass?.id ?? "", input: values });
-        } else {
-          createSchoolClass(values);
-        }
-      })}>
+      <form
+        onSubmit={form.onSubmit((values) => {
+          if (finalSchoolClass) {
+            updateSchoolClass({
+              schoolClassId: finalSchoolClass?.id ?? "",
+              input: values,
+            });
+          } else {
+            createSchoolClass(values);
+          }
+        })}
+      >
         <Stack spacing={24}>
           <Grid columns={5}>
             <Grid.Col span={1}>
@@ -152,15 +148,15 @@ export function NewClassPage() {
                 data={
                   isLoadingYears
                     ? [
-                      {
-                        value: form.values.schoolYearId,
-                        label: "Carregando...",
-                      },
-                    ]
+                        {
+                          value: form.values.schoolYearId,
+                          label: "Carregando...",
+                        },
+                      ]
                     : years?.map(({ name, id }) => ({
-                      label: name.toString(),
-                      value: id,
-                    })) ?? []
+                        label: name.toString(),
+                        value: id,
+                      })) ?? []
                 }
                 nothingFound="Nada encontrado"
                 {...form.getInputProps("schoolYearId")}
@@ -205,8 +201,12 @@ export function NewClassPage() {
           </Grid>
           <Divider mt={20} />
           <Group position="right">
-            <Button variant="outline" onClick={() => navigate(PATH.CLASSES)}>Cancelar</Button>
-            <Button type="submit" disabled={!form.isValid()}>Salvar</Button>
+            <Button variant="outline" onClick={() => navigate(PATH.CLASSES)}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={!form.isValid()}>
+              Salvar
+            </Button>
           </Group>
         </Stack>
       </form>
