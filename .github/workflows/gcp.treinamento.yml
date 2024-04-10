@@ -69,7 +69,7 @@ jobs:
         id: 'deploy'
         uses: 'google-github-actions/deploy-cloudrun@v0'
         with:
-          service: 'eduedu-escola-admin'
+          service: 'eduedu-escola-admin-treinamento'
           image: '${{ env.REGISTRY_PREFIX }}/${{ env.PROJECT_ID }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}'
           region: us-central1
 
