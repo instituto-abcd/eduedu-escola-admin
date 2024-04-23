@@ -3,51 +3,61 @@ import { useDisclosure } from "@mantine/hooks";
 import { AccordionButton } from "~/components/AccordionButton/AccordionButton";
 import { ExamPerformance } from "~/components/ExamPerformance/ExamPerformance";
 import { ModalExamsPerformance } from "./Modal";
+import { useParams } from "react-router-dom";
+import {
+  useGetExamsPerformance,
+  useGetIdealStudents,
+} from "~/api/school-class";
 
-type componentProps = {
-    schoolClassPerformanceExams: Array<[]>;
-    idealStudents: Array<[]>;
-}
-export function ExamsPerformance({ schoolClassPerformanceExams, idealStudents }: componentProps) {
+export function ExamsPerformance() {
+  const params = useParams();
+  const schoolClassId = params.classId ?? "";
 
-    const [openIdealStudentsModal, openIdealStudentsModalHandler] = useDisclosure(false);
+  const { data: perf } = useGetExamsPerformance(schoolClassId, {
+    initialData: [],
+  });
 
-    return (
-        <>
-            <Accordion.Item value="examsPerformance">
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Accordion.Control style={{ maxWidth: '75%' }}>
-                        <Text>Desempenho em Provas</Text>
-                    </Accordion.Control>
-                    <AccordionButton
-                        parentCallback={openIdealStudentsModalHandler.open}
-                        label="Alunos que não precisam de reforço"
-                    />
-                </Box>
+  const { data: ideal } = useGetIdealStudents(schoolClassId, {
+    initialData: [],
+  });
 
-                <Accordion.Panel>
-                    <Flex justify="space-around">
-                        {schoolClassPerformanceExams &&
-                            schoolClassPerformanceExams?.map((item, i) => (
-                                <>
-                                    <Box key={item.axisCode}>
-                                        <ExamPerformance item={item} />
-                                        {(i + 1) != schoolClassPerformanceExams.length &&
-                                            <Divider orientation="vertical" variant="solid" />
-                                        }
-                                    </Box>
-                                </>
-                            ))
-                        }
-                    </Flex>
-                </Accordion.Panel>
-            </Accordion.Item>
+  const [openIdealStudentsModal, openIdealStudentsModalHandler] =
+    useDisclosure(false);
 
-            <ModalExamsPerformance
-                opened={openIdealStudentsModal}
-                onClose={openIdealStudentsModalHandler.close}
-                students={idealStudents}
-            />
-        </>
-    )
+  return (
+    <>
+      <Accordion.Item value="block-1">
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Accordion.Control style={{ maxWidth: "75%" }}>
+            <Text>Desempenho em Provas</Text>
+          </Accordion.Control>
+          <AccordionButton
+            parentCallback={openIdealStudentsModalHandler.open}
+            label="Alunos que não precisam de reforço"
+          />
+        </Box>
+
+        <Accordion.Panel>
+          <Flex justify="space-around">
+            {perf?.map((item, i) => (
+              <Box key={i}>
+                <ExamPerformance performance={item} />
+                {i + 1 < perf.length && (
+                  <Divider orientation="vertical" variant="solid" />
+                )}
+              </Box>
+            ))}
+          </Flex>
+        </Accordion.Panel>
+      </Accordion.Item>
+
+      {ideal && (
+        <ModalExamsPerformance
+          opened={openIdealStudentsModal}
+          onClose={openIdealStudentsModalHandler.close}
+          students={ideal}
+        />
+      )}
+    </>
+  );
 }

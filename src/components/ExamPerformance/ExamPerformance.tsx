@@ -1,38 +1,40 @@
 import { Stack, Group, Text } from "@mantine/core";
 import { ExamItem } from "./ExamItem";
+import { type ClassExamPerformance } from "~/api/school-class";
 
-type componentProps = {
-    item: string
-}
-export function ExamPerformance({ item }: componentProps) {
-    return (
-        <>
-            <Stack>
-                <Text align="center">{item.axisName}</Text>
-                <Group spacing="xl">
-                    <ExamItem
-                        title={item.axisName}
-                        label="Muito Abaixo"
-                        count={item.veryLow.count}
-                        color="red.9"
-                        students={item.veryLow.students}
-                    />
-                    <ExamItem
-                        title={item.axisName}
-                        color="orange.4"
-                        count={item.below.count}
-                        label="Abaixo"
-                        students={item.below.students}
-                    />
-                    <ExamItem
-                        title={item.axisName}
-                        color="green.8"
-                        count={item.expected.count}
-                        label="Esperado"
-                        students={item.expected.students}
-                    />
-                </Group>
-            </Stack>
-        </>
-    )
+type Props = {
+  performance: ClassExamPerformance;
+};
+
+export function ExamPerformance({ performance }: Props) {
+  return (
+    <>
+      <Stack>
+        <Text align="center">{performance.axisName}</Text>
+        <Group spacing="xl">
+          <ExamItem
+            title={performance.axisName}
+            label="Muito Abaixo"
+            count={performance.veryLow.count}
+            color="red.9"
+            students={performance.veryLow.students}
+          />
+          <ExamItem
+            title={performance.axisName}
+            color="orange.4"
+            count={performance.below.count}
+            label="Abaixo"
+            students={performance.below.students}
+          />
+          <ExamItem
+            title={performance.axisName}
+            color="green.8"
+            count={performance.expected.count}
+            label="Esperado"
+            students={performance.expected.students}
+          />
+        </Group>
+      </Stack>
+    </>
+  );
 }
