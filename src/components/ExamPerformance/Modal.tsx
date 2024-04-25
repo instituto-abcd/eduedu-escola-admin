@@ -41,7 +41,7 @@ export function ModalExamPerformance({
         <tbody>
           {students &&
             students.map((student) => (
-              <tr>
+              <tr key={student.studentId}>
                 <td>{student.name}</td>
                 <td style={{ textAlign: "center" }}>
                   {student?.lastExamDate

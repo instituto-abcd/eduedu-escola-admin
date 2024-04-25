@@ -77,7 +77,7 @@ export function TableHeader({
     form.setDirty({ [field]: false });
 
     const empty: string[] = Object.entries(form.values).map(([key, value]) =>
-      value === "" ? key : ""
+      value === "" ? key : "",
     );
     const newValues = form.values;
 
@@ -127,11 +127,16 @@ export function TableHeader({
               {col.type === "select" && (
                 <Select
                   size="sm"
-                  placeholder="Pesquisar"
+                  placeholder={col.inputProps?.placeholder ?? "Pesquisar"}
                   data={[
-                    { label: "Tudo", value: undefined },
+                    col.inputProps?.noExtraOptions === false
+                      ? {
+                        label: "Tudo",
+                        value: undefined,
+                      }
+                      : undefined,
                     ...(col.inputProps?.data ?? []),
-                  ]}
+                  ].filter(Boolean)}
                   {...form.getInputProps(col.searchTerm)}
                   onChange={(val) => {
                     form.getInputProps(col.searchTerm).onChange(val);
@@ -193,7 +198,7 @@ export function TableHeader({
               )}
             </Stack>
           </th>
-        )
+        ),
       )}
     </tr>
   );

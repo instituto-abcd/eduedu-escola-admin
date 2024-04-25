@@ -1,2 +1,1 @@
-export { CardDashboard } from './CardDashboard'
-export { SchoolGradeCard } from './SchoolGrades/Main'
+export { SchoolGradeCard } from "./SchoolGrades/Main";
