@@ -1,67 +1,104 @@
-import { ActionIcon, Table, Select, TextInput } from "@mantine/core";
+import { ActionIcon, Table } from "@mantine/core";
 import { IconEye } from "@tabler/icons-react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Rating } from "@mantine/core";
+import { useGetStudentsPlanetsPerformance } from "~/api/school-class";
+import { TableHeader } from "~/components/TableHeader";
+import { SORT_VALUE_SELECT } from "~/constants";
+import { useStudentPerfFilterStore } from "~/stores/filter";
 
-type componentProps = {
-    data: Array<[]>;
-}
-export function TablePlanet({ data }: componentProps) {
-    return (
-        <Table horizontalSpacing="sm" verticalSpacing="md">
-            <thead>
-                <tr>
-                    <th>
-                        Nome
-                        <TextInput size="sm" placeholder="Pesquisar" />
-                    </th>
-                    <th>
-                        Última prova
-                        <Select withinPortal data={[]} placeholder="Pesquisar" searchable />
-                    </th>
-                    <th>
-                        CFO
-                        <Select withinPortal data={[]} placeholder="Ordenar" searchable />
-                    </th>
-                    <th>
-                        SEA
-                        <Select withinPortal data={[]} placeholder="Ordenar" searchable />
-                    </th>
-                    <th>
-                        LCT
-                        <Select withinPortal data={[]} placeholder="Ordenar" searchable />
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {data &&
-                    data.map((item) => (
-                        <tr>
-                            <td>{item.studentName}</td>
-                            <td>{item.lastExamDate}</td>
-                            <td>
-                                <Rating readOnly defaultValue={item?.cfo?.averageStars ?? 0} value={item?.cfo?.averageStars} key={Math.random()} style={{ width: '100px' }} />
-                            </td>
-                            <td>
-                                <Rating readOnly defaultValue={item?.sea?.averageStars ?? 0} value={item?.sea?.averageStars} key={Math.random()} style={{ width: '100px' }} />
-                            </td>
-                            <td>
-                                <Rating readOnly defaultValue={item?.lct?.averageStars ?? 0} value={item?.lct?.averageStars} key={Math.random()} style={{ width: '100px' }} />
-                            </td>
-                            <td>
-                                <ActionIcon
-                                    component={Link}
-                                    to={`/alunos/${item.studentId}/detalhes`}
-                                    color="blue.9"
-                                >
-                                    <IconEye />
-                                </ActionIcon>
-                            </td>
-                        </tr>
-                    ))
-                }
-            </tbody>
-        </Table>
-    )
+export function TablePlanet() {
+  const params = useParams();
+  const schoolClassId = params.classId ?? "";
+
+  const { data: search, update } = useStudentPerfFilterStore();
+  const { data } = useGetStudentsPlanetsPerformance(schoolClassId, { search });
+
+  const sortProps = {
+    placeholder: "Ordenar",
+    data: SORT_VALUE_SELECT,
+    noExtraOptions: true,
+  };
+
+  return (
+    <Table horizontalSpacing="sm" verticalSpacing="md">
+      <thead>
+        <TableHeader
+          columns={[
+            { label: "Nome", type: "text", searchTerm: "studentName" },
+            { label: "Última prova", type: "text", searchTerm: "examDate" },
+            {
+              label: "CFO",
+              type: "select",
+              searchTerm: "cfo",
+              inputProps: sortProps,
+            },
+            {
+              label: "SEA",
+              type: "select",
+              searchTerm: "sea",
+              inputProps: sortProps,
+            },
+            {
+              label: "LCT",
+              type: "select",
+              searchTerm: "lct",
+              inputProps: sortProps,
+            },
+            {
+              label: "",
+              type: "empty",
+              searchTerm: "",
+            },
+          ]}
+          initialValues={search}
+          onValueChange={update}
+        />
+      </thead>
+      <tbody>
+        {data?.map((item) => (
+          <tr key={item.studentId}>
+            <td>{item.studentName}</td>
+            <td>{item.lastExamDate}</td>
+            <td>
+              <Rating
+                readOnly
+                defaultValue={item?.cfo?.averageStars ?? 0}
+                value={item?.cfo?.averageStars}
+                key={Math.random()}
+                style={{ width: "100px" }}
+              />
+            </td>
+            <td>
+              <Rating
+                readOnly
+                defaultValue={item?.sea?.averageStars ?? 0}
+                value={item?.sea?.averageStars}
+                key={Math.random()}
+                style={{ width: "100px" }}
+              />
+            </td>
+            <td>
+              <Rating
+                readOnly
+                defaultValue={item?.lct?.averageStars ?? 0}
+                value={item?.lct?.averageStars}
+                key={Math.random()}
+                style={{ width: "100px" }}
+              />
+            </td>
+            <td>
+              <ActionIcon
+                component={Link}
+                to={`/alunos/${item.studentId}/detalhes`}
+                color="blue.9"
+              >
+                <IconEye />
+              </ActionIcon>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
+  );
 }

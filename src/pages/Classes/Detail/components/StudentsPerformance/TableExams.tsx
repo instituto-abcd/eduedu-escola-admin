@@ -1,40 +1,60 @@
-import { ActionIcon, Table, Select, TextInput, Text } from "@mantine/core";
+import { ActionIcon, Table, Text } from "@mantine/core";
 import { IconEye } from "@tabler/icons-react";
 import { Link, useParams } from "react-router-dom";
 import { useGetStudentsExamsPerformance } from "~/api/school-class";
+import { TableHeader } from "~/components/TableHeader";
+import { SORT_VALUE_SELECT } from "~/constants";
+import { useStudentPerfFilterStore } from "~/stores/filter";
 
 export function TableExams() {
   const params = useParams();
   const schoolClassId = params.classId ?? "";
+  const { data: search, update } = useStudentPerfFilterStore();
 
-  const { data } = useGetStudentsExamsPerformance(schoolClassId);
+  const { data } = useGetStudentsExamsPerformance(schoolClassId, {
+    search,
+  });
+
+  const sortProps = {
+    placeholder: "Ordenar",
+    data: SORT_VALUE_SELECT,
+    noExtraOptions: true,
+  };
 
   return (
     <Table horizontalSpacing="sm" verticalSpacing="md">
       <thead>
-        <tr>
-          <th>
-            Nome
-            <TextInput size="sm" placeholder="Pesquisar" />
-          </th>
-          <th>
-            Última prova
-            <Select withinPortal data={[]} placeholder="Pesquisar" searchable />
-          </th>
-          <th>
-            CFO
-            <Select withinPortal data={[]} placeholder="Ordenar" searchable />
-          </th>
-          <th>
-            SEA
-            <Select withinPortal data={[]} placeholder="Ordenar" searchable />
-          </th>
-          <th>
-            LCT
-            <Select withinPortal data={[]} placeholder="Ordenar" searchable />
-          </th>
-          <th></th>
-        </tr>
+        <TableHeader
+          columns={[
+            { label: "Nome", type: "text", searchTerm: "studentName" },
+            { label: "Última prova", type: "text", searchTerm: "examDate" },
+            {
+              label: "CFO",
+              type: "select",
+              searchTerm: "cfo",
+              inputProps: sortProps,
+            },
+            {
+              label: "SEA",
+              type: "select",
+              searchTerm: "sea",
+              inputProps: sortProps,
+            },
+            {
+              label: "LCT",
+              type: "select",
+              searchTerm: "lct",
+              inputProps: sortProps,
+            },
+            {
+              label: "",
+              type: "empty",
+              searchTerm: "",
+            },
+          ]}
+          initialValues={search}
+          onValueChange={update}
+        />
       </thead>
       <tbody>
         {data?.map((item) => (

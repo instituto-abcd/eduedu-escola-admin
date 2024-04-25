@@ -53,6 +53,16 @@ export type PlanetPerformance = {
   averageStars: number;
 };
 
+export type StudentPerfSearch = Partial<{
+  "page-number": number;
+  "page-size": number;
+  cfo: "ASC" | "DESC";
+  sea: "ASC" | "DESC";
+  lct: "ASC" | "DESC";
+  examDate: string;
+  studentName: string;
+}>;
+
 export type StudentExamPerf = {
   studentId: string;
   lastExamDate: string;
@@ -235,16 +245,24 @@ export class SchoolClassAPI extends API {
     return data;
   }
 
-  static async getStudentsExamsPerfomance(id: string) {
+  static async getStudentsExamsPerfomance(
+    id: string,
+    params?: StudentPerfSearch,
+  ) {
     const { data } = await this.api.get<StudentExamPerf[]>(
       URL.STUDENTS_EXAMS_PERFORMANCE(id),
+      { params },
     );
     return data;
   }
 
-  static async getStudentsPlanetsPerfomance(id: string) {
+  static async getStudentsPlanetsPerfomance(
+    id: string,
+    params?: StudentPerfSearch,
+  ) {
     const { data } = await this.api.get<StudentPlanetPerf[]>(
       URL.STUDENTS_PLANETS_PERFORMANCE(id),
+      { params },
     );
     return data;
   }
@@ -262,7 +280,7 @@ export function useSchoolClassGetAll(
   > & { search?: SchoolClassSearch },
 ) {
   const handler = useCallback(
-    function() {
+    function () {
       return SchoolClassAPI.getAll(options?.search);
     },
     [options?.search],
@@ -274,7 +292,7 @@ export function useSchoolClassGetAll(
 export function useSchoolClassCreate(
   options?: MutationOptions<SchoolClassInput, SchoolClass>,
 ) {
-  const handler = useCallback(function(input: SchoolClassInput) {
+  const handler = useCallback(function (input: SchoolClassInput) {
     return SchoolClassAPI.create(input);
   }, []);
 
@@ -286,7 +304,7 @@ export function useSchoolClassDelete(
 ) {
   const queryClient = useQueryClient();
 
-  const handler = useCallback(function(ids: string[]) {
+  const handler = useCallback(function (ids: string[]) {
     return SchoolClassAPI.delete(ids);
   }, []);
 
@@ -304,7 +322,7 @@ export function useGetSchoolClass(
   options?: QueryOptions<SchoolClass, [typeof KEY.BY_ID, string]>,
 ) {
   const handler = useCallback(
-    function() {
+    function () {
       return SchoolClassAPI.get(classId);
     },
     [classId],
@@ -319,7 +337,7 @@ export function useSchoolClassUpdate(
     SchoolClass
   >,
 ) {
-  const handler = useCallback(function(data: {
+  const handler = useCallback(function (data: {
     schoolClassId: string;
     input: SchoolClassInput;
   }) {
@@ -341,7 +359,7 @@ export function useStudentsBySchoolclass(
   >,
 ) {
   const handler = useCallback(
-    function() {
+    function () {
       return SchoolClassAPI.studentsBySchoolclass(schoolClassId);
     },
     [schoolClassId],
@@ -362,7 +380,7 @@ export function useStudentsDestiny(
 ) {
   const queryClient = new QueryClient();
 
-  const handler = useCallback(function(data: {
+  const handler = useCallback(function (data: {
     destinationId: string;
     form: { originId: string; studentIds: string[] };
   }) {
@@ -386,7 +404,7 @@ export function useGetPlanetsCharts(
   options?: QueryOptions<Student, [typeof KEY.PLANETS_CHART_BY_ID, string]>,
 ) {
   const handler = useCallback(
-    function() {
+    function () {
       return SchoolClassAPI.getPlanetsCharts(id);
     },
     [id],
@@ -399,7 +417,7 @@ export function useGetExamsCharts(
   options?: QueryOptions<ExamsChart, [typeof KEY.EXAMS_CHART_BY_ID, string]>,
 ) {
   const handler = useCallback(
-    function() {
+    function () {
       return SchoolClassAPI.getExamsCharts(id);
     },
     [id],
@@ -415,7 +433,7 @@ export function useGetExamsPerformance(
   >,
 ) {
   const handler = useCallback(
-    function() {
+    function () {
       return SchoolClassAPI.getExamsPerformance(classId);
     },
     [classId],
@@ -432,7 +450,7 @@ export function useGetPlanetsPerformance(
   >,
 ) {
   const handler = useCallback(
-    function() {
+    function () {
       return SchoolClassAPI.getPlanetsPerformance(classId);
     },
     [classId],
@@ -445,32 +463,48 @@ export function useGetStudentsPlanetsPerformance(
   id: string,
   options?: QueryOptions<
     StudentPlanetPerf[],
-    [typeof KEY.STUDENTS_PLANETS_PERFORMANCE, string]
-  >,
+    [
+      typeof KEY.STUDENTS_PLANETS_PERFORMANCE,
+      string,
+      StudentPerfSearch | undefined,
+    ]
+  > & { search?: StudentPerfSearch },
 ) {
   const handler = useCallback(
-    function() {
-      return SchoolClassAPI.getStudentsPlanetsPerfomance(id);
+    function () {
+      return SchoolClassAPI.getStudentsPlanetsPerfomance(id, options?.search);
     },
-    [id],
+    [id, options?.search],
   );
-  return useQuery([KEY.STUDENTS_PLANETS_PERFORMANCE, id], handler, options);
+  return useQuery(
+    [KEY.STUDENTS_PLANETS_PERFORMANCE, id, options?.search],
+    handler,
+    options,
+  );
 }
 
 export function useGetStudentsExamsPerformance(
   id: string,
   options?: QueryOptions<
     StudentExamPerf[],
-    [typeof KEY.STUDENTS_EXAMS_PERFORMANCE, string]
-  >,
+    [
+      typeof KEY.STUDENTS_EXAMS_PERFORMANCE,
+      string,
+      StudentPerfSearch | undefined,
+    ]
+  > & { search: StudentPerfSearch },
 ) {
   const handler = useCallback(
-    function() {
-      return SchoolClassAPI.getStudentsExamsPerfomance(id);
+    function () {
+      return SchoolClassAPI.getStudentsExamsPerfomance(id, options?.search);
     },
-    [id],
+    [id, options?.search],
   );
-  return useQuery([KEY.STUDENTS_EXAMS_PERFORMANCE, id], handler, options);
+  return useQuery(
+    [KEY.STUDENTS_EXAMS_PERFORMANCE, id, options?.search],
+    handler,
+    options,
+  );
 }
 
 export function useGetIdealStudents(
@@ -478,7 +512,7 @@ export function useGetIdealStudents(
   options?: QueryOptions<IdealStudent[], [typeof KEY.IDEAL_STUDENTS, string]>,
 ) {
   const handler = useCallback(
-    function() {
+    function () {
       return SchoolClassAPI.getIdealStudents(id);
     },
     [id],
