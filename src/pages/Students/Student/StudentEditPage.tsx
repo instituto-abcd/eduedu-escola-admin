@@ -1,4 +1,3 @@
-// Utils & Aux:
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSchoolClassGetAll } from "~/api/school-class";
 import { SCHOOL_PERIOD_SELECT } from "~/constants";
@@ -13,10 +12,7 @@ import {
   useStudentUpdate,
 } from "~/api/student";
 import { z } from "zod";
-
-//Components:
 import {
-  Anchor,
   Button,
   Divider,
   Grid,
@@ -39,22 +35,21 @@ export function StudentEditPage() {
   const navigate = useNavigate();
 
   const params = useParams();
-  const editingStudent = useLocation().state?.schoolClass as Student | undefined;
+  const editingStudent = useLocation().state?.schoolClass as
+    | Student
+    | undefined;
   const shouldFetch = Boolean(!editingStudent && params.studentId);
 
-  const { data: student, isFetching: isFetchingStudent } = useStudentGetOne(
-    params.studentId ?? "",
-    {
-      enabled: shouldFetch,
-      onSuccess: (data) => {
-        form.setValues(data);
-        form.resetDirty();
-      },
-      onError: (error) => {
-        errorNotification("Erro", error.message);
-      }
-    }
-  );
+  const { data: student } = useStudentGetOne(params.studentId ?? "", {
+    enabled: shouldFetch,
+    onSuccess: (data) => {
+      form.setValues(data);
+      form.resetDirty();
+    },
+    onError: (error) => {
+      errorNotification("Erro", error.message);
+    },
+  });
 
   const finalStudent = shouldFetch ? student : editingStudent;
 
@@ -68,9 +63,9 @@ export function StudentEditPage() {
       onSuccess: () => {
         successNotification(
           "Operação realizada com sucesso",
-          "Aluno criado com sucesso!"
+          "Aluno criado com sucesso!",
         );
-        form.reset()
+        form.reset();
       },
       onError: (error) => {
         errorNotification("Erro durante a operação", error.message);
@@ -81,7 +76,7 @@ export function StudentEditPage() {
     onSuccess: () => {
       successNotification(
         "Operação realizada com sucesso",
-        "Aluno alterado com sucesso!"
+        "Aluno alterado com sucesso!",
       );
 
       navigate(PATH.STUDENTS);

@@ -1,27 +1,27 @@
 import { useState } from "react";
-import { Grid } from "@mantine/core";
-import { CardDashboard, SchoolGradeCard } from "./Cards";
+import { Grid, Stack } from "@mantine/core";
+import { SchoolGradeCard } from "./Cards";
+import { DashboardHeader } from "./components/DashboardHeader";
+import { SchoolYear } from "~/api/school-year";
+import { useGetDashboard } from "~/api/dashboard";
 
 export function DashboardPage() {
-
-  const [schoolReport, setSchoolReport] = useState({});
-  const getReportData = (schoolReport: string) => {
-    setSchoolReport(schoolReport);
-  };
+  const [schoolYear, setSchoolYear] = useState<SchoolYear>();
+  const { data: report } = useGetDashboard(schoolYear?.name.toString() ?? "", {
+    enabled: !!schoolYear,
+  });
 
   return (
-    <>
-      <CardDashboard getReportData={getReportData} />
+    <Stack>
+      <DashboardHeader onYearChanged={setSchoolYear} />
 
       <Grid columns={4}>
-        {schoolReport &&
-          schoolReport.schoolGrades?.map((item) => (
-            <Grid.Col span={1}>
-              <SchoolGradeCard schoolGrade={item} />
-            </Grid.Col>
-          ))
-        }
+        {report?.schoolGrades.map((item) => (
+          <Grid.Col span={1} key={item.id}>
+            <SchoolGradeCard grade={item} />
+          </Grid.Col>
+        ))}
       </Grid>
-    </>
+    </Stack>
   );
 }

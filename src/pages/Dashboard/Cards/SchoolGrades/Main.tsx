@@ -1,29 +1,30 @@
-import {
-    Card,
-    Box
-} from "@mantine/core";
+import { Card, Box, Button } from "@mantine/core";
 import { ButtonCollapse } from "./ButtonCollapse";
 import { Header } from "./Header";
+import type { SchoolGradeResponse } from "~/api/dashboard";
 
-type componentProps = {
-    schoolGrade: any;
+type Props = {
+  grade: SchoolGradeResponse;
 };
 
-export function SchoolGradeCard({
-    schoolGrade
-}: componentProps) {
+export function SchoolGradeCard({ grade }: Props) {
+  return (
+    <Card h="100%" p="xl" withBorder>
+      <Card.Section>
+        <Box p={10} pb={0}>
+          <Header grade={grade} />
 
-    return (
-        <Card h="100%" pb={20}>
-            <Card.Section>
-                <Box p={10} pb={0}>
-                    <Header schoolGrade={schoolGrade} />
+          {grade.schoolClasses.map((schoolClass) => (
+            <ButtonCollapse schoolClass={schoolClass} key={schoolClass.id} />
+          ))}
 
-                    {schoolGrade.schoolClasses?.map((schoolClass) => (
-                        <ButtonCollapse schoolClass={schoolClass} />
-                    ))}
-                </Box>
-            </Card.Section>
-        </Card>
-    );
+          {grade.schoolClasses.length === 0 && (
+            <Button fullWidth disabled>
+              Sem turmas cadastradas
+            </Button>
+          )}
+        </Box>
+      </Card.Section>
+    </Card>
+  );
 }

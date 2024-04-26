@@ -94,6 +94,21 @@ export const SCHOOL_GRADE_SELECT: { value: SchoolGrade; label: string }[] = [
   },
 ];
 
+export const SORT_VALUE_SELECT = [
+  {
+    value: undefined,
+    label: "Sem ordenação",
+  },
+  {
+    value: "ASC",
+    label: "Do menor para maior",
+  },
+  {
+    value: "DESC",
+    label: "Do maior para menor",
+  },
+];
+
 export const SCHOOL_GRADE: Record<SchoolGrade, string> = {
   CHILDREN: "Infantil",
   FIRST_GRADE: "1º Ano Fundamental",
@@ -102,18 +117,18 @@ export const SCHOOL_GRADE: Record<SchoolGrade, string> = {
 } as const;
 
 export const AXIS_ENUM = {
-  PHONOLOGICAL_AWARENESS: 'Consciência fonológica',
-  ALPHABETIC_WRITING_SYSTEM: 'Sistema de escrita alfabética',
-  READING_AND_TEXT_COMPREHENSION: 'Leitura e compreensão de texto',
+  PHONOLOGICAL_AWARENESS: "Consciência fonológica",
+  ALPHABETIC_WRITING_SYSTEM: "Sistema de escrita alfabética",
+  READING_AND_TEXT_COMPREHENSION: "Leitura e compreensão de texto",
 
-  ES: 'Consciência fonológica',
-  EA: 'Sistema de escrita alfabética',
-  LC: 'Leitura e compreensão de texto',
+  ES: "Consciência fonológica",
+  EA: "Sistema de escrita alfabética",
+  LC: "Leitura e compreensão de texto",
 
-  ES_ABREV: 'Consc. Fonológica',
-  EA_ABREV: 'Sistema de Escrita alfab.',
+  ES_ABREV: "Consc. Fonológica",
+  EA_ABREV: "Sistema de Escrita alfab.",
 
   // Existe a variação LC e LS vindo do banco, não apague isso aqui pufavôzim
-  LC_ABREV: 'Leitura e Comp. de Texto',
-  LS_ABREV: 'Leitura e Comp. de Texto',
+  LC_ABREV: "Leitura e Comp. de Texto",
+  LS_ABREV: "Leitura e Comp. de Texto",
 } as const;
