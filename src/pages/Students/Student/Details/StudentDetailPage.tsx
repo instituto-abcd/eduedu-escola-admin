@@ -1,5 +1,11 @@
 import { Accordion } from "@mantine/core";
-import { HeaderStudent, PerformancePerArea, SchoolClassPerformanceBy, StudentPerformanceBy, StudentReport } from "./components";
+import {
+  HeaderStudent,
+  PerformancePerArea,
+  SchoolClassPerformanceBy,
+  StudentPerformanceBy,
+  StudentReport,
+} from "./components";
 import { IconPlus } from "@tabler/icons-react";
 import { PerformanceAtPlanets } from "./components/PerformanceAtPlanets";
 import { useParams } from "react-router-dom";
@@ -7,40 +13,48 @@ import { useGetDetailedSummary, useStudentGetOne } from "~/api/student";
 import { errorNotification } from "~/utils/errorNotification";
 
 export function StudentDetailPage() {
-    // Getting student ID from params:
-    const params = useParams();
+  // Getting student ID from params:
+  const params = useParams();
 
-    // Getting detailed-summary data:
-    const { data: detailedSummary } = useGetDetailedSummary(
-        params.studentId ?? "",
-        {
-            onError: (error) =>
-                errorNotification("Erro durante a operação", error.message)
-        }
-    )
+  // Getting detailed-summary data:
+  const { data: detailedSummary } = useGetDetailedSummary(
+    params.studentId ?? "",
+    {
+      onError: (error) =>
+        errorNotification("Erro durante a operação", error.message),
+    },
+  );
 
-    // Getting info about student:
-    const { data: student } = useStudentGetOne(params.studentId ?? "", {});
+  // Getting info about student:
+  const { data: student } = useStudentGetOne(params.studentId ?? "", {});
 
-    return (
-        <>
-            <HeaderStudent
-                student={student}
-                detailedSummary={detailedSummary}
-            />
+  return (
+    <>
+      <HeaderStudent student={student} detailedSummary={detailedSummary} />
 
-            <Accordion
-                multiple={true}
-                variant="separated"
-                chevron={<IconPlus size="1rem" />}
-                chevronPosition="left"
-            >
-                <PerformancePerArea performanceByArea={detailedSummary?.performanceByArea} />
-                <StudentReport summaries={detailedSummary?.summaries} />
-                <StudentPerformanceBy studentId={params?.studentId ?? ""} />
-                <SchoolClassPerformanceBy schoolClassId={student?.schoolClassId ?? ""} />
-                <PerformanceAtPlanets studentId={params?.studentId ?? ""} />
-            </Accordion>
-        </>
-    )
+      <Accordion
+        multiple={true}
+        variant="separated"
+        chevron={<IconPlus size="1rem" />}
+        chevronPosition="left"
+        defaultValue={[
+          "performancePerArea",
+          "studentReport",
+          "studentPerformanceBy",
+          "schoolClassPerformanceBy",
+          "planetsPerformance",
+        ]}
+      >
+        <PerformancePerArea
+          performanceByArea={detailedSummary?.performanceByArea}
+        />
+        <StudentReport summaries={detailedSummary?.summaries} />
+        <StudentPerformanceBy studentId={params?.studentId ?? ""} />
+        <SchoolClassPerformanceBy
+          schoolClassId={student?.schoolClassId ?? ""}
+        />
+        <PerformanceAtPlanets studentId={params?.studentId ?? ""} />
+      </Accordion>
+    </>
+  );
 }
