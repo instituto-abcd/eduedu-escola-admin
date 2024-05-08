@@ -11,61 +11,55 @@ import { errorNotification } from "~/utils/errorNotification";
 import { useEffect } from "react";
 
 export function StudentReport() {
-    // Getting student ID from params:
-    const params = useParams();
+  // Getting student ID from params:
+  const params = useParams();
 
-    // Getting detailed-summary data:
-    const { data: detailedSummary } = useGetDetailedSummary(
-        params.studentId ?? "",
-        {
-            onError: (error) =>
-                errorNotification("Erro ao obter detalhes do estudante", error.message)
-        }
-    )
+  // Getting detailed-summary data:
+  const { data: detailedSummary } = useGetDetailedSummary(
+    params.studentId ?? "",
+    {
+      onError: (error) =>
+        errorNotification("Erro ao obter detalhes do estudante", error.message),
+    },
+  );
 
-    // Getting info about student:
-    const { data: student } = useStudentGetOne(params.studentId ?? "", {});
+  // Getting info about student:
+  const { data: student } = useStudentGetOne(params.studentId ?? "", {});
 
-    const studentId = student?.id;
-    const performanceByArea = detailedSummary?.performanceByArea;
+  const studentId = student?.id;
+  const performanceByArea = detailedSummary?.performanceByArea;
 
-    useEffect(() => {
-        setTimeout(() => {
-            window.print();
-        }, 2000);
+  useEffect(() => {
+    setTimeout(() => {
+      window.print();
+    }, 2000);
+  }, []);
+  return (
+    <>
+      {studentId && (
+        <Box p={20} style={{ maxWidth: "900px" }}>
+          <HeaderReport student={student} />
 
+          {performanceByArea && (
+            <>
+              <ByArea performanceByArea={detailedSummary?.performanceByArea} />
+              <TextReport summaries={detailedSummary?.summaries} />
+            </>
+          )}
 
-        window.addEventListener("afterprint", () => {
-            window.close()
-            self.close()
-        })
-    }, []);
-    return (
+          <ByExam studentId={student?.id} maxWidth="900px" />
+          <ByPlanet studentId={student?.id} maxWidth="900px" />
+          <ByPlanetsAfterExams studentId={student?.id} />
+        </Box>
+      )}
+
+      {/* In case user use the URL to find some student and misstype the ID */}
+      {!studentId && (
         <>
-            {studentId &&
-                <Box p={20} style={{ maxWidth: '900px' }}>
-                    <HeaderReport student={student} />
-
-                    {performanceByArea &&
-                        <>
-                            <ByArea performanceByArea={detailedSummary?.performanceByArea} />
-                            <TextReport summaries={detailedSummary?.summaries} />
-                        </>
-                    }
-
-                    <ByExam studentId={student?.id} maxWidth="900px" />
-                    <ByPlanet studentId={student?.id} maxWidth="900px" />
-                    <ByPlanetsAfterExams studentId={student?.id} />
-                </Box>
-            }
-
-            {/* In case user use the URL to find some student and misstype the ID */}
-            {!studentId &&
-                <>
-                    <h2>Oooops!</h2>
-                    <p>Aluno inexistente.</p>
-                </>
-            }
+          <h2>Oooops!</h2>
+          <p>Aluno inexistente.</p>
         </>
-    )
+      )}
+    </>
+  );
 }
