@@ -27,12 +27,15 @@ export type User = {
   role: UserRole;
   school: School;
   owner: boolean;
-  password: string;
+  password?: string;
   createdAt: string;
   updatedAt: string;
 };
 
-export type UserInput = Pick<User, "name" | "email" | "document" | "profile" | "password">;
+export type UserInput = Pick<
+  User,
+  "name" | "email" | "document" | "profile" | "password"
+>;
 
 export type UserSearch = {
   "page-number"?: number;
@@ -93,14 +96,14 @@ class UserAPI extends API {
 
   static async updateAccessKey(id: string) {
     const { data } = await this.api.put<{ accessKey: string }>(
-      URL.UPDATE_ACCESS_KEY(id)
+      URL.UPDATE_ACCESS_KEY(id),
     );
     return data;
   }
 
   static async getAccessKey(id: string) {
     const { data } = await this.api.get<{ accessKey: string }>(
-      URL.GET_ACCESS_KEY(id)
+      URL.GET_ACCESS_KEY(id),
     );
     return data;
   }
@@ -117,7 +120,7 @@ class UserAPI extends API {
       URL.ACTIVATE(userId),
       {
         status: "ACTIVE",
-      }
+      },
     );
     return data;
   }
@@ -133,7 +136,7 @@ class UserAPI extends API {
   static async updatePassword(input: UpdatePasswordInput) {
     const { data } = await this.api.put<LoginResponse>(
       URL.UPDATE_PASSWORD,
-      input
+      input,
     );
     return data;
   }
@@ -142,13 +145,13 @@ class UserAPI extends API {
 export function useUserGetAll(
   options?: QueryOptions<Paginated<User>, [string, UserSearch | undefined]> & {
     search?: UserSearch;
-  }
+  },
 ) {
   const handler = useCallback(
-    function () {
+    function() {
       return UserAPI.getAll(options?.search);
     },
-    [options?.search]
+    [options?.search],
   );
 
   return useQuery([KEY.ALL, options?.search], handler, options);
@@ -156,20 +159,20 @@ export function useUserGetAll(
 
 export function useUserGetById(
   userId: string,
-  options?: QueryOptions<User, [typeof KEY.BY_ID, string]>
+  options?: QueryOptions<User, [typeof KEY.BY_ID, string]>,
 ) {
   const handler = useCallback(
-    function () {
+    function() {
       return UserAPI.getById(userId);
     },
-    [userId]
+    [userId],
   );
 
   return useQuery([KEY.BY_ID, userId], handler, options);
 }
 
 export function useUserCreate(options?: MutationOptions<UserInput, User>) {
-  const handler = useCallback(function (input: UserInput) {
+  const handler = useCallback(function(input: UserInput) {
     return UserAPI.create(input);
   }, []);
 
@@ -177,39 +180,41 @@ export function useUserCreate(options?: MutationOptions<UserInput, User>) {
 }
 
 export function useUserUpdate(
-  options?: MutationOptions<{ input: UserInput; userId: string }, User>
+  options?: MutationOptions<
+    { input: Partial<UserInput>; userId: string },
+    User
+  >,
 ) {
-  const handler = useCallback(function (data: {
+  const handler = useCallback(function(data: {
     userId: string;
-    input: UserInput;
+    input: Partial<UserInput>;
   }) {
     return UserAPI.update(data.userId, data.input);
-  },
-  []);
+  }, []);
 
   return useMutation(handler, options);
 }
 
 export function useGetAccessKey(
   id: string,
-  options?: QueryOptions<{ accessKey: string }, [string, string]>
+  options?: QueryOptions<{ accessKey: string }, [string, string]>,
 ) {
   const handler = useCallback(
-    function () {
+    function() {
       return UserAPI.getAccessKey(id);
     },
-    [id]
+    [id],
   );
 
   return useQuery(["accessKey", id], handler, options);
 }
 
 export function useUpdateAccessKey(
-  options?: MutationOptions<string, { accessKey: string }>
+  options?: MutationOptions<string, { accessKey: string }>,
 ) {
   const queryClient = useQueryClient();
 
-  const handler = useCallback(function (id: string) {
+  const handler = useCallback(function(id: string) {
     return UserAPI.updateAccessKey(id);
   }, []);
 
@@ -225,11 +230,11 @@ export function useUpdateAccessKey(
 }
 
 export function useUserDelete(
-  options?: MutationOptions<string[], { success: boolean }>
+  options?: MutationOptions<string[], { success: boolean }>,
 ) {
   const queryClient = useQueryClient();
 
-  const handler = useCallback(function (ids: string[]) {
+  const handler = useCallback(function(ids: string[]) {
     return UserAPI.delete(ids);
   }, []);
 
@@ -243,11 +248,11 @@ export function useUserDelete(
 }
 
 export function useUserInactivate(
-  options?: MutationOptions<string[], { success: boolean }>
+  options?: MutationOptions<string[], { success: boolean }>,
 ) {
   const queryClient = useQueryClient();
 
-  const handler = useCallback(function (ids: string[]) {
+  const handler = useCallback(function(ids: string[]) {
     return UserAPI.inactivate(ids);
   }, []);
 
@@ -261,11 +266,11 @@ export function useUserInactivate(
 }
 
 export function useUserActivate(
-  options?: MutationOptions<string, { success: boolean }>
+  options?: MutationOptions<string, { success: boolean }>,
 ) {
   const queryClient = useQueryClient();
 
-  const handler = useCallback(function (id: string) {
+  const handler = useCallback(function(id: string) {
     return UserAPI.activate(id);
   }, []);
 
@@ -279,9 +284,9 @@ export function useUserActivate(
 }
 
 export function useUserUpdatePassword(
-  options?: MutationOptions<UpdatePasswordInput, LoginResponse>
+  options?: MutationOptions<UpdatePasswordInput, LoginResponse>,
 ) {
-  const handler = useCallback(function (input: UpdatePasswordInput) {
+  const handler = useCallback(function(input: UpdatePasswordInput) {
     return UserAPI.updatePassword(input);
   }, []);
 

@@ -1,22 +1,14 @@
-// Utils & Aux:
 import { Link, useLocation, useParams } from "react-router-dom";
 import { PROFILE_SELECT, STATUS_SELECT } from "~/constants";
-import {
-  User,
-  UserInput,
-  useUserCreate,
-  useUserGetById,
-  useUserUpdate,
-} from "~/api/user";
+import { User, useUserCreate, useUserGetById, useUserUpdate } from "~/api/user";
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
 import { z } from "zod";
-
-// Components:
 import { Button, Grid, Group, Select, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { AccessKeyInput } from "~/components/AccessKeyInput";
 import { PageHeader } from "~/components/PageHeader";
+import { useGetClassesByUser } from "~/api/school-class";
 
 const userInputValidation = z.object({
   name: z
@@ -32,7 +24,7 @@ const userInputValidation = z.object({
 
   profile: z.enum(["DIRECTOR", "TEACHER"], {
     errorMap: () => {
-      return { message: 'Por favor, selecione uma opção' };
+      return { message: "Por favor, selecione uma opção" };
     },
   }),
 });
@@ -51,9 +43,9 @@ export function UserPage() {
         form.resetDirty();
       },
       onError: (error) => {
-        errorNotification("Erro", error.message)
-      }
-    }
+        errorNotification("Erro", error.message);
+      },
+    },
   );
 
   const finalUser = shouldFetchUser ? data : editingUser;
@@ -62,15 +54,12 @@ export function UserPage() {
     onSuccess: () => {
       successNotification(
         "Operação realizada com sucesso",
-        "Usuário criado com sucesso!"
+        "Usuário criado com sucesso!",
       );
-      form.reset()
+      form.reset();
     },
     onError: (error) => {
-      errorNotification(
-        "Erro durante a operação",
-        `${error.message}`
-      );
+      errorNotification("Erro durante a operação", `${error.message}`);
     },
   });
 
@@ -78,18 +67,20 @@ export function UserPage() {
     onSuccess: () => {
       successNotification(
         "Operação realizada com sucesso",
-        "Usuário alterado com sucesso!"
+        "Usuário alterado com sucesso!",
       );
     },
     onError: (error) => {
-      errorNotification(
-        "Erro durante a operação",
-        `${error.message}`
-      );
+      errorNotification("Erro durante a operação", `${error.message}`);
     },
   });
 
-  const form = useForm<UserInput>({
+  const { data: userClasses, isLoading: loadingUserClasses } =
+    useGetClassesByUser(finalUser?.id ?? "", {
+      enabled: !!finalUser,
+    });
+
+  const form = useForm<z.infer<typeof userInputValidation>>({
     initialValues: {
       name: finalUser?.name ?? "",
       document: finalUser?.document ?? "",
@@ -146,7 +137,9 @@ export function UserPage() {
               data={PROFILE_SELECT}
               label="Perfil"
               placeholder={isLoadingUser ? "Carregando..." : "Selecione"}
-              disabled={isLoadingUser ? true : (finalUser?.owner == true ? true : false)}
+              disabled={
+                isLoadingUser ? true : finalUser?.owner == true ? true : false
+              }
               {...form.getInputProps("profile")}
             />
           </Grid.Col>
@@ -168,7 +161,11 @@ export function UserPage() {
                 <Grid.Col span={2}>
                   <TextInput
                     label="Salas Associadas"
-                    value="1º A - 2023, 1º B - 2023, 1º C - 2023"
+                    value={
+                      loadingUserClasses
+                        ? "Carregando..."
+                        : userClasses?.names ?? "Sem turmas associadas"
+                    }
                     disabled
                   />
                 </Grid.Col>
