@@ -1,5 +1,6 @@
 import { ActionIcon, Table, Text } from "@mantine/core";
 import { IconEye } from "@tabler/icons-react";
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useGetStudentsExamsPerformance } from "~/api/school-class";
 import { TableHeader } from "~/components/TableHeader";
@@ -20,6 +21,12 @@ export function TableExams() {
     data: SORT_VALUE_SELECT,
     noExtraOptions: true,
   };
+
+  useEffect(() => {
+    return () => {
+      update({});
+    };
+  }, []);
 
   return (
     <Table horizontalSpacing="sm" verticalSpacing="md">

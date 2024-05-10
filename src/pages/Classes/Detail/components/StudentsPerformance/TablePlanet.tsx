@@ -6,6 +6,7 @@ import { useGetStudentsPlanetsPerformance } from "~/api/school-class";
 import { TableHeader } from "~/components/TableHeader";
 import { SORT_VALUE_SELECT } from "~/constants";
 import { useStudentPerfFilterStore } from "~/stores/filter";
+import { useEffect } from "react";
 
 export function TablePlanet() {
   const params = useParams();
@@ -19,6 +20,12 @@ export function TablePlanet() {
     data: SORT_VALUE_SELECT,
     noExtraOptions: true,
   };
+
+  useEffect(() => {
+    return () => {
+      update({});
+    };
+  }, []);
 
   return (
     <Table horizontalSpacing="sm" verticalSpacing="md">
