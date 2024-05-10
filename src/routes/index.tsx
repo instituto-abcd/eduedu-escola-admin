@@ -14,7 +14,6 @@ import { Fragment } from "react";
 import { Notification, Stack, Text } from "@mantine/core";
 import { useSyncStatus } from "~/api/sync";
 import { successNotification } from "~/utils/successNotification";
-import { LayoutReport } from "~/components/Layout/LayoutReport";
 import { CustomProgress } from "~/components/CustomProgress/CustomProgress";
 
 export function AppRoutes() {
@@ -41,7 +40,7 @@ export function AppRoutes() {
       ) {
         successNotification(
           "Sincronização concluída",
-          "Todos os planetas e seus artefatos foram sincronizados com sucesso"
+          "Todos os planetas e seus artefatos foram sincronizados com sucesso",
         );
       }
     },
@@ -59,13 +58,13 @@ export function AppRoutes() {
             style={{ position: "absolute", bottom: 44, right: 44 }}
           >
             <Stack spacing={6}>
-              <CustomProgress value={syncStatus?.percent} label={syncStatus?.percent?.toFixed(2)}/>
+              <CustomProgress
+                value={syncStatus?.percent}
+                label={syncStatus?.percent?.toFixed(2)}
+              />
               <Text size="xs" color="dark.2">
                 {syncStatus?.currentOperation}
               </Text>
-              {/* <Text size="xs" color="dark.3">
-                Artefatos baixados: {syncStatus?.syncedFiles}/{syncStatus?.totalFiles}
-              </Text> */}
             </Stack>
           </Notification>
         )}
