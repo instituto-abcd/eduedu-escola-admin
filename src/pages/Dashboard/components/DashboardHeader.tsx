@@ -12,6 +12,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { SchoolYear, useSchoolYearGetAll } from "~/api/school-year";
 import { PATH } from "~/constants/path";
+import { useSchoolClassFilterStore } from "~/stores/filter";
 
 type Props = {
   onYearChanged: (y: SchoolYear) => void;
@@ -20,6 +21,8 @@ type Props = {
 export function DashboardHeader({ onYearChanged }: Props) {
   const [activeYear, setActiveYear] = useState<SchoolYear>();
 
+  const { data: schoolClassFilter, update: updateSchoolClassFilter } =
+    useSchoolClassFilterStore();
   const { data: years, isLoading } = useSchoolYearGetAll({
     pageSize: 999,
     initialData: [],
@@ -32,10 +35,18 @@ export function DashboardHeader({ onYearChanged }: Props) {
         const sorted = sortYears(activeYears);
         setActiveYear(sorted[0]);
         onYearChanged(sorted[0]);
+        updateSchoolClassFilter({
+          ...schoolClassFilter,
+          schoolYearName: sorted[0].name.toString(),
+        });
       } else {
         const sorted = sortYears(data);
         setActiveYear(sorted[0]);
         onYearChanged(sorted[0]);
+        updateSchoolClassFilter({
+          ...schoolClassFilter,
+          schoolYearName: sorted[0].name.toString(),
+        });
       }
     },
   });

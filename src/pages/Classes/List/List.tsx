@@ -92,7 +92,7 @@ export function ClassesListPage() {
               {
                 label: "Ano Letivo",
                 type: "text",
-                searchTerm: "schoolYearName ",
+                searchTerm: "schoolYearName",
               },
               {
                 label: "Série",
