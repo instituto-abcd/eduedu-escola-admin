@@ -51,6 +51,11 @@ export type UpdatePasswordInput = {
   newPassword: string;
 };
 
+type SheetUploadResponse = {
+  countCreated: number;
+  errors: { line: number; message: string }[];
+};
+
 const KEY = {
   ALL: "USER_ALL",
   BY_ID: "USER",
@@ -69,6 +74,8 @@ const URL = {
   ACTIVATE: (id: string) => `/user/${id}`,
   INACTIVATE: "/user/inactivate",
   UPDATE_PASSWORD: "/user/password",
+  SHEET: "/user/spreadsheet-template",
+  UPLOAD_SHEET: "/user/spreadsheet",
 };
 
 class UserAPI extends API {
@@ -140,7 +147,23 @@ class UserAPI extends API {
     );
     return data;
   }
+
+  static async uploadSheet(sheet: File) {
+    const formData = new FormData();
+
+    formData.append("file", sheet);
+
+    const { data } = await this.api.post(URL.UPLOAD_SHEET, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return data;
+  }
 }
+
+export const userSheetURL = UserAPI.api.defaults.baseURL + URL.SHEET;
 
 export function useUserGetAll(
   options?: QueryOptions<Paginated<User>, [string, UserSearch | undefined]> & {
@@ -314,4 +337,14 @@ export function useUserUpdatePassword(
       options?.onSuccess?.(data, vars, ctx);
     },
   });
+}
+
+export function useUserSheetUpload(
+  options?: MutationOptions<File, SheetUploadResponse>,
+) {
+  const handler = useCallback(function(input: File) {
+    return UserAPI.uploadSheet(input);
+  }, []);
+
+  return useMutation(handler, options);
 }

@@ -30,6 +30,8 @@ import { PATH } from "~/constants/path";
 import { TableLoader } from "~/components/TableLoader";
 import { TableHeader } from "~/components/TableHeader";
 import { useUserFilterStore } from "~/stores/filter";
+import { useDisclosure } from "@mantine/hooks";
+import { UploadUsersModal } from "./UploadUsersModal";
 
 export function UsersListPage() {
   const theme = useMantineTheme();
@@ -58,7 +60,7 @@ export function UsersListPage() {
     onSuccess: () => {
       successNotification(
         "Operação realizada com sucesso",
-        `${selected.length} Usuário(s) excluído(s)com sucesso!`
+        `${selected.length} Usuário(s) excluído(s)com sucesso!`,
       );
       setSelected([]);
     },
@@ -72,7 +74,7 @@ export function UsersListPage() {
       onSuccess: () => {
         successNotification(
           "Operação realizada com sucesso",
-          `${selected.length} Usuário(s) inativado(s) com sucesso!`
+          `${selected.length} Usuário(s) inativado(s) com sucesso!`,
         );
         setSelected([]);
       },
@@ -85,7 +87,7 @@ export function UsersListPage() {
     onSuccess: () => {
       successNotification(
         "Operação realizada com sucesso",
-        `${selected.length} Usuário(s) ativado(s) com sucesso!`
+        `${selected.length} Usuário(s) ativado(s) com sucesso!`,
       );
       setSelected([]);
     },
@@ -139,6 +141,8 @@ export function UsersListPage() {
       },
     });
 
+  const [uploadModalOpen, uploadModalHandler] = useDisclosure(false);
+
   return (
     <Stack>
       <PageHeader
@@ -150,9 +154,14 @@ export function UsersListPage() {
         }
         gap={0}
       >
-        <Button component={Link} to="/usuarios/novo-usuario">
-          Novo usuário
-        </Button>
+        <Group noWrap>
+          <Button variant="outline" onClick={uploadModalHandler.open}>
+            Upload usuários
+          </Button>
+          <Button component={Link} to="/usuarios/novo-usuario">
+            Novo usuário
+          </Button>
+        </Group>
       </PageHeader>
 
       {selected.length > 0 ? (
@@ -235,7 +244,8 @@ export function UsersListPage() {
             onCheckAll={(checked) =>
               checked
                 ? setSelected(
-                    users?.items?.filter((u) => !u.owner).map((u) => u.id) ?? []
+                    users?.items?.filter((u) => !u.owner).map((u) => u.id) ??
+                      [],
                   )
                 : setSelected([])
             }
@@ -282,6 +292,11 @@ export function UsersListPage() {
           paginationHook={pagination}
         />
       )}
+
+      <UploadUsersModal
+        opened={uploadModalOpen}
+        onClose={uploadModalHandler.close}
+      />
     </Stack>
   );
 }
