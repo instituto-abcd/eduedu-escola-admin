@@ -12,16 +12,24 @@ type SyncStatus = {
   currentOperation: string;
 };
 
+type LastSyncResponse = {
+  syncedAt: Date;
+  daysSinceLastSync: number | null;
+  showReminder: boolean;
+};
+
 const URL = {
   SYNC_EXAM: "exam",
   SYNC_PLANETS: "planet-sync/sync-all",
   SYNC_STATUS: "planet-sync/sync-status",
+  LAST_SYNC: "planet-sync/last-sync",
 };
 
 const KEY = {
   EXAM: "EXAM",
   PLANETS: "PLANETS",
   SYNCSTATUS: "SYNC_STATUS",
+  LAST_SYNC: "LAST_SYNC",
 };
 
 class SyncAPI extends API {
@@ -37,6 +45,11 @@ class SyncAPI extends API {
 
   static async getSyncStatus() {
     const { data } = await this.api.get<SyncStatus>(URL.SYNC_STATUS);
+    return data;
+  }
+
+  static async getLastSync() {
+    const { data } = await this.api.get<LastSyncResponse>(URL.LAST_SYNC);
     return data;
   }
 }
@@ -58,11 +71,21 @@ export function useSyncPlanets(options?: MutationOptions<void, void>) {
 }
 
 export function useSyncStatus(
-  options?: QueryOptions<SyncStatus, [typeof KEY.SYNCSTATUS]>
+  options?: QueryOptions<SyncStatus, [typeof KEY.SYNCSTATUS]>,
 ) {
   const handler = useCallback(function () {
     return SyncAPI.getSyncStatus();
   }, []);
 
   return useQuery([KEY.SYNCSTATUS], handler, options);
+}
+
+export function useLastSync(
+  options?: QueryOptions<LastSyncResponse, [typeof KEY.LAST_SYNC]>,
+) {
+  const handler = useCallback(function () {
+    return SyncAPI.getLastSync();
+  }, []);
+
+  return useQuery([KEY.LAST_SYNC], handler, options);
 }

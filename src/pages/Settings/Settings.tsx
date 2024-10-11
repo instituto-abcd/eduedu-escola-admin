@@ -24,6 +24,7 @@ import { AuditModal } from "./components/AuditModal";
 import { z } from "zod";
 import { useSyncPlanets, useSyncStatus } from "~/api/sync";
 import { useState } from "react";
+import { SyncNotification } from "./components/SyncNotification";
 
 export function SettingsPage() {
   const [syncClicked, setSyncClicked] = useState(false);
@@ -37,7 +38,7 @@ export function SettingsPage() {
     onSuccess: () =>
       successNotification(
         "Operação realizada com sucesso",
-        "Configurações atualizadas"
+        "Configurações atualizadas",
       ),
   });
 
@@ -53,7 +54,7 @@ export function SettingsPage() {
           required_error: "Campo obrigatório",
           invalid_type_error: "Digite apenas o número da porta",
         }),
-      })
+      }),
     ),
   });
 
@@ -79,7 +80,7 @@ export function SettingsPage() {
   };
 
   const disableSync = syncStatus
-    ? (syncStatus.percent < 99.9 && syncStatus.percent > 0 || syncClicked)
+    ? (syncStatus.percent < 99.9 && syncStatus.percent > 0) || syncClicked
     : false;
 
   return (
@@ -89,7 +90,10 @@ export function SettingsPage() {
           <Group noWrap>
             <Button
               variant="outline"
-              onClick={() => {mutateSyncPlanets(); onClickSyncButton()}}
+              onClick={() => {
+                mutateSyncPlanets();
+                onClickSyncButton();
+              }}
               loading={disableSync}
             >
               Sincronizar Planetas
@@ -99,6 +103,10 @@ export function SettingsPage() {
             </Button>
           </Group>
         </PageHeader>
+
+        <Stack align="start">
+          <SyncNotification />
+        </Stack>
 
         <Grid columns={8}>
           <Grid.Col span={2}>
@@ -122,7 +130,7 @@ export function SettingsPage() {
               onChange={(v) =>
                 form.setFieldValue(
                   "synchronizationPlanets",
-                  v === "Ativo" ? true : false
+                  v === "Ativo" ? true : false,
                 )
               }
               value={form.values.synchronizationPlanets ? "Ativo" : "Inativo"}
