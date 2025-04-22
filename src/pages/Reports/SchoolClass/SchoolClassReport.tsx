@@ -17,22 +17,30 @@ export function SchoolClassReport() {
   const { data: schoolClass } = useGetSchoolClass(params.classId ?? "", {});
   const { data: schoolClassPerformanceExams } = useGetExamsPerformance(
     params.classId ?? "",
-    {},
+    {}
   );
   const { data: schoolClassPerformancePlanets } = useGetPlanetsPerformance(
     params.classId ?? "",
-    {},
+    {}
   );
   const { data: schoolClassExamsChart } = useGetExamsCharts(
     params.classId ?? "",
-    {},
+    {}
   );
 
   useEffect(() => {
-    setTimeout(() => {
-      window.print();
-    }, 2000);
-  }, []);
+    let IDTimeout: any = null;
+    if (schoolClassPerformancePlanets && schoolClassExamsChart) {
+      IDTimeout = setTimeout(() => {
+        window.print();
+      }, 2000);
+    } else {
+      clearTimeout(IDTimeout);
+    }
+    return () => {
+      clearTimeout(IDTimeout);
+    };
+  }, [schoolClassPerformancePlanets, schoolClassExamsChart]);
 
   return (
     <Box p={20} style={{ maxWidth: "900px" }}>
@@ -81,7 +89,7 @@ export function SchoolClassReport() {
             schoolClassPerformanceExams?.map((item, i) => (
               <>
                 <Box key={item.axisCode}>
-                  <ExamPerformance item={item} />
+                  <ExamPerformance performance={item} />
                   {i + 1 != schoolClassPerformanceExams.length && (
                     <Divider orientation="vertical" variant="solid" />
                   )}
