@@ -7,11 +7,13 @@ import { TablePerformancePlanets } from "../../Students/Student/Details/componen
 
 type componentProps = {
     studentId: string;
+    report?: boolean;
 }
 
-export function ByPlanetsAfterExams({ studentId }: componentProps) {
+export function ByPlanetsAfterExams({ studentId, report }: componentProps) {
     // Get and manage the list of exams executed:
     const [dateExam, setDateExam] = useState('-');
+    const [dateExamText, setDateExamText] = useState('-');
 
     const [examsPerformanceData, setExamsPerformanceData] = useState([])
     const { mutate: examsPerformancePlanets } = useExamsPerformancePlanets({
@@ -41,6 +43,7 @@ export function ByPlanetsAfterExams({ studentId }: componentProps) {
 
                 if (data[0]) {
                     setDateExam(data[0].id)
+                    setDateExamText(data[0].label || '')
                     examsPerformancePlanets({
                         id: data[0].studentId,
                         studentExamId: data[0].id,
@@ -55,7 +58,7 @@ export function ByPlanetsAfterExams({ studentId }: componentProps) {
 
     return (
         <Box mt={40}>
-            <Title order={4} pb={20}>Desempenho nos planetas disponibilizados após a prova em:</Title>
+            <Title order={4} pb={20}>{`Desempenho nos planetas disponibilizados após a prova em${report ? ` ${dateExamText}` : ''}:`}</Title>
 
             {examsPerformanceData.length != 0 &&
                 <TablePerformancePlanets
