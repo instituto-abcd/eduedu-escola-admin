@@ -49,7 +49,7 @@ export function StudentReport() {
 
           <ByExam studentId={student?.id} maxWidth="900px" />
           <ByPlanet studentId={student?.id} maxWidth="900px" />
-          <ByPlanetsAfterExams studentId={student?.id} />
+          <ByPlanetsAfterExams studentId={student?.id} report />
         </Box>
       )}
 
