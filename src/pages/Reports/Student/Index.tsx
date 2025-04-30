@@ -30,10 +30,19 @@ export function StudentReport() {
   const performanceByArea = detailedSummary?.performanceByArea;
 
   useEffect(() => {
-    setTimeout(() => {
-      window.print();
-    }, 2000);
-  }, []);
+    let IDTimeout: any = null;
+    if (student && performanceByArea) {
+      IDTimeout = setTimeout(() => {
+        window.print();
+      }, 2000);
+    } else {
+      clearTimeout(IDTimeout);
+    }
+    return () => {
+      clearTimeout(IDTimeout);
+    };
+  }, [student, performanceByArea]);
+  
   return (
     <>
       {studentId && (
