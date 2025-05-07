@@ -89,10 +89,10 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
                 type: 'linear' as const,
                 display: true, 
                 position: 'left' as const,
-                max: performanceType === 'Provas' ? 100 : 5,
-                min: performanceType === 'Provas' ? 0 : 0,
+                max: 100,
+                min:  0,
                 ticks: {
-                    stepSize: performanceType === 'Provas' ? 20 : 1,
+                    stepSize: 20,
                     callback: function(value: any) {
                         return value + '%';
                     }
