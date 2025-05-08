@@ -1,5 +1,5 @@
 import { Box, Title } from "@mantine/core";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useExamsPerformancePlanets, useGetExamExecutions } from "~/api/student";
 import { monthsAbbreviation } from "~/constants";
 import { errorNotification } from "~/utils/errorNotification";
@@ -8,9 +8,11 @@ import { TablePerformancePlanets } from "../../Students/Student/Details/componen
 type componentProps = {
     studentId: string;
     report?: boolean;
+    onReady?: () => void;
 }
 
-export function ByPlanetsAfterExams({ studentId, report }: componentProps) {
+export function ByPlanetsAfterExams({ studentId, report, onReady }: componentProps) {
+    const [isPlanetsExamsReady, setIsPlanetsExamsReady] = useState({ examsPerformancePlanets: false, dateExamList: false });
     // Get and manage the list of exams executed:
     const [dateExam, setDateExam] = useState('-');
     const [dateExamText, setDateExamText] = useState('-');
@@ -18,7 +20,8 @@ export function ByPlanetsAfterExams({ studentId, report }: componentProps) {
     const [examsPerformanceData, setExamsPerformanceData] = useState([])
     const { mutate: examsPerformancePlanets } = useExamsPerformancePlanets({
         onSuccess: (data) => {
-            setExamsPerformanceData(data)
+            setExamsPerformanceData(data);
+            setIsPlanetsExamsReady({...isPlanetsExamsReady, examsPerformancePlanets: true});
         },
         onError: (error) => {
             errorNotification(
@@ -49,12 +52,19 @@ export function ByPlanetsAfterExams({ studentId, report }: componentProps) {
                         studentExamId: data[0].id,
                     })
                 }
+                setIsPlanetsExamsReady({...isPlanetsExamsReady, dateExamList: true})
             },
             onError: (error) => {
                 errorNotification("Erro durante a operação", error.message);
             }
         }
     )
+
+    useEffect(() => {
+        if (isPlanetsExamsReady.dateExamList && isPlanetsExamsReady.examsPerformancePlanets) {
+          onReady?.();
+        }
+      }, [isPlanetsExamsReady]);
 
     return (
         <Box mt={40}>

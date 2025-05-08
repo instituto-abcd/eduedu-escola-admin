@@ -8,9 +8,10 @@ import { ByPlanetsAfterExams } from "./ByPlanetsAfterExams";
 import { useParams } from "react-router-dom";
 import { useGetDetailedSummary, useStudentGetOne } from "~/api/student";
 import { errorNotification } from "~/utils/errorNotification";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export function StudentReport() {
+  const [isPlanetsExamsReady, setIsPlanetsExamsReady] = useState(false);
   // Getting student ID from params:
   const params = useParams();
 
@@ -31,17 +32,17 @@ export function StudentReport() {
 
   useEffect(() => {
     let IDTimeout: any = null;
-    if (student && performanceByArea) {
+    if (student && performanceByArea && isPlanetsExamsReady) {
       IDTimeout = setTimeout(() => {
         window.print();
-      }, 2000);
+      }, 500);
     } else {
       clearTimeout(IDTimeout);
     }
     return () => {
       clearTimeout(IDTimeout);
     };
-  }, [student, performanceByArea]);
+  }, [student, performanceByArea, isPlanetsExamsReady]);
   
   return (
     <>
@@ -58,7 +59,7 @@ export function StudentReport() {
 
           <ByExam studentId={student?.id} maxWidth="900px" />
           <ByPlanet studentId={student?.id} maxWidth="900px" />
-          <ByPlanetsAfterExams studentId={student?.id} report />
+          <ByPlanetsAfterExams studentId={student?.id} report onReady={() => setIsPlanetsExamsReady(true)} />
         </Box>
       )}
 
