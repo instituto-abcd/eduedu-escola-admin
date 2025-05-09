@@ -58,7 +58,6 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
     );
 
     const options = {
-        aspectRatio: 4,
         responsive: true,
         interaction: {
             mode: 'index' as const,
@@ -125,7 +124,7 @@ export function StudentPerformanceBy({ studentId }: componentProps) {
                     {performanceType == "Planetas" &&
                         processedPlanetsData &&
                         <Flex style={{width: '100%'}}>
-                            <Stack pr={5} mt={15} mb={20} p={5} style={{gap:16}} justify="space-between" align="center">
+                            <Stack pr={5} mt={40} mb={2} style={{gap:16}} justify="space-between" align="center">
                                 <Rating readOnly value={5} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={4} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={3} key={Math.random()} style={{ width: '100px' }} />

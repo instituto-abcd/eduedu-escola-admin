@@ -69,7 +69,6 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
     );
 
     const options = {
-        aspectRatio: 4,
         responsive: true,
         interaction: {
             mode: 'index' as const,
@@ -134,7 +133,7 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
                     {performanceType == "Planetas" &&
                         processedPlanetsData &&
                         <Flex style={{width: '100%'}}>
-                            <Stack pr={5} mt={15} mb={20} p={5} style={{gap:16}} justify="space-between" >
+                            <Stack pr={5} mb={45} mt={20} style={{gap:16}} justify="space-between" align="center" >
                                 <Rating readOnly value={5} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={4} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={3} key={Math.random()} style={{ width: '100px' }} />
@@ -142,7 +141,7 @@ export function SchoolClassPerformanceBy({ schoolClassId }: componentProps) {
                                 <Rating readOnly value={1} key={Math.random()} style={{ width: '100px' }} />
                                 <Rating readOnly value={0} key={Math.random()} style={{ width: '100px' }} />
                             </Stack>
-                            <div className="chart-container" style={{ position: 'relative', height: 'auto', width: '100%' }}>
+                            <div className="chart-container" style={{ position: 'relative', height: 'auto', width: '100%', minWidth: '400px' }}>
                                 <Bar options={options} data={{ labels: schoolClassPerformanceByPlanets?.labels, datasets: processedPlanetsData }} />
                             </div>
                         </Flex>
