@@ -1,16 +1,17 @@
 FROM node:18 AS builder
 WORKDIR /app
 
-ARG ARG_VITE_API_URL
-ARG ARG_VITE_APP_VERSION
 
-ENV VITE_API_URL=${ARG_VITE_API_URL}
-ENV VITE_APP_VERSION=${ARG_VITE_APP_VERSION}
+ARG API_URL
+ARG APP_VERSION
+ARG BUILD_MODE=production
+
+ENV VITE_API_URL=${API_URL}
 
 COPY . .
 
 RUN npm install
-RUN npx vite build
+RUN npx vite build --mode $BUILD_MODE
 
 FROM nginx:1.16.0-alpine
 
