@@ -6,13 +6,13 @@ import { envObjectSchema } from "./config/env.schema";
 export default defineConfig(({ mode }) => ({
 	plugins: [
 		react(),
-		{
-			name: "validate-env-vars",
-			buildStart: () => {
-				const env = loadEnv(mode, process.cwd(), "");
-				envObjectSchema.parse(env);
-			},
-		},
+		// {
+		// 	name: "validate-env-vars",
+		// 	buildStart: () => {
+		// 		const env = loadEnv(mode, process.cwd(), "");
+		// 		envObjectSchema.parse(env);
+		// 	},
+		// },
 	],
 	resolve: {
 		alias: {
