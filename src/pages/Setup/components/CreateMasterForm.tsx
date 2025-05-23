@@ -15,7 +15,7 @@ import {
 import { useForm, zodResolver } from "@mantine/form";
 import { z } from "zod";
 import { useSettingsCreateOwner } from "~/api/settings";
-import { useSyncExams, useSyncPlanets } from "~/api/sync";
+import { useSyncExams } from "~/api/sync";
 import { UserInput } from "~/api/user";
 import { PROFILE_SELECT, USER_PROFILE } from "~/constants";
 import { errorNotification } from "~/utils/errorNotification";
