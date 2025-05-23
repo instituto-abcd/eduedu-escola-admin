@@ -4,13 +4,16 @@ import { CreateMasterForm } from "./components/CreateMasterForm";
 import { useSettingsGetStatus } from "~/api/settings";
 import { CreateSchoolForm } from "./components/CreateSchoolForm";
 import { SetupComplete } from "./components/SetupComplete";
-import { useSyncPlanets } from "~/api/sync";
+import { useLastSync, useSyncPlanets } from "~/api/sync";
+import { useEffect } from "react";
 
 export function SetupPage() {
 	const { mutate: syncPlanets, isLoading: isSyncing } = useSyncPlanets();
+	const { data: lastSync } = useLastSync();
+
 	const { data: status, isFetching } = useSettingsGetStatus({
 		onSettled: () => {
-			if (!isSyncing) {
+			if (!isSyncing && lastSync && lastSync.daysSinceLastSync === null) {
 				syncPlanets();
 			}
 		},
@@ -25,6 +28,12 @@ export function SetupPage() {
 		status?.completedOwnerSetup && !status?.completedSchoolSetup;
 	const setupComplete =
 		status?.completedOwnerSetup && status?.completedSchoolSetup;
+
+	useEffect(() => {
+		if (!isSyncing) {
+			syncPlanets();
+		}
+	}, [syncPlanets]);
 
 	return (
 		<BackgroundImage src={bg} h="100vh">
