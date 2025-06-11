@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import { API } from "./base";
 import {
-  QueryClient,
-  useMutation,
-  useQuery,
-  useQueryClient,
+	QueryClient,
+	useMutation,
+	useQuery,
+	useQueryClient,
 } from "@tanstack/react-query";
 import { MutationOptions, Paginated, QueryOptions } from "./api-types";
 import { User } from "./user";
@@ -12,532 +12,537 @@ import { SchoolYear } from "./school-year";
 import { Student } from "./student";
 
 export type SchoolGrade =
-  | "CHILDREN"
-  | "FIRST_GRADE"
-  | "SECOND_GRADE"
-  | "THIRD_GRADE";
+	| "CHILDREN"
+	| "FIRST_GRADE"
+	| "SECOND_GRADE"
+	| "THIRD_GRADE";
 export type SchoolPeriod = "MORNING" | "AFTERNOON" | "FULL";
 
 export type SchoolClass = {
-  id: string;
-  name: string;
-  schoolGrade: SchoolGrade;
-  schoolPeriod: SchoolPeriod;
-  teachers: User[];
-  schoolYear: SchoolYear;
-  studentsCount: number;
+	id: string;
+	name: string;
+	schoolGrade: SchoolGrade;
+	schoolPeriod: SchoolPeriod;
+	teachers: User[];
+	schoolYear: SchoolYear;
+	studentsCount: number;
 };
 
 export type SchoolClassInput = Pick<
-  SchoolClass,
-  "name" | "schoolGrade" | "schoolPeriod"
+	SchoolClass,
+	"name" | "schoolGrade" | "schoolPeriod"
 > & {
-  schoolYearId: string;
-  teacherIds: string[];
+	schoolYearId: string;
+	teacherIds: string[];
 };
 
 export type SchoolClassSearch = {
-  "page-number"?: number;
-  "page-size"?: number;
-  name?: string;
-  schoolGrade?: string;
-  schoolPeriod?: string;
-  schoolYearName?: string;
+	"page-number"?: number;
+	"page-size"?: number;
+	name?: string;
+	schoolGrade?: string;
+	schoolPeriod?: string;
+	schoolYearName?: string;
 };
 
 export type PlanetPerformance = {
-  axisCode: "ES" | "EA" | "LC";
-  axisName: string;
-  offeredPlanets: number;
-  accomplishedPlanets: number;
-  averageStars: number;
+	axisCode: "ES" | "EA" | "LC";
+	axisName: string;
+	offeredPlanets: number;
+	accomplishedPlanets: number;
+	averageStars: number;
 };
 
 export type StudentPerfSearch = Partial<{
-  "page-number": number;
-  "page-size": number;
-  cfo: "ASC" | "DESC";
-  sea: "ASC" | "DESC";
-  lct: "ASC" | "DESC";
-  examDate: string;
-  studentName: string;
+	"page-number": number;
+	"page-size": number;
+	cfo: "ASC" | "DESC";
+	sea: "ASC" | "DESC";
+	lct: "ASC" | "DESC";
+	examDate: string;
+	studentName: string;
 }>;
 
 export type StudentExamPerf = {
-  studentId: string;
-  lastExamDate: string;
-  studentName: string;
-  cfo: PerformanceMetrics;
-  sea: PerformanceMetrics;
-  lct: PerformanceMetrics;
+	studentId: string;
+	lastExamDate: string;
+	studentName: string;
+	cfo: PerformanceMetrics;
+	sea: PerformanceMetrics;
+	lct: PerformanceMetrics;
 };
 
 export type StudentPlanetPerf = {
-  studentId: string;
-  studentName: string;
-  lastExamDate: string;
-  cfo: PerfRating;
-  sea: PerfRating;
-  lct: PerfRating;
+	studentId: string;
+	studentName: string;
+	lastExamDate: string;
+	cfo: PerfRating;
+	sea: PerfRating;
+	lct: PerfRating;
 };
 
 type PerformanceMetrics = {
-  percent: string;
-  color: string;
+	percent: string;
+	color: string;
 };
 
 type PerfDetail = {
-  students: IdealStudent[];
-  count: number;
+	students: IdealStudent[];
+	count: number;
 };
 
 type PerfRating = {
-  averageStars: number;
+	averageStars: number;
 };
 
 export type ClassExamPerformance = {
-  axisCode: string;
-  axisName: string;
-  veryLow: PerfDetail;
-  below: PerfDetail;
-  expected: PerfDetail;
+	axisCode: string;
+	axisName: string;
+	veryLow: PerfDetail;
+	below: PerfDetail;
+	expected: PerfDetail;
 };
 
 export type IdealStudent = {
-  studentId: string;
-  name: string;
-  lastExamDate: Date;
-  percent?: number;
+	studentId: string;
+	name: string;
+	lastExamDate: Date;
+	percent?: number;
 };
 
 type ExamsChart = {
-  labels: string[];
-  datasets: {
-    label: string;
-    data: number[];
-    borderWidth: number;
-  }[];
+	labels: string[];
+	datasets: {
+		label: string;
+		data: number[];
+		borderWidth: number;
+	}[];
 };
 
 type ClassByUserResponse = { names: string };
 
 const KEY = {
-  ALL: "SCHOOL_CLASS_ALL",
-  BY_ID: "SCHOOL_CLASS_BY_ID",
-  STUDENT_DESTINATION: "SCHOOL_CLASS_STUDENT_DESTINATION",
-  STUDENT_BY_SCHOOLCLASS: "STUDENT_BY_SCHOOLCLASS",
-  PLANETS_CHART_BY_ID: "PLANETS_CHART_BY_ID",
-  EXAMS_CHART_BY_ID: "EXAMS_CHART_BY_ID",
-  DEITALED_SUMMARY_BY_ID: "DEITALED_SUMMARY_BY_ID",
-  PLANETS_PERFORMANCE: "PLANETS_PERFORMANCE",
-  EXAMS_PERFORMANCE: "EXAMS_PERFORMANCE",
-  STUDENTS_PLANETS_PERFORMANCE: "STUDENTS_PLANETS_PERFORMANCE",
-  STUDENTS_EXAMS_PERFORMANCE: "STUDENTS_EXAMS_PERFORMANCE",
-  IDEAL_STUDENTS: "IDEAL_STUDENTS",
-  USER: "CLASSES_BY_USER",
+	ALL: "SCHOOL_CLASS_ALL",
+	BY_ID: "SCHOOL_CLASS_BY_ID",
+	STUDENT_DESTINATION: "SCHOOL_CLASS_STUDENT_DESTINATION",
+	STUDENT_BY_SCHOOLCLASS: "STUDENT_BY_SCHOOLCLASS",
+	PLANETS_CHART_BY_ID: "PLANETS_CHART_BY_ID",
+	EXAMS_CHART_BY_ID: "EXAMS_CHART_BY_ID",
+	DEITALED_SUMMARY_BY_ID: "DEITALED_SUMMARY_BY_ID",
+	PLANETS_PERFORMANCE: "PLANETS_PERFORMANCE",
+	EXAMS_PERFORMANCE: "EXAMS_PERFORMANCE",
+	STUDENTS_PLANETS_PERFORMANCE: "STUDENTS_PLANETS_PERFORMANCE",
+	STUDENTS_EXAMS_PERFORMANCE: "STUDENTS_EXAMS_PERFORMANCE",
+	IDEAL_STUDENTS: "IDEAL_STUDENTS",
+	USER: "CLASSES_BY_USER",
 } as const;
 
-const URL = {
-  ALL: "/schoolClass/all",
-  CREATE: "/schoolClass",
-  DELETE: "/schoolClass",
-  GET: (id: string) => `/schoolClass/${id}`,
-  UPDATE: (id: string) => `/schoolClass/${id}`,
-  SHEET: "schoolClass/students/spreadsheet-template",
-  UPLOAD_SHEET: (id: string) => `/schoolClass/${id}/students/spreadsheet`,
-  DESTINY_STUDENTS: (destinyID: string) => `/schoolClass/${destinyID}/students`,
-  STUDENTS_BY_SCHOOLCLASS: (schoolClassId: string) =>
-    `/schoolClass/${schoolClassId}/students`,
-  PLANET_CHARTS: (id: string) => `/schoolClass/${id}/planets-chart`,
-  EXAM_CHARTS: (id: string) => `/schoolClass/${id}/exams-chart`,
-  EXAMS_PERFORMANCE: (id: string) => `/schoolClass/${id}/exams-performance`,
-  PLANETS_PERFORMANCE: (id: string) => `/schoolClass/${id}/planets-performance`,
-  STUDENTS_PLANETS_PERFORMANCE: (id: string) =>
-    `/schoolClass/${id}/planets-performance-students`,
-  STUDENTS_EXAMS_PERFORMANCE: (id: string) =>
-    `/schoolClass/${id}/exams-performance-students`,
-  IDEAL_STUDENTS: (id: string) => `/schoolClass/${id}/ideal-students`,
-  USER: (id: string) => "/schoolClass/user/" + id,
+const ROUTE = {
+	ALL: "/schoolClass/all",
+	CREATE: "/schoolClass",
+	DELETE: "/schoolClass",
+	GET: (id: string) => `/schoolClass/${id}`,
+	UPDATE: (id: string) => `/schoolClass/${id}`,
+	SHEET: "/schoolClass/students/spreadsheet-template",
+	UPLOAD_SHEET: (id: string) => `/schoolClass/${id}/students/spreadsheet`,
+	DESTINY_STUDENTS: (destinyID: string) => `/schoolClass/${destinyID}/students`,
+	STUDENTS_BY_SCHOOLCLASS: (schoolClassId: string) =>
+		`/schoolClass/${schoolClassId}/students`,
+	PLANET_CHARTS: (id: string) => `/schoolClass/${id}/planets-chart`,
+	EXAM_CHARTS: (id: string) => `/schoolClass/${id}/exams-chart`,
+	EXAMS_PERFORMANCE: (id: string) => `/schoolClass/${id}/exams-performance`,
+	PLANETS_PERFORMANCE: (id: string) => `/schoolClass/${id}/planets-performance`,
+	STUDENTS_PLANETS_PERFORMANCE: (id: string) =>
+		`/schoolClass/${id}/planets-performance-students`,
+	STUDENTS_EXAMS_PERFORMANCE: (id: string) =>
+		`/schoolClass/${id}/exams-performance-students`,
+	IDEAL_STUDENTS: (id: string) => `/schoolClass/${id}/ideal-students`,
+	USER: (id: string) => "/schoolClass/user/" + id,
 };
 
 export class SchoolClassAPI extends API {
-  static async getAll(params?: SchoolClassSearch) {
-    const { data } = await this.api.get<Paginated<SchoolClass>>(URL.ALL, {
-      params,
-    });
-    return data;
-  }
+	static async getAll(params?: SchoolClassSearch) {
+		const { data } = await this.api.get<Paginated<SchoolClass>>(ROUTE.ALL, {
+			params,
+		});
+		return data;
+	}
 
-  static async create(input?: SchoolClassInput) {
-    const { data } = await this.api.post<SchoolClass>(URL.CREATE, input);
-    return data;
-  }
+	static async create(input?: SchoolClassInput) {
+		const { data } = await this.api.post<SchoolClass>(ROUTE.CREATE, input);
+		return data;
+	}
 
-  static async delete(schoolClassId: string[]) {
-    const { data } = await this.api.delete<{ success: boolean }>(URL.DELETE, {
-      data: { ids: schoolClassId },
-    });
+	static async delete(schoolClassId: string[]) {
+		const { data } = await this.api.delete<{ success: boolean }>(ROUTE.DELETE, {
+			data: { ids: schoolClassId },
+		});
 
-    return data;
-  }
+		return data;
+	}
 
-  static async get(id: string) {
-    const { data } = await this.api.get<SchoolClass>(URL.GET(id));
-    return data;
-  }
+	static async get(id: string) {
+		const { data } = await this.api.get<SchoolClass>(ROUTE.GET(id));
+		return data;
+	}
 
-  static async update(
-    schoolClassId: string,
-    input?: Partial<SchoolClassInput>,
-  ) {
-    const { data } = await this.api.patch<SchoolClass>(
-      URL.UPDATE(schoolClassId),
-      input,
-    );
-    return data;
-  }
+	static async update(
+		schoolClassId: string,
+		input?: Partial<SchoolClassInput>,
+	) {
+		const { data } = await this.api.patch<SchoolClass>(
+			ROUTE.UPDATE(schoolClassId),
+			input,
+		);
+		return data;
+	}
 
-  static async uploadStudentsSheet(sheet: File, id: string) {
-    const formData = new FormData();
-    formData.append("file", sheet);
+	static async uploadStudentsSheet(sheet: File, id: string) {
+		const formData = new FormData();
+		formData.append("file", sheet);
 
-    const { data } = await this.api.post(URL.UPLOAD_SHEET(id), formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+		const { data } = await this.api.post(ROUTE.UPLOAD_SHEET(id), formData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		});
 
-    return data;
-  }
+		return data;
+	}
 
-  static async studentsBySchoolclass(schoolClassId: string) {
-    const { data } = await this.api.get(
-      URL.STUDENTS_BY_SCHOOLCLASS(schoolClassId),
-    );
-    return data;
-  }
+	static async studentsBySchoolclass(schoolClassId: string) {
+		const { data } = await this.api.get(
+			ROUTE.STUDENTS_BY_SCHOOLCLASS(schoolClassId),
+		);
+		return data;
+	}
 
-  static async studentsDestiny(
-    destinyID: string,
-    form: { originId: string; studentIds: string[] },
-  ) {
-    const { data } = await this.api.post(URL.DESTINY_STUDENTS(destinyID), form);
-    return data;
-  }
+	static async studentsDestiny(
+		destinyID: string,
+		form: { originId: string; studentIds: string[] },
+	) {
+		const { data } = await this.api.post(
+			ROUTE.DESTINY_STUDENTS(destinyID),
+			form,
+		);
+		return data;
+	}
 
-  static async getPlanetsCharts(id: string) {
-    const { data } = await this.api.get(URL.PLANET_CHARTS(id));
-    return data;
-  }
+	static async getPlanetsCharts(id: string) {
+		const { data } = await this.api.get(ROUTE.PLANET_CHARTS(id));
+		return data;
+	}
 
-  static async getExamsCharts(id: string) {
-    const { data } = await this.api.get<ExamsChart>(URL.EXAM_CHARTS(id));
-    return data;
-  }
+	static async getExamsCharts(id: string) {
+		const { data } = await this.api.get<ExamsChart>(ROUTE.EXAM_CHARTS(id));
+		return data;
+	}
 
-  static async getExamsPerformance(id: string) {
-    const { data } = await this.api.get<ClassExamPerformance[]>(
-      URL.EXAMS_PERFORMANCE(id),
-    );
-    return data;
-  }
+	static async getExamsPerformance(id: string) {
+		const { data } = await this.api.get<ClassExamPerformance[]>(
+			ROUTE.EXAMS_PERFORMANCE(id),
+		);
+		return data;
+	}
 
-  static async getPlanetsPerformance(id: string) {
-    const { data } = await this.api.get<PlanetPerformance[]>(
-      URL.PLANETS_PERFORMANCE(id),
-    );
-    return data;
-  }
+	static async getPlanetsPerformance(id: string) {
+		const { data } = await this.api.get<PlanetPerformance[]>(
+			ROUTE.PLANETS_PERFORMANCE(id),
+		);
+		return data;
+	}
 
-  static async getStudentsExamsPerfomance(
-    id: string,
-    params?: StudentPerfSearch,
-  ) {
-    const { data } = await this.api.get<StudentExamPerf[]>(
-      URL.STUDENTS_EXAMS_PERFORMANCE(id),
-      { params },
-    );
-    return data;
-  }
+	static async getStudentsExamsPerfomance(
+		id: string,
+		params?: StudentPerfSearch,
+	) {
+		const { data } = await this.api.get<StudentExamPerf[]>(
+			ROUTE.STUDENTS_EXAMS_PERFORMANCE(id),
+			{ params },
+		);
+		return data;
+	}
 
-  static async getStudentsPlanetsPerfomance(
-    id: string,
-    params?: StudentPerfSearch,
-  ) {
-    const { data } = await this.api.get<StudentPlanetPerf[]>(
-      URL.STUDENTS_PLANETS_PERFORMANCE(id),
-      { params },
-    );
-    return data;
-  }
+	static async getStudentsPlanetsPerfomance(
+		id: string,
+		params?: StudentPerfSearch,
+	) {
+		const { data } = await this.api.get<StudentPlanetPerf[]>(
+			ROUTE.STUDENTS_PLANETS_PERFORMANCE(id),
+			{ params },
+		);
+		return data;
+	}
 
-  static async getIdealStudents(id: string) {
-    const { data } = await this.api.get<IdealStudent[]>(URL.IDEAL_STUDENTS(id));
-    return data;
-  }
+	static async getIdealStudents(id: string) {
+		const { data } = await this.api.get<IdealStudent[]>(
+			ROUTE.IDEAL_STUDENTS(id),
+		);
+		return data;
+	}
 
-  static async getClassesByUser(id: string) {
-    const { data } = await this.api.get<ClassByUserResponse>(URL.USER(id));
-    return data;
-  }
+	static async getClassesByUser(id: string) {
+		const { data } = await this.api.get<ClassByUserResponse>(ROUTE.USER(id));
+		return data;
+	}
 }
 
 export function useSchoolClassGetAll(
-  options?: QueryOptions<
-    Paginated<SchoolClass>,
-    [string, SchoolClassSearch | undefined]
-  > & { search?: SchoolClassSearch },
+	options?: QueryOptions<
+		Paginated<SchoolClass>,
+		[string, SchoolClassSearch | undefined]
+	> & { search?: SchoolClassSearch },
 ) {
-  const handler = useCallback(
-    function() {
-      return SchoolClassAPI.getAll(options?.search);
-    },
-    [options?.search],
-  );
+	const handler = useCallback(
+		function () {
+			return SchoolClassAPI.getAll(options?.search);
+		},
+		[options?.search],
+	);
 
-  return useQuery([KEY.ALL, options?.search], handler, options);
+	return useQuery([KEY.ALL, options?.search], handler, options);
 }
 
 export function useSchoolClassCreate(
-  options?: MutationOptions<SchoolClassInput, SchoolClass>,
+	options?: MutationOptions<SchoolClassInput, SchoolClass>,
 ) {
-  const handler = useCallback(function(input: SchoolClassInput) {
-    return SchoolClassAPI.create(input);
-  }, []);
+	const handler = useCallback(function (input: SchoolClassInput) {
+		return SchoolClassAPI.create(input);
+	}, []);
 
-  return useMutation(handler, options);
+	return useMutation(handler, options);
 }
 
 export function useSchoolClassDelete(
-  options?: MutationOptions<string[], { success: boolean }>,
+	options?: MutationOptions<string[], { success: boolean }>,
 ) {
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-  const handler = useCallback(function(ids: string[]) {
-    return SchoolClassAPI.delete(ids);
-  }, []);
+	const handler = useCallback(function (ids: string[]) {
+		return SchoolClassAPI.delete(ids);
+	}, []);
 
-  return useMutation(handler, {
-    ...options,
-    onSuccess: async (data, vars, ctx) => {
-      await queryClient.invalidateQueries([KEY.ALL]);
-      options?.onSuccess?.(data, vars, ctx);
-    },
-  });
+	return useMutation(handler, {
+		...options,
+		onSuccess: async (data, vars, ctx) => {
+			await queryClient.invalidateQueries([KEY.ALL]);
+			options?.onSuccess?.(data, vars, ctx);
+		},
+	});
 }
 
 export function useGetSchoolClass(
-  classId: string,
-  options?: QueryOptions<SchoolClass, [typeof KEY.BY_ID, string]>,
+	classId: string,
+	options?: QueryOptions<SchoolClass, [typeof KEY.BY_ID, string]>,
 ) {
-  const handler = useCallback(
-    function() {
-      return SchoolClassAPI.get(classId);
-    },
-    [classId],
-  );
+	const handler = useCallback(
+		function () {
+			return SchoolClassAPI.get(classId);
+		},
+		[classId],
+	);
 
-  return useQuery([KEY.BY_ID, classId], handler, options);
+	return useQuery([KEY.BY_ID, classId], handler, options);
 }
 
 export function useSchoolClassUpdate(
-  options?: MutationOptions<
-    { input: Partial<SchoolClassInput>; schoolClassId: string },
-    SchoolClass
-  >,
+	options?: MutationOptions<
+		{ input: Partial<SchoolClassInput>; schoolClassId: string },
+		SchoolClass
+	>,
 ) {
-  const handler = useCallback(function(data: {
-    schoolClassId: string;
-    input: SchoolClassInput;
-  }) {
-    return SchoolClassAPI.update(data.schoolClassId, data.input);
-  }, []);
+	const handler = useCallback(function (data: {
+		schoolClassId: string;
+		input: SchoolClassInput;
+	}) {
+		return SchoolClassAPI.update(data.schoolClassId, data.input);
+	}, []);
 
-  return useMutation(handler, options);
+	return useMutation(handler, options);
 }
 
 export function sheetDownloadUrl() {
-  return SchoolClassAPI.api.defaults.baseURL + URL.SHEET;
+	return new URL(ROUTE.SHEET, SchoolClassAPI.api.defaults.baseURL).toString();
 }
 
 export function useStudentsBySchoolclass(
-  schoolClassId: string,
-  options?: QueryOptions<
-    Array<Student>,
-    [typeof KEY.STUDENT_BY_SCHOOLCLASS, string]
-  >,
+	schoolClassId: string,
+	options?: QueryOptions<
+		Array<Student>,
+		[typeof KEY.STUDENT_BY_SCHOOLCLASS, string]
+	>,
 ) {
-  const handler = useCallback(
-    function() {
-      return SchoolClassAPI.studentsBySchoolclass(schoolClassId);
-    },
-    [schoolClassId],
-  );
+	const handler = useCallback(
+		function () {
+			return SchoolClassAPI.studentsBySchoolclass(schoolClassId);
+		},
+		[schoolClassId],
+	);
 
-  return useQuery(
-    [KEY.STUDENT_BY_SCHOOLCLASS, schoolClassId],
-    handler,
-    options,
-  );
+	return useQuery(
+		[KEY.STUDENT_BY_SCHOOLCLASS, schoolClassId],
+		handler,
+		options,
+	);
 }
 
 export function useStudentsDestiny(
-  options?: MutationOptions<
-    { destinationId: string; form: { originId: string; studentIds: string[] } },
-    void
-  >,
+	options?: MutationOptions<
+		{ destinationId: string; form: { originId: string; studentIds: string[] } },
+		void
+	>,
 ) {
-  const queryClient = new QueryClient();
+	const queryClient = new QueryClient();
 
-  const handler = useCallback(function(data: {
-    destinationId: string;
-    form: { originId: string; studentIds: string[] };
-  }) {
-    return SchoolClassAPI.studentsDestiny(data.destinationId, data.form);
-  }, []);
+	const handler = useCallback(function (data: {
+		destinationId: string;
+		form: { originId: string; studentIds: string[] };
+	}) {
+		return SchoolClassAPI.studentsDestiny(data.destinationId, data.form);
+	}, []);
 
-  return useMutation(handler, {
-    ...options,
-    async onSuccess(data, variables, ctx) {
-      await queryClient.invalidateQueries([
-        KEY.STUDENT_BY_SCHOOLCLASS,
-        KEY.STUDENT_DESTINATION,
-      ]);
-      options?.onSuccess?.(data, variables, ctx);
-    },
-  });
+	return useMutation(handler, {
+		...options,
+		async onSuccess(data, variables, ctx) {
+			await queryClient.invalidateQueries([
+				KEY.STUDENT_BY_SCHOOLCLASS,
+				KEY.STUDENT_DESTINATION,
+			]);
+			options?.onSuccess?.(data, variables, ctx);
+		},
+	});
 }
 
 export function useGetPlanetsCharts(
-  id: string,
-  options?: QueryOptions<Student, [typeof KEY.PLANETS_CHART_BY_ID, string]>,
+	id: string,
+	options?: QueryOptions<Student, [typeof KEY.PLANETS_CHART_BY_ID, string]>,
 ) {
-  const handler = useCallback(
-    function() {
-      return SchoolClassAPI.getPlanetsCharts(id);
-    },
-    [id],
-  );
-  return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options);
+	const handler = useCallback(
+		function () {
+			return SchoolClassAPI.getPlanetsCharts(id);
+		},
+		[id],
+	);
+	return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options);
 }
 
 export function useGetExamsCharts(
-  id: string,
-  options?: QueryOptions<ExamsChart, [typeof KEY.EXAMS_CHART_BY_ID, string]>,
+	id: string,
+	options?: QueryOptions<ExamsChart, [typeof KEY.EXAMS_CHART_BY_ID, string]>,
 ) {
-  const handler = useCallback(
-    function() {
-      return SchoolClassAPI.getExamsCharts(id);
-    },
-    [id],
-  );
-  return useQuery([KEY.EXAMS_CHART_BY_ID, id], handler, options);
+	const handler = useCallback(
+		function () {
+			return SchoolClassAPI.getExamsCharts(id);
+		},
+		[id],
+	);
+	return useQuery([KEY.EXAMS_CHART_BY_ID, id], handler, options);
 }
 
 export function useGetExamsPerformance(
-  classId: string,
-  options?: QueryOptions<
-    ClassExamPerformance[],
-    [typeof KEY.EXAMS_PERFORMANCE, string]
-  >,
+	classId: string,
+	options?: QueryOptions<
+		ClassExamPerformance[],
+		[typeof KEY.EXAMS_PERFORMANCE, string]
+	>,
 ) {
-  const handler = useCallback(
-    function() {
-      return SchoolClassAPI.getExamsPerformance(classId);
-    },
-    [classId],
-  );
+	const handler = useCallback(
+		function () {
+			return SchoolClassAPI.getExamsPerformance(classId);
+		},
+		[classId],
+	);
 
-  return useQuery([KEY.EXAMS_PERFORMANCE, classId], handler, options);
+	return useQuery([KEY.EXAMS_PERFORMANCE, classId], handler, options);
 }
 
 export function useGetPlanetsPerformance(
-  classId: string,
-  options?: QueryOptions<
-    PlanetPerformance[],
-    [typeof KEY.PLANETS_PERFORMANCE, string]
-  >,
+	classId: string,
+	options?: QueryOptions<
+		PlanetPerformance[],
+		[typeof KEY.PLANETS_PERFORMANCE, string]
+	>,
 ) {
-  const handler = useCallback(
-    function() {
-      return SchoolClassAPI.getPlanetsPerformance(classId);
-    },
-    [classId],
-  );
+	const handler = useCallback(
+		function () {
+			return SchoolClassAPI.getPlanetsPerformance(classId);
+		},
+		[classId],
+	);
 
-  return useQuery([KEY.PLANETS_PERFORMANCE, classId], handler, options);
+	return useQuery([KEY.PLANETS_PERFORMANCE, classId], handler, options);
 }
 
 export function useGetStudentsPlanetsPerformance(
-  id: string,
-  options?: QueryOptions<
-    StudentPlanetPerf[],
-    [
-      typeof KEY.STUDENTS_PLANETS_PERFORMANCE,
-      string,
-      StudentPerfSearch | undefined,
-    ]
-  > & { search?: StudentPerfSearch },
+	id: string,
+	options?: QueryOptions<
+		StudentPlanetPerf[],
+		[
+			typeof KEY.STUDENTS_PLANETS_PERFORMANCE,
+			string,
+			StudentPerfSearch | undefined,
+		]
+	> & { search?: StudentPerfSearch },
 ) {
-  const handler = useCallback(
-    function() {
-      return SchoolClassAPI.getStudentsPlanetsPerfomance(id, options?.search);
-    },
-    [id, options?.search],
-  );
-  return useQuery(
-    [KEY.STUDENTS_PLANETS_PERFORMANCE, id, options?.search],
-    handler,
-    options,
-  );
+	const handler = useCallback(
+		function () {
+			return SchoolClassAPI.getStudentsPlanetsPerfomance(id, options?.search);
+		},
+		[id, options?.search],
+	);
+	return useQuery(
+		[KEY.STUDENTS_PLANETS_PERFORMANCE, id, options?.search],
+		handler,
+		options,
+	);
 }
 
 export function useGetStudentsExamsPerformance(
-  id: string,
-  options?: QueryOptions<
-    StudentExamPerf[],
-    [
-      typeof KEY.STUDENTS_EXAMS_PERFORMANCE,
-      string,
-      StudentPerfSearch | undefined,
-    ]
-  > & { search: StudentPerfSearch },
+	id: string,
+	options?: QueryOptions<
+		StudentExamPerf[],
+		[
+			typeof KEY.STUDENTS_EXAMS_PERFORMANCE,
+			string,
+			StudentPerfSearch | undefined,
+		]
+	> & { search: StudentPerfSearch },
 ) {
-  const handler = useCallback(
-    function() {
-      return SchoolClassAPI.getStudentsExamsPerfomance(id, options?.search);
-    },
-    [id, options?.search],
-  );
-  return useQuery(
-    [KEY.STUDENTS_EXAMS_PERFORMANCE, id, options?.search],
-    handler,
-    options,
-  );
+	const handler = useCallback(
+		function () {
+			return SchoolClassAPI.getStudentsExamsPerfomance(id, options?.search);
+		},
+		[id, options?.search],
+	);
+	return useQuery(
+		[KEY.STUDENTS_EXAMS_PERFORMANCE, id, options?.search],
+		handler,
+		options,
+	);
 }
 
 export function useGetIdealStudents(
-  id: string,
-  options?: QueryOptions<IdealStudent[], [typeof KEY.IDEAL_STUDENTS, string]>,
+	id: string,
+	options?: QueryOptions<IdealStudent[], [typeof KEY.IDEAL_STUDENTS, string]>,
 ) {
-  const handler = useCallback(
-    function() {
-      return SchoolClassAPI.getIdealStudents(id);
-    },
-    [id],
-  );
-  return useQuery([KEY.IDEAL_STUDENTS, id], handler, options);
+	const handler = useCallback(
+		function () {
+			return SchoolClassAPI.getIdealStudents(id);
+		},
+		[id],
+	);
+	return useQuery([KEY.IDEAL_STUDENTS, id], handler, options);
 }
 
 export function useGetClassesByUser(
-  id: string,
-  options?: QueryOptions<ClassByUserResponse, [typeof KEY.USER, string]>,
+	id: string,
+	options?: QueryOptions<ClassByUserResponse, [typeof KEY.USER, string]>,
 ) {
-  const handler = useCallback(
-    function() {
-      return SchoolClassAPI.getClassesByUser(id);
-    },
-    [id],
-  );
-  return useQuery([KEY.USER, id], handler, options);
+	const handler = useCallback(
+		function () {
+			return SchoolClassAPI.getClassesByUser(id);
+		},
+		[id],
+	);
+	return useQuery([KEY.USER, id], handler, options);
 }

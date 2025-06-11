@@ -1,4 +1,9 @@
+
 # EduEdu Escola - Portal ADMIN
+
+## Gitflow
+![image](https://github.com/user-attachments/assets/6be6f745-4805-432c-a09d-01fc5643c7a3)
+
 
 ## Instruções de uso e desenvolvimento
 
