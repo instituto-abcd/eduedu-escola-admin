@@ -54,33 +54,29 @@ export function Navbar() {
           justifyContent: "center",
         },
       }}
-      py={17}
     >
       <Group
-        maw={1440}
         w="100%"
-        spacing={64}
         position="apart"
         noWrap
         align="center"
-        h="100%"
-        px={150}
+        style={{ border: "1px solid red" }}
       >
         <Link to="/dashboard">
-          <Image src={logo} alt="EduEdu Escola" width={50} mx={40} />
+          <Image src={logo} alt="EduEdu Escola" width={50} ml={24} />
         </Link>
 
+        <Group spacing={16} noWrap>
+          {usedLinks.map((link) => (
+            <Link key={link.label} to={link.to} className={classes.anchor}>
+              <Text color="dark.5" td="none" weight={600} size={14} truncate>
+                {link.label}
+              </Text>
+            </Link>
+          ))}
+        </Group>
         <Group noWrap>
-          <Group spacing={16}>
-            {usedLinks.map((link) => (
-              <Link key={link.label} to={link.to} className={classes.anchor}>
-                <Text color="dark.5" td="none" weight={600} size={14}>
-                  {link.label}
-                </Text>
-              </Link>
-            ))}
-          </Group>
-          <Divider orientation="vertical" mx={30} variant="solid" />
+          <Divider orientation="vertical" variant="solid" />
           <Group noWrap>
             <Notifications />
             <UserDropdown />
