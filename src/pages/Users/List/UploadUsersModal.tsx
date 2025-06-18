@@ -42,6 +42,7 @@ export function UploadUsersModal({ opened, onClose: _onClose }: Props) {
 		isLoading,
 		data: uploadResponse,
 		reset: uploadReset,
+		isSuccess,
 	} = useUserSheetUpload({
 		onSuccess: async (data) => {
 			if (data.countCreated) {
@@ -77,18 +78,17 @@ export function UploadUsersModal({ opened, onClose: _onClose }: Props) {
 				})}
 			>
 				<Stack spacing="md">
-					{uploadResponse &&
-						uploadResponse.countCreated > 0 &&
-						uploadResponse.errors.length > 0 && (
-							<Notification
-								color="teal"
-								icon={<IconCheck size="1.1rem" />}
-								title={`${uploadResponse.countCreated} usuário(s) cadastrado(s)`}
-								withBorder
-								withCloseButton={false}
-							/>
-						)}
-					{uploadResponse?.errors && (
+					{uploadResponse && uploadResponse.countCreated > 0 && (
+						<Notification
+							color="teal"
+							icon={<IconCheck size="1.1rem" />}
+							title={`${uploadResponse.countCreated} usuário(s) cadastrado(s)`}
+							withBorder
+							withCloseButton={false}
+						/>
+					)}
+
+					{uploadResponse?.errors && uploadResponse.errors.length > 0 && (
 						<Notification
 							title={`Não foi possível cadastrar ${uploadResponse.errors.length} usuário(s):`}
 							color="red"
@@ -102,6 +102,7 @@ export function UploadUsersModal({ opened, onClose: _onClose }: Props) {
 							))}
 						</Notification>
 					)}
+
 					<Text size="sm">
 						Para fazer upload de usuário em lote é necessário seguir o template
 						de cadastro <em>(planilha csv ou xlsx)</em>.
