@@ -55,13 +55,7 @@ export function Navbar() {
         },
       }}
     >
-      <Group
-        w="100%"
-        position="apart"
-        noWrap
-        align="center"
-        style={{ border: "1px solid red" }}
-      >
+      <Group w="100%" position="apart" noWrap align="center">
         <Link to="/dashboard">
           <Image src={logo} alt="EduEdu Escola" width={50} ml={24} />
         </Link>
