@@ -9,24 +9,24 @@ import { errorNotification } from "~/utils/errorNotification";
 import { useEffect } from "react";
 
 export function Layout() {
-	const isUserAuthenticated = useUserStore((u) => u.isUserAuthenticated());
-	const navigate = useNavigate();
+  const isUserAuthenticated = useUserStore((u) => u.isUserAuthenticated());
+  const navigate = useNavigate();
 
-	useSettingsGetStatus({});
+  useSettingsGetStatus({});
 
-	if (!isUserAuthenticated) return <Navigate to={PATH.LOGIN} />;
+  if (!isUserAuthenticated) return <Navigate to={PATH.LOGIN} />;
 
-	const { pathname } = useLocation();
+  const { pathname } = useLocation();
 
-	useEffect(() => {
-		window.scrollTo(0, 0);
-	}, [pathname]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
-	return (
-		<AppShell header={<Navbar />} footer={<Footer />}>
-			<Stack px={150} spacing={24} py={24}>
-				<Outlet />
-			</Stack>
-		</AppShell>
-	);
+  return (
+    <AppShell header={<Navbar />} footer={<Footer />}>
+      <Stack spacing={24} py={24} px={{ base: 24, md: 48 }}>
+        <Outlet />
+      </Stack>
+    </AppShell>
+  );
 }
