@@ -29,6 +29,7 @@ import {
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { PageHeader } from "~/components/PageHeader";
+import { useUserStore } from "~/stores/user";
 
 const schoolClassInputValidation = z.object({
   name: z.string().min(1, { message: "Nome deve ter no mínimo 1 caracteres" }),
@@ -113,6 +114,12 @@ export function NewClassPage() {
       },
     });
 
+  const userProfile = useUserStore((u) => u.profile);
+  const blockTeachersInput = [
+    isLoadingTeachers,
+    userProfile === "TEACHER",
+  ].includes(true);
+
   return (
     <Stack>
       <PageHeader title={finalSchoolClass?.name ?? "Nova turma"} />
@@ -153,10 +160,10 @@ export function NewClassPage() {
                           label: "Carregando...",
                         },
                       ]
-                    : years?.map(({ name, id }) => ({
+                    : (years?.map(({ name, id }) => ({
                         label: name.toString(),
                         value: id,
-                      })) ?? []
+                      })) ?? [])
                 }
                 nothingFound="Nada encontrado"
                 {...form.getInputProps("schoolYearId")}
@@ -188,7 +195,7 @@ export function NewClassPage() {
                 placeholder="Selecione"
                 searchable
                 nothingFound="Nada encontrado"
-                disabled={isLoadingTeachers}
+                disabled={blockTeachersInput}
                 data={
                   teachers?.items.map(({ name, id }) => ({
                     label: name,
