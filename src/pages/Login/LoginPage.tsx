@@ -60,7 +60,7 @@ export function LoginPage() {
 
 	const { mutate: login, isLoading: isAuthenticating } = useAuthLogin({
 		onError: (error) => {
-			errorNotification("Erro durante a operação", `${error.message}`);
+			errorNotification("Erro durante a operação", `${error.message || "Algo deu errado"}`);
 		},
 		onSuccess: () => {
 			navigate(PATH.DASHBOARD);
