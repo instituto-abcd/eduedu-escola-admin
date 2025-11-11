@@ -12,163 +12,164 @@ import { errorNotification } from "~/utils/errorNotification";
 import { PATH } from "~/constants/path";
 
 type Settings = {
-	id: string;
-	schoolName?: string;
-	synchronizationPlanets: boolean;
-	smtpHostName: string;
-	smtpUserName: string;
-	smtpPassword: string;
-	smtpPort: string;
-	sslIsActive: boolean;
-	schoolId: string;
-	createdAt: string;
-	updatedAt: string;
+  id: string;
+  schoolName?: string;
+  synchronizationPlanets: boolean;
+  smtpHostName: string;
+  smtpUserName: string;
+  smtpPassword: string;
+  smtpPort: string;
+  sslIsActive: boolean;
+  schoolId: string;
+  createdAt: string;
+  updatedAt: string;
+  accessKey: string;
 };
 
 export type SettingsUpdateInput = Omit<
-	Settings,
-	"id" | "createdAt" | "updatedAt" | "schoolId"
+  Settings,
+  "id" | "createdAt" | "updatedAt" | "schoolId"
 >;
 
 type SettingsStatus = {
-	completedSchoolSetup: boolean;
-	completedOwnerSetup: boolean;
+  completedSchoolSetup: boolean;
+  completedOwnerSetup: boolean;
 };
 
 const URL = {
-	BASE: "system-configuration",
-	STATUS: "system-configuration/status",
-	OWNER: "system-configuration/owner",
-	SCHOOL_NAME: "system-configuration/school/name",
+  BASE: "system-configuration",
+  STATUS: "system-configuration/status",
+  OWNER: "system-configuration/owner",
+  SCHOOL_NAME: "system-configuration/school/name",
 };
 
 const KEY = {
-	BASE: "SYSTEM_CONFIGURATION",
-	STATUS: "SYSTEM_CONFIGURATION_STATUS",
+  BASE: "SYSTEM_CONFIGURATION",
+  STATUS: "SYSTEM_CONFIGURATION_STATUS",
 };
 
 class SettingsAPI extends API {
-	static async get() {
-		const { data } = await this.api.get<Settings>(URL.BASE);
-		return data;
-	}
+  static async get() {
+    const { data } = await this.api.get<Settings>(URL.BASE);
+    return data;
+  }
 
-	static async update(input: SettingsUpdateInput) {
-		const { data } = await this.api.put<Settings>(URL.BASE, input);
+  static async update(input: SettingsUpdateInput) {
+    const { data } = await this.api.put<Settings>(URL.BASE, input);
 
-		return data;
-	}
+    return data;
+  }
 
-	static async getStatus() {
-		const { data } = await this.api.get<SettingsStatus>(URL.STATUS);
-		return data;
-	}
+  static async getStatus() {
+    const { data } = await this.api.get<SettingsStatus>(URL.STATUS);
+    return data;
+  }
 
-	static async createOwner(input: UserInput) {
-		const { data } = await this.api.post<LoginResponse>(URL.OWNER, input);
-		return data;
-	}
+  static async createOwner(input: UserInput) {
+    const { data } = await this.api.post<LoginResponse>(URL.OWNER, input);
+    return data;
+  }
 
-	static async updateSchoolName(schoolName: string) {
-		const { data } = await this.api.put<Settings>(URL.SCHOOL_NAME, {
-			schoolName,
-		});
-		return data;
-	}
+  static async updateSchoolName(schoolName: string) {
+    const { data } = await this.api.put<Settings>(URL.SCHOOL_NAME, {
+      schoolName,
+    });
+    return data;
+  }
 }
 
 export function useSettingsGet(
-	options?: QueryOptions<Settings, [typeof KEY.BASE]>,
+  options?: QueryOptions<Settings, [typeof KEY.BASE]>
 ) {
-	const handler = useCallback(function () {
-		return SettingsAPI.get();
-	}, []);
+  const handler = useCallback(function () {
+    return SettingsAPI.get();
+  }, []);
 
-	return useQuery([KEY.BASE], handler, options);
+  return useQuery([KEY.BASE], handler, options);
 }
 
 export function useSettingsUpdate(
-	options?: MutationOptions<SettingsUpdateInput, Settings>,
+  options?: MutationOptions<SettingsUpdateInput, Settings>
 ) {
-	const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-	const handler = useCallback(function (input: SettingsUpdateInput) {
-		return SettingsAPI.update(input);
-	}, []);
+  const handler = useCallback(function (input: SettingsUpdateInput) {
+    return SettingsAPI.update(input);
+  }, []);
 
-	return useMutation(handler, {
-		...options,
-		onSuccess: async (data, vars, ctx) => {
-			queryClient.setQueryData([KEY.BASE], data);
-			await queryClient.invalidateQueries([KEY.STATUS]);
-			options?.onSuccess?.(data, vars, ctx);
-		},
-	});
+  return useMutation(handler, {
+    ...options,
+    onSuccess: async (data, vars, ctx) => {
+      queryClient.setQueryData([KEY.BASE], data);
+      await queryClient.invalidateQueries([KEY.STATUS]);
+      options?.onSuccess?.(data, vars, ctx);
+    },
+  });
 }
 
 export function useSettingsGetStatus(
-	options?: QueryOptions<SettingsStatus, [typeof KEY.STATUS]>,
+  options?: QueryOptions<SettingsStatus, [typeof KEY.STATUS]>
 ) {
-	const navigate = useNavigate();
-	const handler = useCallback(function () {
-		return SettingsAPI.getStatus();
-	}, []);
+  const navigate = useNavigate();
+  const handler = useCallback(function () {
+    return SettingsAPI.getStatus();
+  }, []);
 
-	return useQuery([KEY.STATUS], handler, {
-		...options,
+  return useQuery([KEY.STATUS], handler, {
+    ...options,
 
-		onError: (error) => {
-			if (window.location.pathname !== PATH.SETUP) {
-				errorNotification("Erro", error.message);
-			}
+    onError: (error) => {
+      if (window.location.pathname !== PATH.SETUP) {
+        errorNotification("Erro", error.message);
+      }
 
-			if (error.code === "SCHOOL_NOT_FOUND") {
-				navigate(PATH.SETUP);
-			} else navigate(PATH.LOGIN);
+      if (error.code === "SCHOOL_NOT_FOUND") {
+        navigate(PATH.SETUP);
+      } else navigate(PATH.LOGIN);
 
-			options?.onError?.(error);
-		},
+      options?.onError?.(error);
+    },
 
-		onSuccess(data) {
-			if (!data.completedOwnerSetup || !data.completedSchoolSetup) {
-				navigate(PATH.SETUP);
-			}
-			options?.onSuccess?.(data);
-		},
-	});
+    onSuccess(data) {
+      if (!data.completedOwnerSetup || !data.completedSchoolSetup) {
+        navigate(PATH.SETUP);
+      }
+      options?.onSuccess?.(data);
+    },
+  });
 }
 
 export function useSettingsCreateOwner(
-	options?: MutationOptions<UserInput, LoginResponse>,
+  options?: MutationOptions<UserInput, LoginResponse>
 ) {
-	const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-	const handler = useCallback(function (input: UserInput) {
-		return SettingsAPI.createOwner(input);
-	}, []);
+  const handler = useCallback(function (input: UserInput) {
+    return SettingsAPI.createOwner(input);
+  }, []);
 
-	return useMutation(handler, {
-		...options,
-		onSuccess: async (data, vars, ctx) => {
-			await queryClient.invalidateQueries([KEY.STATUS]);
-			const tokenValidation = z.object({
-				email: z.string().email(),
-				profile: z.enum(["DIRECTOR", "TEACHER"], {
-					errorMap: () => {
-						return { message: "Por favor, selecione uma opção" };
-					},
-				}),
-				iat: z.number(),
-			});
+  return useMutation(handler, {
+    ...options,
+    onSuccess: async (data, vars, ctx) => {
+      await queryClient.invalidateQueries([KEY.STATUS]);
+      const tokenValidation = z.object({
+        email: z.string().email(),
+        profile: z.enum(["DIRECTOR", "TEACHER"], {
+          errorMap: () => {
+            return { message: "Por favor, selecione uma opção" };
+          },
+        }),
+        iat: z.number(),
+      });
 
-			const token = decodeJwt(data.accessToken) as z.infer<
-				typeof tokenValidation
-			>;
+      const token = decodeJwt(data.accessToken) as z.infer<
+        typeof tokenValidation
+      >;
 
-			tokenValidation.parse(token);
+      tokenValidation.parse(token);
 
-			useUserStore.setState({ ...data, profile: token.profile });
-			options?.onSuccess?.(data, vars, ctx);
-		},
-	});
+      useUserStore.setState({ ...data, profile: token.profile });
+      options?.onSuccess?.(data, vars, ctx);
+    },
+  });
 }
