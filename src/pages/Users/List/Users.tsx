@@ -150,7 +150,7 @@ export function UsersListPage() {
         description={
           loadingUsers
             ? "Carregando..."
-            : `${users?.pagination?.totalItems} registros` ?? ""
+            : (`${users?.pagination?.totalItems} registros` ?? "")
         }
         gap={0}
       >

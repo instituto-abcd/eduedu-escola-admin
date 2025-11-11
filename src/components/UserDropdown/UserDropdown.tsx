@@ -20,28 +20,30 @@ import {
 } from "@mantine/core";
 import { errorNotification } from "~/utils/errorNotification";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function UserDropdown() {
   const { name: userName, profile } = useUserStore();
-  const logout = useUserStore((u) => u.signOut);
+  const storeLogout = useUserStore((u) => u.signOut);
   const [updatePwModalOpen, updatePwModalHandlers] = useDisclosure(false);
-  const [passwordStrengthValidationMessage, setpasswordStrengthValidationMessage] = useState('');
+  const [
+    passwordStrengthValidationMessage,
+    setpasswordStrengthValidationMessage,
+  ] = useState("");
 
   const { mutate: updatePassword, isLoading } = useUserUpdatePassword({
     onSuccess: () => {
       updatePwModalHandlers.close();
-      successNotification("Operação realizada com sucesso", "Senha alterada com sucesso!");
+      successNotification(
+        "Operação realizada com sucesso",
+        "Senha alterada com sucesso!",
+      );
     },
     onError: (error) => {
-      if (error.code == 'WEAK_PASSWORD') {
-        setpasswordStrengthValidationMessage(() => (
-          error.message
-        ));
+      if (error.code == "WEAK_PASSWORD") {
+        setpasswordStrengthValidationMessage(() => error.message);
       } else {
-        errorNotification(
-          "Erro durante a operação",
-          `${error.message}`
-        );
+        errorNotification("Erro durante a operação", `${error.message}`);
       }
     },
   });
@@ -57,10 +59,18 @@ export function UserDropdown() {
         newPassword: z
           .string()
           .min(6, { message: "Senha deve ter ao menos 6 caracteres" }),
-        oldPassword: z.string().min(1, { message: "Nova senha não pode ser igual a senha anterior" }),
-      })
+        oldPassword: z.string().min(1, {
+          message: "Nova senha não pode ser igual a senha anterior",
+        }),
+      }),
     ),
   });
+
+  /* Logout */
+  function signOut() {
+    storeLogout();
+    location.replace("/login");
+  }
 
   return (
     <Menu position="bottom-end">
@@ -91,7 +101,7 @@ export function UserDropdown() {
             >
               Redefinir Senha
             </Button>
-            <Button size="xs" variant="outline" onClick={logout}>
+            <Button size="xs" variant="outline" onClick={signOut}>
               Sair
             </Button>
           </Stack>
@@ -100,7 +110,7 @@ export function UserDropdown() {
 
       <Modal
         opened={updatePwModalOpen}
-        onClose={isLoading ? () => { } : updatePwModalHandlers.close}
+        onClose={isLoading ? () => {} : updatePwModalHandlers.close}
         title="Alterar senha"
         size="sm"
       >
@@ -124,7 +134,9 @@ export function UserDropdown() {
           <Divider my="xl" />
           <Text
             size={14}
-            dangerouslySetInnerHTML={{ __html: passwordStrengthValidationMessage }}
+            dangerouslySetInnerHTML={{
+              __html: passwordStrengthValidationMessage,
+            }}
             color="red"
           />
           <Group position="right">

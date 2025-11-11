@@ -38,7 +38,7 @@ export function SettingsPage() {
     onSuccess: () =>
       successNotification(
         "Operação realizada com sucesso",
-        "Configurações atualizadas",
+        "Configurações atualizadas"
       ),
   });
 
@@ -54,7 +54,12 @@ export function SettingsPage() {
           required_error: "Campo obrigatório",
           invalid_type_error: "Digite apenas o número da porta",
         }),
-      }),
+        accessKey: z
+          .string()
+          .regex(/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/, {
+            message: "Formato inválido. Use o formato XXXX-XXXX-XXXX-XXXX.",
+          }),
+      })
     ),
   });
 
@@ -130,7 +135,7 @@ export function SettingsPage() {
               onChange={(v) =>
                 form.setFieldValue(
                   "synchronizationPlanets",
-                  v === "Ativo" ? true : false,
+                  v === "Ativo" ? true : false
                 )
               }
               value={form.values.synchronizationPlanets ? "Ativo" : "Inativo"}
@@ -138,7 +143,27 @@ export function SettingsPage() {
             />
           </Grid.Col>
 
-          <Grid.Col span={2} />
+          <Grid.Col span={2}>
+            <TextInput
+              label="Chave de acesso"
+              placeholder={isLoading ? "Carregando..." : "XXXX-XXXX-XXXX-XXXX"}
+              {...form.getInputProps("accessKey")}
+              value={form.values.accessKey || ""}
+              onChange={(e) => {
+                let value = e.currentTarget.value.toUpperCase();
+                value = value.replace(/[^A-Z0-9]/g, "");
+                value =
+                  value
+                    .match(/.{1,4}/g)
+                    ?.join("-")
+                    .slice(0, 19) || "";
+                form.setFieldValue("accessKey", value);
+              }}
+              maxLength={19}
+              disabled={isLoading || isMutating}
+            />
+          </Grid.Col>
+
           <Grid.Col span={2} />
 
           <Grid.Col span={2}>

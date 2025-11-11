@@ -11,340 +11,345 @@ import { z } from "zod";
 export type UserRole = "MASTER" | "ADMIN" | "USER";
 
 type School = {
-  id: string;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	name: string;
+	createdAt: string;
+	updatedAt: string;
 };
 
 export type User = {
-  id: string;
-  status: UserStatus;
-  name: string;
-  email: string;
-  document: string;
-  profile: UserProfile;
-  role: UserRole;
-  school: School;
-  owner: boolean;
-  password?: string;
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	status: UserStatus;
+	name: string;
+	email: string;
+	document: string;
+	profile: UserProfile;
+	role: UserRole;
+	school: School;
+	owner: boolean;
+	password?: string;
+	createdAt: string;
+	updatedAt: string;
 };
 
 export type UserInput = Pick<
-  User,
-  "name" | "email" | "document" | "profile" | "password"
+	User,
+	"name" | "email" | "document" | "profile" | "password"
 >;
 
 export type UserSearch = {
-  "page-number"?: number;
-  "page-size"?: number;
-  name?: string;
-  email?: string;
-  document?: string;
-  profile?: string;
+	"page-number"?: number;
+	"page-size"?: number;
+	name?: string;
+	email?: string;
+	document?: string;
+	profile?: string;
 };
 
 export type UpdatePasswordInput = {
-  oldPassword: string;
-  newPassword: string;
+	oldPassword: string;
+	newPassword: string;
 };
 
 type SheetUploadResponse = {
-  countCreated: number;
-  errors: { line: number; message: string }[];
+	countCreated: number;
+	errors: { line: number; message: string }[];
 };
 
 const KEY = {
-  ALL: "USER_ALL",
-  BY_ID: "USER",
-  INACTIVATE_USER: "INACTIVATE_USER",
-  ACTIVATE_USER: "ACTIVATE_USER",
+	ALL: "USER_ALL",
+	BY_ID: "USER",
+	INACTIVATE_USER: "INACTIVATE_USER",
+	ACTIVATE_USER: "ACTIVATE_USER",
 } as const;
 
-const URL = {
-  ALL: "/user/all",
-  BY_ID: (id: string) => `/user/${id}`,
-  CREATE: "/user",
-  UPDATE: (id: string) => `/user/${id}`,
-  UPDATE_ACCESS_KEY: (id: string) => `/user/${id}/access-key`,
-  GET_ACCESS_KEY: (id: string) => `/user/${id}/access-key`,
-  DELETE: "/user",
-  ACTIVATE: (id: string) => `/user/${id}`,
-  INACTIVATE: "/user/inactivate",
-  UPDATE_PASSWORD: "/user/password",
-  SHEET: "/user/spreadsheet-template",
-  UPLOAD_SHEET: "/user/spreadsheet",
-};
+const ROUTE = {
+	ALL: "/user/all",
+	BY_ID: (id: string) => `/user/${id}`,
+	CREATE: "/user",
+	UPDATE: (id: string) => `/user/${id}`,
+	UPDATE_ACCESS_KEY: (id: string) => `/user/${id}/access-key`,
+	GET_ACCESS_KEY: (id: string) => `/user/${id}/access-key`,
+	DELETE: "/user",
+	ACTIVATE: (id: string) => `/user/${id}`,
+	INACTIVATE: "/user/inactivate",
+	UPDATE_PASSWORD: "/user/password",
+	SHEET: "/user/spreadsheet-template",
+	UPLOAD_SHEET: "/user/spreadsheet",
+} as const;
 
 class UserAPI extends API {
-  static async getAll(params?: UserSearch) {
-    const { data } = await this.api.get<Paginated<User>>(URL.ALL, {
-      params,
-    });
-    return data;
-  }
+	static async getAll(params?: UserSearch) {
+		const { data } = await this.api.get<Paginated<User>>(ROUTE.ALL, {
+			params,
+		});
+		return data;
+	}
 
-  static async getById(id: string) {
-    const { data } = await this.api.get<User>(URL.BY_ID(id));
-    return data;
-  }
+	static async getById(id: string) {
+		const { data } = await this.api.get<User>(ROUTE.BY_ID(id));
+		return data;
+	}
 
-  static async create(input?: UserInput) {
-    const { data } = await this.api.post<User>(URL.CREATE, input);
-    return data;
-  }
+	static async create(input?: UserInput) {
+		const { data } = await this.api.post<User>(ROUTE.CREATE, input);
+		return data;
+	}
 
-  static async update(userId: string, input?: Partial<UserInput>) {
-    const { data } = await this.api.patch<User>(URL.UPDATE(userId), input);
-    return data;
-  }
+	static async update(userId: string, input?: Partial<UserInput>) {
+		const { data } = await this.api.patch<User>(ROUTE.UPDATE(userId), input);
+		return data;
+	}
 
-  static async updateAccessKey(id: string) {
-    const { data } = await this.api.put<{ accessKey: string }>(
-      URL.UPDATE_ACCESS_KEY(id),
-    );
-    return data;
-  }
+	static async updateAccessKey(id: string) {
+		const { data } = await this.api.put<{ accessKey: string }>(
+			ROUTE.UPDATE_ACCESS_KEY(id),
+		);
+		return data;
+	}
 
-  static async getAccessKey(id: string) {
-    const { data } = await this.api.get<{ accessKey: string }>(
-      URL.GET_ACCESS_KEY(id),
-    );
-    return data;
-  }
+	static async getAccessKey(id: string) {
+		const { data } = await this.api.get<{ accessKey: string }>(
+			ROUTE.GET_ACCESS_KEY(id),
+		);
+		return data;
+	}
 
-  static async inactivate(userIds: string[]) {
-    const { data } = await this.api.post<{ success: boolean }>(URL.INACTIVATE, {
-      ids: userIds,
-    });
-    return data;
-  }
+	static async inactivate(userIds: string[]) {
+		const { data } = await this.api.post<{ success: boolean }>(
+			ROUTE.INACTIVATE,
+			{
+				ids: userIds,
+			},
+		);
+		return data;
+	}
 
-  static async activate(userId: string) {
-    const { data } = await this.api.patch<{ success: boolean }>(
-      URL.ACTIVATE(userId),
-      {
-        status: "ACTIVE",
-      },
-    );
-    return data;
-  }
+	static async activate(userId: string) {
+		const { data } = await this.api.patch<{ success: boolean }>(
+			ROUTE.ACTIVATE(userId),
+			{
+				status: "ACTIVE",
+			},
+		);
+		return data;
+	}
 
-  static async delete(userIds: string[]) {
-    const { data } = await this.api.delete<{ success: boolean }>(URL.DELETE, {
-      data: { ids: userIds },
-    });
+	static async delete(userIds: string[]) {
+		const { data } = await this.api.delete<{ success: boolean }>(ROUTE.DELETE, {
+			data: { ids: userIds },
+		});
 
-    return data;
-  }
+		return data;
+	}
 
-  static async updatePassword(input: UpdatePasswordInput) {
-    const { data } = await this.api.put<LoginResponse>(
-      URL.UPDATE_PASSWORD,
-      input,
-    );
-    return data;
-  }
+	static async updatePassword(input: UpdatePasswordInput) {
+		const { data } = await this.api.put<LoginResponse>(
+			ROUTE.UPDATE_PASSWORD,
+			input,
+		);
+		return data;
+	}
 
-  static async uploadSheet(sheet: File) {
-    const formData = new FormData();
+	static async uploadSheet(sheet: File) {
+		const formData = new FormData();
 
-    formData.append("file", sheet);
+		formData.append("file", sheet);
 
-    const { data } = await this.api.post(URL.UPLOAD_SHEET, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+		const { data } = await this.api.post(ROUTE.UPLOAD_SHEET, formData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		});
 
-    return data;
-  }
+		return data;
+	}
 }
 
-export const userSheetURL = UserAPI.api.defaults.baseURL + URL.SHEET;
+export function userSheetDownloadURL() {
+	return new URL(ROUTE.SHEET, UserAPI.api.defaults.baseURL).toString();
+}
 
 export function useUserGetAll(
-  options?: QueryOptions<Paginated<User>, [string, UserSearch | undefined]> & {
-    search?: UserSearch;
-  },
+	options?: QueryOptions<Paginated<User>, [string, UserSearch | undefined]> & {
+		search?: UserSearch;
+	},
 ) {
-  const handler = useCallback(
-    function() {
-      return UserAPI.getAll(options?.search);
-    },
-    [options?.search],
-  );
+	const handler = useCallback(
+		function () {
+			return UserAPI.getAll(options?.search);
+		},
+		[options?.search],
+	);
 
-  return useQuery([KEY.ALL, options?.search], handler, options);
+	return useQuery([KEY.ALL, options?.search], handler, options);
 }
 
 export function useUserGetById(
-  userId: string,
-  options?: QueryOptions<User, [typeof KEY.BY_ID, string]>,
+	userId: string,
+	options?: QueryOptions<User, [typeof KEY.BY_ID, string]>,
 ) {
-  const handler = useCallback(
-    function() {
-      return UserAPI.getById(userId);
-    },
-    [userId],
-  );
+	const handler = useCallback(
+		function () {
+			return UserAPI.getById(userId);
+		},
+		[userId],
+	);
 
-  return useQuery([KEY.BY_ID, userId], handler, options);
+	return useQuery([KEY.BY_ID, userId], handler, options);
 }
 
 export function useUserCreate(options?: MutationOptions<UserInput, User>) {
-  const handler = useCallback(function(input: UserInput) {
-    return UserAPI.create(input);
-  }, []);
+	const handler = useCallback(function (input: UserInput) {
+		return UserAPI.create(input);
+	}, []);
 
-  return useMutation(handler, options);
+	return useMutation(handler, options);
 }
 
 export function useUserUpdate(
-  options?: MutationOptions<
-    { input: Partial<UserInput>; userId: string },
-    User
-  >,
+	options?: MutationOptions<
+		{ input: Partial<UserInput>; userId: string },
+		User
+	>,
 ) {
-  const handler = useCallback(function(data: {
-    userId: string;
-    input: Partial<UserInput>;
-  }) {
-    return UserAPI.update(data.userId, data.input);
-  }, []);
+	const handler = useCallback(function (data: {
+		userId: string;
+		input: Partial<UserInput>;
+	}) {
+		return UserAPI.update(data.userId, data.input);
+	}, []);
 
-  return useMutation(handler, options);
+	return useMutation(handler, options);
 }
 
 export function useGetAccessKey(
-  id: string,
-  options?: QueryOptions<{ accessKey: string }, [string, string]>,
+	id: string,
+	options?: QueryOptions<{ accessKey: string }, [string, string]>,
 ) {
-  const handler = useCallback(
-    function() {
-      return UserAPI.getAccessKey(id);
-    },
-    [id],
-  );
+	const handler = useCallback(
+		function () {
+			return UserAPI.getAccessKey(id);
+		},
+		[id],
+	);
 
-  return useQuery(["accessKey", id], handler, options);
+	return useQuery(["accessKey", id], handler, options);
 }
 
 export function useUpdateAccessKey(
-  options?: MutationOptions<string, { accessKey: string }>,
+	options?: MutationOptions<string, { accessKey: string }>,
 ) {
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-  const handler = useCallback(function(id: string) {
-    return UserAPI.updateAccessKey(id);
-  }, []);
+	const handler = useCallback(function (id: string) {
+		return UserAPI.updateAccessKey(id);
+	}, []);
 
-  return useMutation(handler, {
-    ...options,
-    onSuccess: (data, vars, ctx) => {
-      queryClient.setQueryData(["accessKey", vars], {
-        accessKey: data.accessKey,
-      });
-      options?.onSuccess?.(data, vars, ctx);
-    },
-  });
+	return useMutation(handler, {
+		...options,
+		onSuccess: (data, vars, ctx) => {
+			queryClient.setQueryData(["accessKey", vars], {
+				accessKey: data.accessKey,
+			});
+			options?.onSuccess?.(data, vars, ctx);
+		},
+	});
 }
 
 export function useUserDelete(
-  options?: MutationOptions<string[], { success: boolean }>,
+	options?: MutationOptions<string[], { success: boolean }>,
 ) {
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-  const handler = useCallback(function(ids: string[]) {
-    return UserAPI.delete(ids);
-  }, []);
+	const handler = useCallback(function (ids: string[]) {
+		return UserAPI.delete(ids);
+	}, []);
 
-  return useMutation(handler, {
-    ...options,
-    onSuccess: async (data, vars, ctx) => {
-      await queryClient.invalidateQueries([KEY.ALL]);
-      options?.onSuccess?.(data, vars, ctx);
-    },
-  });
+	return useMutation(handler, {
+		...options,
+		onSuccess: async (data, vars, ctx) => {
+			await queryClient.invalidateQueries([KEY.ALL]);
+			options?.onSuccess?.(data, vars, ctx);
+		},
+	});
 }
 
 export function useUserInactivate(
-  options?: MutationOptions<string[], { success: boolean }>,
+	options?: MutationOptions<string[], { success: boolean }>,
 ) {
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-  const handler = useCallback(function(ids: string[]) {
-    return UserAPI.inactivate(ids);
-  }, []);
+	const handler = useCallback(function (ids: string[]) {
+		return UserAPI.inactivate(ids);
+	}, []);
 
-  return useMutation(handler, {
-    ...options,
-    onSuccess: async (data, vars, ctx) => {
-      await queryClient.invalidateQueries([KEY.ALL, KEY.BY_ID]);
-      options?.onSuccess?.(data, vars, ctx);
-    },
-  });
+	return useMutation(handler, {
+		...options,
+		onSuccess: async (data, vars, ctx) => {
+			await queryClient.invalidateQueries([KEY.ALL, KEY.BY_ID]);
+			options?.onSuccess?.(data, vars, ctx);
+		},
+	});
 }
 
 export function useUserActivate(
-  options?: MutationOptions<string, { success: boolean }>,
+	options?: MutationOptions<string, { success: boolean }>,
 ) {
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-  const handler = useCallback(function(id: string) {
-    return UserAPI.activate(id);
-  }, []);
+	const handler = useCallback(function (id: string) {
+		return UserAPI.activate(id);
+	}, []);
 
-  return useMutation(handler, {
-    ...options,
-    onSuccess: async (data, vars, ctx) => {
-      await queryClient.invalidateQueries([KEY.ALL, KEY.BY_ID]);
-      options?.onSuccess?.(data, vars, ctx);
-    },
-  });
+	return useMutation(handler, {
+		...options,
+		onSuccess: async (data, vars, ctx) => {
+			await queryClient.invalidateQueries([KEY.ALL, KEY.BY_ID]);
+			options?.onSuccess?.(data, vars, ctx);
+		},
+	});
 }
 
 export function useUserUpdatePassword(
-  options?: MutationOptions<UpdatePasswordInput, LoginResponse>,
+	options?: MutationOptions<UpdatePasswordInput, LoginResponse>,
 ) {
-  const handler = useCallback(function(input: UpdatePasswordInput) {
-    return UserAPI.updatePassword(input);
-  }, []);
+	const handler = useCallback(function (input: UpdatePasswordInput) {
+		return UserAPI.updatePassword(input);
+	}, []);
 
-  return useMutation(handler, {
-    ...options,
+	return useMutation(handler, {
+		...options,
 
-    onSuccess: (data, vars, ctx) => {
-      const tokenValidation = z.object({
-        email: z.string().email(),
-        profile: z.enum(["DIRECTOR", "TEACHER"], {
-          errorMap: () => {
-            return { message: "Por favor, selecione uma opção" };
-          },
-        }),
-        iat: z.number(),
-      });
+		onSuccess: (data, vars, ctx) => {
+			const tokenValidation = z.object({
+				email: z.string().email(),
+				profile: z.enum(["DIRECTOR", "TEACHER"], {
+					errorMap: () => {
+						return { message: "Por favor, selecione uma opção" };
+					},
+				}),
+				iat: z.number(),
+			});
 
-      const token = decodeJwt(data.accessToken) as z.infer<
-        typeof tokenValidation
-      >;
+			const token = decodeJwt(data.accessToken) as z.infer<
+				typeof tokenValidation
+			>;
 
-      tokenValidation.parse(token);
+			tokenValidation.parse(token);
 
-      useUserStore.setState({ ...data, profile: token.profile });
-      options?.onSuccess?.(data, vars, ctx);
-    },
-  });
+			useUserStore.setState({ ...data, profile: token.profile });
+			options?.onSuccess?.(data, vars, ctx);
+		},
+	});
 }
 
 export function useUserSheetUpload(
-  options?: MutationOptions<File, SheetUploadResponse>,
+	options?: MutationOptions<File, SheetUploadResponse>,
 ) {
-  const handler = useCallback(function(input: File) {
-    return UserAPI.uploadSheet(input);
-  }, []);
+	const handler = useCallback(function (input: File) {
+		return UserAPI.uploadSheet(input);
+	}, []);
 
-  return useMutation(handler, options);
+	return useMutation(handler, options);
 }

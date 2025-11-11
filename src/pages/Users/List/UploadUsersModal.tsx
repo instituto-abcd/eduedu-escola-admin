@@ -20,7 +20,11 @@ import {
 import { useForm } from "@mantine/form";
 import { successNotification } from "~/utils/successNotification";
 import { useQueryClient } from "@tanstack/react-query";
-import { useUserSheetUpload, userSheetURL } from "~/api/user";
+import {
+  useUserSheetUpload,
+  userSheetDownloadURL,
+  userSheetURL,
+} from "~/api/user";
 
 type Props = {
   opened: boolean;
@@ -38,12 +42,13 @@ export function UploadUsersModal({ opened, onClose: _onClose }: Props) {
     isLoading,
     data: uploadResponse,
     reset: uploadReset,
+    isSuccess,
   } = useUserSheetUpload({
     onSuccess: async (data) => {
-      if (data.countCreated) {
+      if (data.countCreated > 0) {
         await queryClient.invalidateQueries(["USER_ALL"]);
 
-        if (!data.errors) {
+        if (!data.errors || data.errors.length == 0) {
           successNotification(
             "Usuário(s) cadastrados",
             `${data.countCreated} usuário(s) adicionado(s) com sucesso!`,
@@ -73,18 +78,17 @@ export function UploadUsersModal({ opened, onClose: _onClose }: Props) {
         })}
       >
         <Stack spacing="md">
-          {uploadResponse &&
-            uploadResponse.countCreated > 0 &&
-            uploadResponse.errors.length > 0 && (
-              <Notification
-                color="teal"
-                icon={<IconCheck size="1.1rem" />}
-                title={`${uploadResponse.countCreated} usuário(s) cadastrado(s)`}
-                withBorder
-                withCloseButton={false}
-              />
-            )}
-          {uploadResponse?.errors && (
+          {uploadResponse && uploadResponse.countCreated > 0 && (
+            <Notification
+              color="teal"
+              icon={<IconCheck size="1.1rem" />}
+              title={`${uploadResponse.countCreated} usuário(s) cadastrado(s)`}
+              withBorder
+              withCloseButton={false}
+            />
+          )}
+
+          {uploadResponse?.errors && uploadResponse.errors.length > 0 && (
             <Notification
               title={`Não foi possível cadastrar ${uploadResponse.errors.length} usuário(s):`}
               color="red"
@@ -98,6 +102,7 @@ export function UploadUsersModal({ opened, onClose: _onClose }: Props) {
               ))}
             </Notification>
           )}
+
           <Text size="sm">
             Para fazer upload de usuário em lote é necessário seguir o template
             de cadastro <em>(planilha csv ou xlsx)</em>.
@@ -107,7 +112,7 @@ export function UploadUsersModal({ opened, onClose: _onClose }: Props) {
               size={rem(18)}
               style={{ stroke: theme.colors.blue[6] }}
             />
-            <Anchor c="blue.6" size="sm" href={userSheetURL}>
+            <Anchor c="blue.6" size="sm" href={userSheetDownloadURL()}>
               Fazer download do template
             </Anchor>
           </Group>

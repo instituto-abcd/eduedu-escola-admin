@@ -17,7 +17,7 @@ export function DashboardPage() {
 
       <Grid columns={4}>
         {report?.schoolGrades.map((item) => (
-          <Grid.Col span={1} key={item.id}>
+          <Grid.Col span={2} md={1} key={item.id}>
             <SchoolGradeCard grade={item} />
           </Grid.Col>
         ))}
