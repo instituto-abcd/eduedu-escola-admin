@@ -1,6 +1,10 @@
 import { useCallback } from "react";
 import { API } from "./base";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+} from "@tanstack/react-query";
 import { MutationOptions, QueryOptions } from "./api-types";
 
 type SyncStatus = {
@@ -62,16 +66,17 @@ export function useSyncExams(options?: QueryOptions<void, [typeof KEY.EXAM]>) {
   return useQuery([KEY.EXAM], handler, options);
 }
 
-export function useSyncPlanets(options?: MutationOptions<void, void>) {
-  const handler = useCallback(function () {
-    return SyncAPI.syncPlanets();
-  }, []);
-
-  return useMutation(handler, options);
+export function useSyncPlanets(options?: UseMutationOptions<void, void>) {
+  return useMutation<void, void>({
+    mutationFn: async () => {
+      await SyncAPI.syncPlanets();
+    },
+    ...options,
+  });
 }
 
 export function useSyncStatus(
-  options?: QueryOptions<SyncStatus, [typeof KEY.SYNCSTATUS]>,
+  options?: QueryOptions<SyncStatus, [typeof KEY.SYNCSTATUS]>
 ) {
   const handler = useCallback(function () {
     return SyncAPI.getSyncStatus();
@@ -81,7 +86,7 @@ export function useSyncStatus(
 }
 
 export function useLastSync(
-  options?: QueryOptions<LastSyncResponse, [typeof KEY.LAST_SYNC]>,
+  options?: QueryOptions<LastSyncResponse, [typeof KEY.LAST_SYNC]>
 ) {
   const handler = useCallback(function () {
     return SyncAPI.getLastSync();

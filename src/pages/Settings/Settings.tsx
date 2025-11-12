@@ -23,11 +23,13 @@ import { successNotification } from "~/utils/successNotification";
 import { AuditModal } from "./components/AuditModal";
 import { z } from "zod";
 import { useSyncPlanets, useSyncStatus } from "~/api/sync";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SyncNotification } from "./components/SyncNotification";
+import { useFileSync } from "~/stores/filter";
 
 export function SettingsPage() {
-  const [syncClicked, setSyncClicked] = useState(false);
+  const [disableSync, setDisableSync] = useState(false);
+
   const { data, isLoading } = useSettingsGet({
     onError: (error) =>
       errorNotification("Erro durante a operação", error.message),
@@ -65,28 +67,35 @@ export function SettingsPage() {
 
   const [auditModalOpen, auditModalHandlers] = useDisclosure(false);
 
-  const { mutate: mutateSyncPlanets } = useSyncPlanets();
+  const { update, data: syncFilesState } = useFileSync();
+  const { mutate: mutateSyncPlanets, isLoading: isSyncingPlanets } =
+    useSyncPlanets();
+
   const { data: syncStatus } = useSyncStatus({
+    refetchInterval: syncFilesState ? 1000 : false,
+    enabled: syncFilesState,
     cacheTime: 10 * 1000,
-    refetchInterval: 10 * 1000,
     initialData: {
       totalFiles: 0,
       syncedFiles: 0,
       percent: 0,
       duration: "00:00:00",
+      running: false,
+      currentOperation: "",
+    },
+    onSuccess: (data) => {
+      // Só ativa polling quando o backend confirmar que começou
+      if (data.running && !syncFilesState) update(true);
+
+      // Quando termina, desliga polling
+      if (!data.running && syncFilesState) update(false);
     },
   });
 
-  const onClickSyncButton = () => {
-    setSyncClicked(true);
-    setTimeout(() => {
-      setSyncClicked(false);
-    }, 20000);
+  const onClickSyncButton = async () => {
+    mutateSyncPlanets(); // dispara o backend
+    update(true); // ativa polling (vai rodar até o backend indicar término)
   };
-
-  const disableSync = syncStatus
-    ? (syncStatus.percent < 99.9 && syncStatus.percent > 0) || syncClicked
-    : false;
 
   return (
     <form onSubmit={form.onSubmit((v) => mutate(v))}>
@@ -95,11 +104,8 @@ export function SettingsPage() {
           <Group noWrap>
             <Button
               variant="outline"
-              onClick={() => {
-                mutateSyncPlanets();
-                onClickSyncButton();
-              }}
-              loading={disableSync}
+              onClick={onClickSyncButton}
+              loading={isSyncingPlanets || syncFilesState}
             >
               Sincronizar Planetas
             </Button>

@@ -10,20 +10,24 @@ import { ClassesRoutes } from "./Classes";
 import { AuthRoutes } from "./Auth";
 import { ReportRoutes } from "./Report";
 import { SetupRoutes } from "./Setup";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Notification, Stack, Text } from "@mantine/core";
 import { useSyncStatus } from "~/api/sync";
 import { successNotification } from "~/utils/successNotification";
 import { CustomProgress } from "~/components/CustomProgress/CustomProgress";
+import { useFileSync } from "~/stores/filter";
 
 export function AppRoutes() {
   function nested(route: string) {
     return route.endsWith("/") ? route + "*" : `${route}/*`;
   }
 
-  const { data: syncStatus } = useSyncStatus({
+  const { data: syncFilesState, update } = useFileSync();
+
+  const { data: syncStatus, refetch } = useSyncStatus({
     cacheTime: 10 * 1000,
-    refetchInterval: 10 * 1000,
+    refetchInterval: syncFilesState ? 1000 : false,
+    enabled: syncFilesState,
     initialData: {
       totalFiles: 0,
       syncedFiles: 0,
@@ -33,6 +37,10 @@ export function AppRoutes() {
       currentOperation: "",
     },
     onSuccess: (data) => {
+      if (!data.running) {
+        update(false);
+      }
+
       if (
         data.syncedFiles > 0 &&
         data.percent < 100 &&
@@ -40,34 +48,38 @@ export function AppRoutes() {
       ) {
         successNotification(
           "Sincronização concluída",
-          "Todos os planetas e seus artefatos foram sincronizados com sucesso",
+          "Todos os planetas e seus artefatos foram sincronizados com sucesso"
         );
       }
     },
   });
 
+  useEffect(() => {
+    if (syncFilesState) {
+      refetch();
+    }
+  }, []);
+
   return (
     <Fragment>
-      {syncStatus &&
-        syncStatus.running &&
-        syncStatus.syncedFiles < syncStatus.totalFiles && (
-          <Notification
-            title="Sincronização de Planetas"
-            loading
-            withCloseButton={false}
-            style={{ position: "absolute", bottom: 44, right: 44 }}
-          >
-            <Stack spacing={6}>
-              <CustomProgress
-                value={syncStatus?.percent}
-                label={syncStatus?.percent?.toFixed(2)}
-              />
-              <Text size="xs" color="dark.2">
-                {syncStatus?.currentOperation}
-              </Text>
-            </Stack>
-          </Notification>
-        )}
+      {syncStatus && syncStatus.running && (
+        <Notification
+          title="Sincronização de Planetas"
+          loading
+          withCloseButton={false}
+          style={{ position: "absolute", bottom: 44, right: 44 }}
+        >
+          <Stack spacing={6}>
+            <CustomProgress
+              value={syncStatus?.percent}
+              label={syncStatus?.percent?.toFixed(2)}
+            />
+            <Text size="xs" color="dark.2">
+              {syncStatus?.currentOperation}
+            </Text>
+          </Stack>
+        </Notification>
+      )}
 
       <BrowserRouter>
         <Routes>
