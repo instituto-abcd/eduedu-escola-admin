@@ -88,7 +88,13 @@ export function SettingsPage() {
       if (data.running && !syncFilesState) update(true);
 
       // Quando termina, desliga polling
-      if (!data.running && syncFilesState) update(false);
+      if (!data.running && syncFilesState) {
+        update(false);
+        errorNotification(
+          "Erro durante a operação",
+          "Verifique a validade da sua chave de acesso."
+        );
+      }
     },
   });
 
