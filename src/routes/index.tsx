@@ -16,6 +16,7 @@ import { useSyncStatus } from "~/api/sync";
 import { successNotification } from "~/utils/successNotification";
 import { CustomProgress } from "~/components/CustomProgress/CustomProgress";
 import { useFileSync } from "~/stores/filter";
+import { errorNotification } from "~/utils/errorNotification";
 
 export function AppRoutes() {
   function nested(route: string) {
@@ -24,10 +25,7 @@ export function AppRoutes() {
 
   const { data: syncFilesState, update } = useFileSync();
 
-  const { data: syncStatus, refetch } = useSyncStatus({
-    cacheTime: 10 * 1000,
-    refetchInterval: syncFilesState ? 1000 : false,
-    enabled: syncFilesState,
+  const { data: syncStatus } = useSyncStatus({
     initialData: {
       totalFiles: 0,
       syncedFiles: 0,
@@ -36,50 +34,70 @@ export function AppRoutes() {
       running: false,
       currentOperation: "",
     },
+    enabled: true,
+    refetchInterval: (data) => (data?.running ? 1000 : false),
     onSuccess: (data) => {
-      if (!data.running) {
-        update(false);
-      }
+      if (syncFilesState) {
+        if (
+          !data.running &&
+          data.currentOperation === "Erro na sincronização"
+        ) {
+          errorNotification(
+            "Erro na sincronização",
+            "Ocorreu um erro durante a sincronização. Verifique sua Chave de acesso.",
+            () => update(false)
+          );
+        }
 
-      if (
-        data.syncedFiles > 0 &&
-        data.percent < 100 &&
-        data.syncedFiles === data.totalFiles
-      ) {
-        successNotification(
-          "Sincronização concluída",
-          "Todos os planetas e seus artefatos foram sincronizados com sucesso"
-        );
+        if (!data.running && data.percent === 100) {
+          successNotification(
+            "Sincronização concluída",
+            "Todos os planetas e artefatos foram sincronizados",
+            () => update(false)
+          );
+        }
+
+        if (
+          !data.running &&
+          data.percent < 100 &&
+          data.currentOperation !== "Erro na sincronização"
+        ) {
+          update(true);
+        }
       }
+    },
+    onError: (error) => {
+      errorNotification(
+        "Erro durante a operação",
+        "Verifique sua chave de acesso."
+      );
     },
   });
 
-  useEffect(() => {
-    if (syncFilesState) {
-      refetch();
-    }
-  }, []);
-
   return (
     <Fragment>
-      {syncStatus && syncStatus.running && (
-        <Notification
-          title="Sincronização de Planetas"
-          loading
-          withCloseButton={false}
-          style={{ position: "absolute", bottom: 44, right: 44 }}
-        >
-          <Stack spacing={6}>
-            <CustomProgress
-              value={syncStatus?.percent}
-              label={syncStatus?.percent?.toFixed(2)}
-            />
-            <Text size="xs" color="dark.2">
-              {syncStatus?.currentOperation}
-            </Text>
-          </Stack>
-        </Notification>
-      )}
+      {syncStatus?.running &&
+        syncStatus?.percent < 100 &&
+        syncStatus?.currentOperation !== "Erro na sincronização" &&
+        syncStatus?.currentOperation !== "Sincronizando Planetas" &&
+        syncStatus?.currentOperation !== "Limpando pasta..." && (
+          <Notification
+            title="Sincronização de Planetas"
+            loading
+            withCloseButton={false}
+            style={{ position: "absolute", bottom: 44, right: 44 }}
+          >
+            <Stack spacing={6}>
+              <CustomProgress
+                value={syncStatus?.percent}
+                label={syncStatus?.percent?.toFixed(2)}
+              />
+              <Text size="xs" color="dark.2">
+                {syncStatus?.currentOperation}
+              </Text>
+            </Stack>
+          </Notification>
+        )}
 
       <BrowserRouter>
         <Routes>
