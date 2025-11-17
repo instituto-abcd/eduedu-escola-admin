@@ -28,8 +28,6 @@ import { SyncNotification } from "./components/SyncNotification";
 import { useFileSync } from "~/stores/filter";
 
 export function SettingsPage() {
-  const [disableSync, setDisableSync] = useState(false);
-
   const { data, isLoading } = useSettingsGet({
     onError: (error) =>
       errorNotification("Erro durante a operação", error.message),
@@ -67,40 +65,14 @@ export function SettingsPage() {
 
   const [auditModalOpen, auditModalHandlers] = useDisclosure(false);
 
-  const { update, data: syncFilesState } = useFileSync();
-  const { mutate: mutateSyncPlanets, isLoading: isSyncingPlanets } =
+  const { data: syncFilesState, update } = useFileSync();
+
+  const { mutate: mutateSyncPlanets, isLoading: syncPlanetsLoading } =
     useSyncPlanets();
 
-  const { data: syncStatus } = useSyncStatus({
-    refetchInterval: syncFilesState ? 1000 : false,
-    enabled: syncFilesState,
-    cacheTime: 10 * 1000,
-    initialData: {
-      totalFiles: 0,
-      syncedFiles: 0,
-      percent: 0,
-      duration: "00:00:00",
-      running: false,
-      currentOperation: "",
-    },
-    onSuccess: (data) => {
-      // Só ativa polling quando o backend confirmar que começou
-      if (data.running && !syncFilesState) update(true);
-
-      // Quando termina, desliga polling
-      if (!data.running && syncFilesState) {
-        update(false);
-        errorNotification(
-          "Erro durante a operação",
-          "Verifique a validade da sua chave de acesso."
-        );
-      }
-    },
-  });
-
   const onClickSyncButton = async () => {
-    mutateSyncPlanets(); // dispara o backend
-    update(true); // ativa polling (vai rodar até o backend indicar término)
+    update(true);
+    mutateSyncPlanets();
   };
 
   return (
@@ -111,7 +83,7 @@ export function SettingsPage() {
             <Button
               variant="outline"
               onClick={onClickSyncButton}
-              loading={isSyncingPlanets || syncFilesState}
+              loading={syncFilesState}
             >
               Sincronizar Planetas
             </Button>
