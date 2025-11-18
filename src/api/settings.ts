@@ -23,7 +23,7 @@ type Settings = {
   schoolId: string;
   createdAt: string;
   updatedAt: string;
-  accessKey: string;
+  accessKey?: string;
 };
 
 export type SettingsUpdateInput = Omit<
