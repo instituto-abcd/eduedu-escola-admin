@@ -1,7 +1,13 @@
 import { useCallback } from "react";
 import { API } from "./base";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+} from "@tanstack/react-query";
 import { MutationOptions, QueryOptions } from "./api-types";
+import { errorNotification } from "~/utils/errorNotification";
+import { useFileSync } from "~/stores/filter";
 
 type SyncStatus = {
   totalFiles: number;
@@ -62,26 +68,40 @@ export function useSyncExams(options?: QueryOptions<void, [typeof KEY.EXAM]>) {
   return useQuery([KEY.EXAM], handler, options);
 }
 
-export function useSyncPlanets(options?: MutationOptions<void, void>) {
-  const handler = useCallback(function () {
-    return SyncAPI.syncPlanets();
-  }, []);
+export function useSyncPlanets(options?: UseMutationOptions) {
+  const { data: syncStatus, refetch: refetchSync } = useSyncStatus();
+  const { data: syncFilesState, update } = useFileSync();
 
-  return useMutation(handler, options);
+  return useMutation({
+    mutationFn: async () => {
+      await SyncAPI.syncPlanets();
+    },
+    onSuccess: async () => {
+      await refetchSync();
+    },
+    onError: () => {
+      errorNotification(
+        "Erro na sincronização",
+        "Ocorreu um erro durante a sincronização. Verifique sua Chave de acesso."
+      );
+      update(false);
+    },
+    ...options,
+  });
 }
 
 export function useSyncStatus(
-  options?: QueryOptions<SyncStatus, [typeof KEY.SYNCSTATUS]>,
+  options?: QueryOptions<SyncStatus, [typeof KEY.SYNCSTATUS]>
 ) {
-  const handler = useCallback(function () {
-    return SyncAPI.getSyncStatus();
+  const handler = useCallback(async function () {
+    return await SyncAPI.getSyncStatus();
   }, []);
 
   return useQuery([KEY.SYNCSTATUS], handler, options);
 }
 
 export function useLastSync(
-  options?: QueryOptions<LastSyncResponse, [typeof KEY.LAST_SYNC]>,
+  options?: QueryOptions<LastSyncResponse, [typeof KEY.LAST_SYNC]>
 ) {
   const handler = useCallback(function () {
     return SyncAPI.getLastSync();

@@ -5,11 +5,15 @@ import axios, {
 } from "axios";
 import { useUserStore } from "../stores/user";
 import type { BaseError } from "./api-types";
-import { env } from "~/env";
 
 export class API {
+
+	// .env foi removido por conta do docker entrypoint definir a URL da API
+	// Window config é carregado via script em index.html
+	private static API_URL = window.config.API_URL;
+
 	static readonly api: AxiosInstance = axios.create({
-		baseURL: env.VITE_API_URL,
+		baseURL: this.API_URL,
 	});
 
 	private static readonly tokenInterceptorId =
