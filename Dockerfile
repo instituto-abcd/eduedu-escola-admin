@@ -6,8 +6,6 @@ ARG API_URL
 ARG APP_VERSION
 ARG BUILD_MODE=production
 
-ENV VITE_API_URL=${API_URL}
-
 COPY . .
 
 RUN npm install
@@ -22,5 +20,11 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY ./.nginx/nginx.conf /etc/nginx/conf.d
 
 EXPOSE 80
+
+
+COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["nginx", "-g", "daemon off;"]
