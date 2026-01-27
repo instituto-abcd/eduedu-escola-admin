@@ -1,20 +1,23 @@
-import { Notification } from "@mantine/core";
-import { useLastSync } from "~/api/sync";
+import { Group, Notification } from "@mantine/core";
+import { usePlanetLastSync, useExamLastSync, LastSyncResponse } from "~/api/sync";
 
-export function SyncNotification() {
-  const { data } = useLastSync();
-
-  if (!data || !data.showReminder) return null;
-
+function SyncReminderNotification({
+  title,
+  description,
+  data,
+}: {
+  title: string;
+  description: string;
+  data: LastSyncResponse;
+}) {
   return (
     <Notification
       color="yellow"
-      title="Aviso sobre sincronização"
+      title={title}
       withCloseButton={false}
       w={450}
     >
-      Recomendamos que seja feito a sincronização de Planetas novos com a base
-      de dados.
+      {description}
       {data.syncedAt && (
         <>
           <br />
@@ -30,5 +33,34 @@ export function SyncNotification() {
         </>
       )}
     </Notification>
+  );
+}
+
+export function SyncNotification() {
+  const { data: planetData } = usePlanetLastSync();
+  const { data: examData } = useExamLastSync();
+
+  const showPlanetReminder = planetData?.showReminder;
+  const showExamReminder = examData?.showReminder;
+
+  if (!showPlanetReminder && !showExamReminder) return null;
+
+  return (
+    <Group spacing="md">
+      {showPlanetReminder && planetData && (
+        <SyncReminderNotification
+          title="Aviso sobre sincronização de Planetas"
+          description="Recomendamos que seja feito a sincronização de Planetas novos com a base de dados."
+          data={planetData}
+        />
+      )}
+      {showExamReminder && examData && (
+        <SyncReminderNotification
+          title="Aviso sobre sincronização de Provas"
+          description="Recomendamos que seja feito a sincronização de Provas novas com a base de dados."
+          data={examData}
+        />
+      )}
+    </Group>
   );
 }
