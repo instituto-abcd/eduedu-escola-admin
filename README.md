@@ -391,4 +391,4 @@ Contribuições são bem-vindas! Para contribuir:
 
 Este projeto é mantido pelo [Instituto ABCD](https://www.institutoabcd.org.br/).
 
-Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
+Consulte o arquivo [LICENSE](LICENSE.md) para mais detalhes.
