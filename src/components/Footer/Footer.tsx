@@ -13,7 +13,7 @@ export function Footer() {
         <Flex justify="space-between">
           <b>{schoolName}</b>
           <Group spacing={12}>
-            <span>Desenvolvido por EduEdu+</span>
+            <span>Desenvolvido por Instituto ABCD</span>
             &mdash;
             <span>{VERSION ? `Versão ${VERSION}` : "v1.0.0"}</span>
           </Group>
