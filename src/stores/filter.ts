@@ -9,7 +9,7 @@ type Filter<T = unknown> = {
   data: T;
 };
 
-interface FileSyncState {
+interface SyncState {
   data: boolean;
   update: (value: boolean) => void;
 }
@@ -19,18 +19,36 @@ export const useStudentFilterStore = create<Filter<StudentSearch>>((set) => ({
   update: (filter) => set({ data: filter }),
 }));
 
-export const useFileSync = create<FileSyncState>()(
+// Planet sync state
+export const usePlanetSync = create<SyncState>()(
   persist(
     (set) => ({
       data: false,
       update: (value) => set({ data: value }),
     }),
     {
-      name: "file-sync-storage",
+      name: "planet-sync-storage",
       getStorage: () => localStorage,
     }
   )
 );
+
+// Exam sync state
+export const useExamSync = create<SyncState>()(
+  persist(
+    (set) => ({
+      data: false,
+      update: (value) => set({ data: value }),
+    }),
+    {
+      name: "exam-sync-storage",
+      getStorage: () => localStorage,
+    }
+  )
+);
+
+// Legacy alias for backward compatibility (deprecated)
+export const useFileSync = usePlanetSync;
 
 export const useSchoolClassFilterStore = create<Filter<SchoolClassSearch>>(
   (set) => ({
