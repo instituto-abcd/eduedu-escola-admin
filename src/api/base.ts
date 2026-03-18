@@ -7,7 +7,9 @@ import { useUserStore } from "../stores/user";
 import type { BaseError } from "./api-types";
 
 export class API {
-  private static API_URL = import.meta.env.VITE_API_URL;
+  // .env foi removido por conta do docker entrypoint definir a URL da API
+  // Window config é carregado via script em index.html
+  private static API_URL = window.config.API_URL;
 
   static readonly api: AxiosInstance = axios.create({
     baseURL: this.API_URL,
