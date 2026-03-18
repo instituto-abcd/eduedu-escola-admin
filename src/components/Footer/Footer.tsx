@@ -1,7 +1,7 @@
 import { Box, Container, Flex, Group } from "@mantine/core";
 import { useUserStore } from "~/stores/user";
 
-const VERSION = window.config.APP_VERSION;
+const VERSION = import.meta.env.VITE_APP_VERSION;
 
 export function Footer() {
   const { schoolName } = useUserStore();
