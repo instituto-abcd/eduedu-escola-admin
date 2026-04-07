@@ -22,10 +22,9 @@ import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
 import { AuditModal } from "./components/AuditModal";
 import { z } from "zod";
-import { useSyncPlanets, useSyncStatus } from "~/api/sync";
-import { useEffect, useState } from "react";
+import { useSyncPlanets, useSyncExams } from "~/api/sync";
 import { SyncNotification } from "./components/SyncNotification";
-import { useFileSync } from "~/stores/filter";
+import { usePlanetSync, useExamSync } from "~/stores/filter";
 
 export function SettingsPage() {
   const { data, isLoading } = useSettingsGet({
@@ -66,14 +65,20 @@ export function SettingsPage() {
 
   const [auditModalOpen, auditModalHandlers] = useDisclosure(false);
 
-  const { data: syncFilesState, update } = useFileSync();
+  const { data: planetSyncState, update: updatePlanetSync } = usePlanetSync();
+  const { data: examSyncState, update: updateExamSync } = useExamSync();
 
-  const { mutate: mutateSyncPlanets, isLoading: syncPlanetsLoading } =
-    useSyncPlanets();
+  const { mutate: mutateSyncPlanets } = useSyncPlanets();
+  const { mutate: mutateSyncExams } = useSyncExams();
 
-  const onClickSyncButton = async () => {
-    update(true);
+  const onClickSyncPlanetsButton = async () => {
+    updatePlanetSync(true);
     mutateSyncPlanets();
+  };
+
+  const onClickSyncExamsButton = async () => {
+    updateExamSync(true);
+    mutateSyncExams();
   };
 
   return (
@@ -83,10 +88,17 @@ export function SettingsPage() {
           <Group noWrap>
             <Button
               variant="outline"
-              onClick={onClickSyncButton}
-              loading={syncFilesState}
+              onClick={onClickSyncPlanetsButton}
+              loading={planetSyncState}
             >
               Sincronizar Planetas
+            </Button>
+            <Button
+              variant="outline"
+              onClick={onClickSyncExamsButton}
+              loading={examSyncState}
+            >
+              Sincronizar Provas
             </Button>
             <Button variant="outline" onClick={auditModalHandlers.open}>
               Gestão de Auditoria
