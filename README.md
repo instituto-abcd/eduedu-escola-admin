@@ -37,33 +37,33 @@ O **EduEdu+ Escola Admin** é o painel administrativo da plataforma educacional 
 
 ### Repositórios Relacionados
 
-| Repositório                                                                      | Descrição                                          |
-| -------------------------------------------------------------------------------- | -------------------------------------------------- |
-| [eduedu-escola-setup](https://github.com/instituto-abcd/eduedu-escola-setup)     | Pacote de instalação e orquestração (Docker)       |
-| [eduedu-escola-backend](https://github.com/instituto-abcd/eduedu-escola-backend) | API backend (NestJS + Prisma + MongoDB)            |
-| [eduedu-escola-aluno](https://github.com/instituto-abcd/eduedu-escola-aluno)     | Interface do aluno                                 |
+| Repositório                                                                      | Descrição                                    |
+| -------------------------------------------------------------------------------- | -------------------------------------------- |
+| [eduedu-escola-setup](https://github.com/instituto-abcd/eduedu-escola-setup)     | Pacote de instalação e orquestração (Docker) |
+| [eduedu-escola-backend](https://github.com/instituto-abcd/eduedu-escola-backend) | API backend (NestJS + Prisma + MongoDB)      |
+| [eduedu-escola-aluno](https://github.com/instituto-abcd/eduedu-escola-aluno)     | Interface do aluno                           |
 
 ---
 
 ## Tecnologias
 
-| Categoria        | Tecnologia                                                        |
-| ---------------- | ----------------------------------------------------------------- |
-| Framework        | [React](https://react.dev/) 18                                    |
-| Build Tool       | [Vite](https://vitejs.dev/) 4                                     |
-| Linguagem        | TypeScript 5 (strict mode)                                        |
-| UI Components    | [Mantine](https://mantine.dev/) v6                                |
-| Estado Servidor  | [TanStack React Query](https://tanstack.com/query) v4             |
-| Estado Cliente   | [Zustand](https://zustand-demo.pmnd.rs/) + persist middleware     |
-| HTTP Client      | [Axios](https://axios-http.com/)                                  |
-| Roteamento       | [React Router DOM](https://reactrouter.com/) v6                   |
-| Validação        | [Zod](https://zod.dev/)                                           |
-| Gráficos         | [Chart.js](https://www.chartjs.org/) + react-chartjs-2            |
-| PDF              | [@react-pdf/renderer](https://react-pdf.org/) + jsPDF             |
-| Ícones           | [@tabler/icons-react](https://tabler.io/icons)                    |
-| Datas            | [Day.js](https://day.js.org/)                                     |
-| Containerização  | Docker + nginx                                                    |
-| CI/CD            | GitHub Actions + Google Cloud Run                                 |
+| Categoria       | Tecnologia                                                    |
+| --------------- | ------------------------------------------------------------- |
+| Framework       | [React](https://react.dev/) 18                                |
+| Build Tool      | [Vite](https://vitejs.dev/) 4                                 |
+| Linguagem       | TypeScript 5 (strict mode)                                    |
+| UI Components   | [Mantine](https://mantine.dev/) v6                            |
+| Estado Servidor | [TanStack React Query](https://tanstack.com/query) v4         |
+| Estado Cliente  | [Zustand](https://zustand-demo.pmnd.rs/) + persist middleware |
+| HTTP Client     | [Axios](https://axios-http.com/)                              |
+| Roteamento      | [React Router DOM](https://reactrouter.com/) v6               |
+| Validação       | [Zod](https://zod.dev/)                                       |
+| Gráficos        | [Chart.js](https://www.chartjs.org/) + react-chartjs-2        |
+| PDF             | [@react-pdf/renderer](https://react-pdf.org/) + jsPDF         |
+| Ícones          | [@tabler/icons-react](https://tabler.io/icons)                |
+| Datas           | [Day.js](https://day.js.org/)                                 |
+| Containerização | Docker + nginx                                                |
+| CI/CD           | GitHub Actions + Google Cloud Run                             |
 
 ---
 
@@ -100,14 +100,6 @@ window.config = {
   APP_VERSION: "1.21.0",
 };
 ```
-
-**Ambientes disponíveis:**
-
-| Ambiente    | API URL                                                       |
-| ----------- | ------------------------------------------------------------- |
-| Local       | `http://localhost:3000/`                                      |
-| Development | `https://dev-eduedu-escola-backend-3djofcpyaq-uc.a.run.app/` |
-| Staging     | `https://eduedu-escola-backend-3djofcpyaq-uc.a.run.app/`     |
 
 ### 4. Inicie o servidor de desenvolvimento
 
@@ -289,18 +281,18 @@ export const useUserStore = create<UserStore>()(
 
 ## Conceitos de Domínio
 
-| Termo          | Descrição                                                                |
-| -------------- | ------------------------------------------------------------------------ |
-| **Turma**      | Classe escolar com série e período (manhã, tarde, integral)              |
-| **Aluno**      | Estudante com acompanhamento de desempenho                               |
-| **Ano Letivo** | Ano acadêmico com estados: Rascunho, Ativo, Inativo                     |
-| **Planeta**    | Módulo de aprendizagem gamificado na plataforma EduEdu                   |
-| **Prova**      | Avaliação diagnóstica aplicada aos alunos                                |
-| **Eixos**      | Dimensões de aprendizagem avaliadas:                                     |
-|                | &bull; **ES** &mdash; Consciência fonológica                             |
-|                | &bull; **EA** &mdash; Sistema de escrita alfabética                      |
-|                | &bull; **LC** &mdash; Leitura e compreensão de texto                     |
-| **Série**      | Infantil, 1º ao 5º Ano do Ensino Fundamental                            |
+| Termo          | Descrição                                                   |
+| -------------- | ----------------------------------------------------------- |
+| **Turma**      | Classe escolar com série e período (manhã, tarde, integral) |
+| **Aluno**      | Estudante com acompanhamento de desempenho                  |
+| **Ano Letivo** | Ano acadêmico com estados: Rascunho, Ativo, Inativo         |
+| **Planeta**    | Módulo de aprendizagem gamificado na plataforma EduEdu      |
+| **Prova**      | Avaliação diagnóstica aplicada aos alunos                   |
+| **Eixos**      | Dimensões de aprendizagem avaliadas:                        |
+|                | &bull; **ES** &mdash; Consciência fonológica                |
+|                | &bull; **EA** &mdash; Sistema de escrita alfabética         |
+|                | &bull; **LC** &mdash; Leitura e compreensão de texto        |
+| **Série**      | Infantil, 1º ao 5º Ano do Ensino Fundamental                |
 
 ---
 
@@ -323,7 +315,7 @@ export const useUserStore = create<UserStore>()(
 
 | Variável      | Descrição              | Exemplo                 |
 | ------------- | ---------------------- | ----------------------- |
-| `API_URL`     | URL do backend EduEdu+ | `http://localhost:3000`  |
+| `API_URL`     | URL do backend EduEdu+ | `http://localhost:3000` |
 | `APP_VERSION` | Versão da aplicação    | `1.21.0`                |
 
 A aplicação **não** utiliza variáveis de ambiente do Vite (`VITE_*`) para a URL da API. Em vez disso, usa o objeto `window.config` carregado do script `public/config.js`, permitindo configuração em runtime sem rebuild da imagem Docker.
@@ -342,13 +334,6 @@ docker run -p 80:80 -e API_URL=https://api.exemplo.com -e APP_VERSION=1.0.0 edue
 ```
 
 O `entrypoint.sh` gera o `config.js` automaticamente a partir das variáveis de ambiente no momento da inicialização do container, permitindo configurar a API por ambiente sem reconstruir a imagem.
-
-### Google Cloud Run
-
-O projeto possui workflows do GitHub Actions configurados para deploy automatizado:
-
-- **Push em `qa`** &mdash; Deploy automático para o ambiente de QA/staging no Cloud Run
-- **Workflow manual** &mdash; Deploy para o registro de produção open-source com tag versionada
 
 ---
 
