@@ -4,11 +4,14 @@ import { User, useUserCreate, useUserGetById, useUserUpdate } from "~/api/user";
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
 import { z } from "zod";
-import { Button, Grid, Group, Select, TextInput } from "@mantine/core";
+import { Anchor, Button, Grid, Group, Select, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
 import { AccessKeyInput } from "~/components/AccessKeyInput";
 import { PageHeader } from "~/components/PageHeader";
 import { useGetClassesByUser } from "~/api/school-class";
+import { useUserStore } from "~/stores/user";
+import { ResetPasswordModal } from "./ResetPasswordModal";
 
 const userInputValidation = z.object({
   name: z
@@ -79,6 +82,14 @@ export function UserPage() {
     useGetClassesByUser(finalUser?.id ?? "", {
       enabled: !!finalUser,
     });
+
+  const currentUserProfile = useUserStore((state) => state.profile);
+  const [resetPasswordOpened, { open: openResetPassword, close: closeResetPassword }] =
+    useDisclosure(false);
+  const canResetTeacherPassword =
+    !!finalUser &&
+    finalUser.profile === "TEACHER" &&
+    currentUserProfile === "DIRECTOR";
 
   const form = useForm<z.infer<typeof userInputValidation>>({
     initialValues: {
@@ -173,6 +184,18 @@ export function UserPage() {
               <Grid.Col span={1}>
                 <AccessKeyInput userId={finalUser?.id ?? ""} />
               </Grid.Col>
+
+              {canResetTeacherPassword && (
+                <Grid.Col span={4}>
+                  <Anchor
+                    component="button"
+                    type="button"
+                    onClick={openResetPassword}
+                  >
+                    Redefinir senha
+                  </Anchor>
+                </Grid.Col>
+              )}
             </>
           )}
         </Grid>
@@ -189,6 +212,14 @@ export function UserPage() {
           </Button>
         </Group>
       </form>
+
+      {finalUser && (
+        <ResetPasswordModal
+          opened={resetPasswordOpened}
+          onClose={closeResetPassword}
+          userId={finalUser.id}
+        />
+      )}
     </>
   );
 }
