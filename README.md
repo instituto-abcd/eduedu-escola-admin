@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/banner.png" alt="EduEdu+ Escola Admin" width="100%" />
+</p>
+
 <h1 align="center">EduEdu+ Escola Admin</h1>
 
 <p align="center">
@@ -5,16 +9,25 @@
 </p>
 
 <p align="center">
+  <a href="#-demonstração">Demonstração</a> &bull;
   <a href="#sobre-o-projeto">Sobre</a> &bull;
   <a href="#tecnologias">Tecnologias</a> &bull;
   <a href="#pré-requisitos">Pré-requisitos</a> &bull;
   <a href="#instalação">Instalação</a> &bull;
   <a href="#estrutura-do-projeto">Estrutura</a> &bull;
+  <a href="#rotas-da-aplicação">Rotas</a> &bull;
+  <a href="#conceitos-de-domínio">Domínio</a> &bull;
   <a href="#scripts-disponíveis">Scripts</a> &bull;
   <a href="#variáveis-de-ambiente">Ambiente</a> &bull;
   <a href="#deploy">Deploy</a> &bull;
   <a href="#contribuindo">Contribuindo</a> &bull;
   <a href="#licença">Licença</a>
+</p>
+
+## 🎬 Demonstração
+
+<p align="center">
+  <img src="docs/assets/videos/demo-painel-adm.gif" alt="Demonstração do painel administrativo EduEdu+" width="800" />
 </p>
 
 ---
@@ -97,7 +110,7 @@ O projeto usa um arquivo `public/config.js` para configuração em runtime. Para
 ```javascript
 window.config = {
   API_URL: "http://localhost:3000",
-  APP_VERSION: "1.21.0",
+  APP_VERSION: "<versão do package.json>",
 };
 ```
 
@@ -316,7 +329,7 @@ export const useUserStore = create<UserStore>()(
 | Variável      | Descrição              | Exemplo                 |
 | ------------- | ---------------------- | ----------------------- |
 | `API_URL`     | URL do backend EduEdu+ | `http://localhost:3000` |
-| `APP_VERSION` | Versão da aplicação    | `1.21.0`                |
+| `APP_VERSION` | Versão da aplicação (deve refletir `package.json`) | `1.21.0` |
 
 A aplicação **não** utiliza variáveis de ambiente do Vite (`VITE_*`) para a URL da API. Em vez disso, usa o objeto `window.config` carregado do script `public/config.js`, permitindo configuração em runtime sem rebuild da imagem Docker.
 
