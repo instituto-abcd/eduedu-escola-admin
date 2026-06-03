@@ -1,4 +1,4 @@
-import { Link, useLocation, useParams } from "react-router-dom";
+﻿import { Link, useLocation, useParams } from "react-router-dom";
 import { PROFILE_SELECT, STATUS_SELECT } from "~/constants";
 import { User, useUserCreate, useUserGetById, useUserUpdate } from "~/api/user";
 import { errorNotification } from "~/utils/errorNotification";
@@ -84,8 +84,10 @@ export function UserPage() {
     });
 
   const currentUserProfile = useUserStore((state) => state.profile);
-  const [resetPasswordOpened, { open: openResetPassword, close: closeResetPassword }] =
-    useDisclosure(false);
+  const [
+    resetPasswordOpened,
+    { open: openResetPassword, close: closeResetPassword },
+  ] = useDisclosure(false);
   const canResetTeacherPassword =
     !!finalUser &&
     finalUser.profile === "TEACHER" &&
@@ -114,10 +116,11 @@ export function UserPage() {
           }
         })}
       >
-        <Grid columns={4}>
+        <Grid columns={4} align="flex-start">
           <Grid.Col span={1}>
             <TextInput
               label="Nome"
+              description={<>&nbsp;</>}
               placeholder={isLoadingUser ? "Carregando..." : "Nome"}
               disabled={isLoadingUser}
               {...form.getInputProps("name")}
@@ -127,8 +130,12 @@ export function UserPage() {
           <Grid.Col span={1}>
             <TextInput
               label="CPF"
+              description="* Apenas números"
               placeholder={isLoadingUser ? "Carregando..." : "CPF"}
               disabled={isLoadingUser}
+              inputMode="numeric"
+              type="number"
+              maxLength={11}
               {...form.getInputProps("document")}
             />
           </Grid.Col>
@@ -136,6 +143,7 @@ export function UserPage() {
           <Grid.Col span={1}>
             <TextInput
               label="Email"
+              description={<>&nbsp;</>}
               placeholder={isLoadingUser ? "Carregando..." : "Email"}
               disabled={isLoadingUser}
               {...form.getInputProps("email")}
@@ -147,6 +155,7 @@ export function UserPage() {
               withinPortal
               data={PROFILE_SELECT}
               label="Perfil"
+              description={<>&nbsp;</>}
               placeholder={isLoadingUser ? "Carregando..." : "Selecione"}
               disabled={
                 isLoadingUser ? true : finalUser?.owner == true ? true : false
@@ -175,7 +184,7 @@ export function UserPage() {
                     value={
                       loadingUserClasses
                         ? "Carregando..."
-                        : userClasses?.names ?? "Sem turmas associadas"
+                        : (userClasses?.names ?? "Sem turmas associadas")
                     }
                     disabled
                   />
