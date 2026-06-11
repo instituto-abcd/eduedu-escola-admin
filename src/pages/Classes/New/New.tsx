@@ -49,12 +49,18 @@ export function NewClassPage() {
   const editingSchoolClass = useLocation().state?.schoolClass as
     | SchoolClass
     | undefined;
-  const shouldFetch = Boolean(!editingSchoolClass && params.classId);
+  const shouldFetch = Boolean(params.classId);
 
   const { data: schoolClass } = useGetSchoolClass(params.classId ?? "", {
     enabled: shouldFetch,
     onSuccess: (data) => {
-      form.setValues(data);
+      form.setValues({
+        name: data.name,
+        schoolGrade: data.schoolGrade,
+        schoolPeriod: data.schoolPeriod,
+        schoolYearId: data.schoolYear.id,
+        teacherIds: data.teachers.map(({ id }) => id),
+      });
       form.resetDirty();
     },
     onError: (error) => {
@@ -62,7 +68,7 @@ export function NewClassPage() {
     },
   });
 
-  const finalSchoolClass = shouldFetch ? schoolClass : editingSchoolClass;
+  const finalSchoolClass = schoolClass ?? editingSchoolClass;
 
   const form = useForm<SchoolClassInput>({
     initialValues: {
