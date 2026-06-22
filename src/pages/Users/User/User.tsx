@@ -134,9 +134,14 @@ export function UserPage() {
               placeholder={isLoadingUser ? "Carregando..." : "CPF"}
               disabled={isLoadingUser}
               inputMode="numeric"
-              type="number"
               maxLength={11}
               {...form.getInputProps("document")}
+              onChange={(event) =>
+                form.setFieldValue(
+                  "document",
+                  event.currentTarget.value.replace(/\D/g, "").slice(0, 11)
+                )
+              }
             />
           </Grid.Col>
 
