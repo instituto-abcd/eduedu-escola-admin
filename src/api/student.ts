@@ -60,6 +60,7 @@ const URL = {
   EXAMS_PERFORMANCE_PLANETS: (id: string, studentExamId: string) =>
     `/student/${id}/exam-executions/${studentExamId}/planets-performance?loadPlanets=true`,
   RELEASE_PLANETS: (id: string) => `/student/${id}/release-planets`,
+  RELEASE_PLANETS_BULK: "/student/release-planets",
 };
 
 const KEY = {
@@ -146,6 +147,14 @@ class StudentAPI extends API {
 
   static async putReleasePlanets(id: string) {
     const { data } = await this.api.put(URL.RELEASE_PLANETS(id));
+    return data;
+  }
+
+  static async putReleasePlanetsBulk(ids: string[]) {
+    const { data } = await this.api.put<{ success: boolean }>(
+      URL.RELEASE_PLANETS_BULK,
+      { ids }
+    );
     return data;
   }
 }
@@ -332,6 +341,24 @@ export function usePutReleasePlanets(
 
   const handler = useCallback(function (data: { id: string }) {
     return StudentAPI.putReleasePlanets(data);
+  }, []);
+
+  return useMutation(handler, {
+    ...options,
+    onSuccess: (data, vars, ctx) => {
+      queryClient.invalidateQueries([KEY.ALL]);
+      options?.onSuccess?.(data, vars, ctx);
+    },
+  });
+}
+
+export function usePutReleasePlanetsBulk(
+  options?: MutationOptions<string[], { success: boolean }>
+) {
+  const queryClient = useQueryClient();
+
+  const handler = useCallback(function (ids: string[]) {
+    return StudentAPI.putReleasePlanetsBulk(ids);
   }, []);
 
   return useMutation(handler, {
