@@ -273,7 +273,10 @@ export function useGetExamCharts(
     },
     [id]
   );
-  return useQuery([KEY.EXAM_CHART_BY_ID, id], handler, options);
+  return useQuery([KEY.EXAM_CHART_BY_ID, id], handler, {
+    ...options,
+    enabled: !!id && (options?.enabled ?? true),
+  });
 }
 
 export function useGetPlanetsCharts(
@@ -286,7 +289,10 @@ export function useGetPlanetsCharts(
     },
     [id]
   );
-  return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options);
+  return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, {
+    ...options,
+    enabled: !!id && (options?.enabled ?? true),
+  });
 }
 
 export function useGetExamExecutions(
