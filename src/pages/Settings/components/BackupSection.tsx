@@ -13,6 +13,7 @@ import { useUserStore } from "~/stores/user";
 import { useBackupCreate, useBackupRestoreByFile } from "~/api/backup";
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
+import { BackupScheduleForm } from "./BackupScheduleForm";
 
 export function BackupSection() {
   const profile = useUserStore((state) => state.profile);
@@ -103,6 +104,10 @@ export function BackupSection() {
           ? "Criando backup..."
           : "Criar backup do aplicativo atual"}
       </Anchor>
+
+      <Divider mt="md" />
+
+      <BackupScheduleForm />
     </Stack>
   );
 }
