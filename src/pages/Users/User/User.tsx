@@ -1,14 +1,17 @@
-import { Link, useLocation, useParams } from "react-router-dom";
+﻿import { Link, useLocation, useParams } from "react-router-dom";
 import { PROFILE_SELECT, STATUS_SELECT } from "~/constants";
 import { User, useUserCreate, useUserGetById, useUserUpdate } from "~/api/user";
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
 import { z } from "zod";
-import { Button, Grid, Group, Select, TextInput } from "@mantine/core";
+import { Anchor, Button, Grid, Group, Select, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
 import { AccessKeyInput } from "~/components/AccessKeyInput";
 import { PageHeader } from "~/components/PageHeader";
 import { useGetClassesByUser } from "~/api/school-class";
+import { useUserStore } from "~/stores/user";
+import { ResetPasswordModal } from "./ResetPasswordModal";
 
 const userInputValidation = z.object({
   name: z
@@ -80,6 +83,16 @@ export function UserPage() {
       enabled: !!finalUser,
     });
 
+  const currentUserProfile = useUserStore((state) => state.profile);
+  const [
+    resetPasswordOpened,
+    { open: openResetPassword, close: closeResetPassword },
+  ] = useDisclosure(false);
+  const canResetTeacherPassword =
+    !!finalUser &&
+    finalUser.profile === "TEACHER" &&
+    currentUserProfile === "DIRECTOR";
+
   const form = useForm<z.infer<typeof userInputValidation>>({
     initialValues: {
       name: finalUser?.name ?? "",
@@ -103,10 +116,11 @@ export function UserPage() {
           }
         })}
       >
-        <Grid columns={4}>
+        <Grid columns={4} align="flex-start">
           <Grid.Col span={1}>
             <TextInput
               label="Nome"
+              description={<>&nbsp;</>}
               placeholder={isLoadingUser ? "Carregando..." : "Nome"}
               disabled={isLoadingUser}
               {...form.getInputProps("name")}
@@ -116,15 +130,25 @@ export function UserPage() {
           <Grid.Col span={1}>
             <TextInput
               label="CPF"
+              description="* Apenas números"
               placeholder={isLoadingUser ? "Carregando..." : "CPF"}
               disabled={isLoadingUser}
+              inputMode="numeric"
+              maxLength={11}
               {...form.getInputProps("document")}
+              onChange={(event) =>
+                form.setFieldValue(
+                  "document",
+                  event.currentTarget.value.replace(/\D/g, "").slice(0, 11)
+                )
+              }
             />
           </Grid.Col>
 
           <Grid.Col span={1}>
             <TextInput
               label="Email"
+              description={<>&nbsp;</>}
               placeholder={isLoadingUser ? "Carregando..." : "Email"}
               disabled={isLoadingUser}
               {...form.getInputProps("email")}
@@ -136,6 +160,7 @@ export function UserPage() {
               withinPortal
               data={PROFILE_SELECT}
               label="Perfil"
+              description={<>&nbsp;</>}
               placeholder={isLoadingUser ? "Carregando..." : "Selecione"}
               disabled={
                 isLoadingUser ? true : finalUser?.owner == true ? true : false
@@ -164,7 +189,7 @@ export function UserPage() {
                     value={
                       loadingUserClasses
                         ? "Carregando..."
-                        : userClasses?.names ?? "Sem turmas associadas"
+                        : (userClasses?.names ?? "Sem turmas associadas")
                     }
                     disabled
                   />
@@ -173,6 +198,18 @@ export function UserPage() {
               <Grid.Col span={1}>
                 <AccessKeyInput userId={finalUser?.id ?? ""} />
               </Grid.Col>
+
+              {canResetTeacherPassword && (
+                <Grid.Col span={4}>
+                  <Anchor
+                    component="button"
+                    type="button"
+                    onClick={openResetPassword}
+                  >
+                    Redefinir senha
+                  </Anchor>
+                </Grid.Col>
+              )}
             </>
           )}
         </Grid>
@@ -189,6 +226,14 @@ export function UserPage() {
           </Button>
         </Group>
       </form>
+
+      {finalUser && (
+        <ResetPasswordModal
+          opened={resetPasswordOpened}
+          onClose={closeResetPassword}
+          userId={finalUser.id}
+        />
+      )}
     </>
   );
 }

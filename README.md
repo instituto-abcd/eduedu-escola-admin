@@ -1,15 +1,22 @@
+<p align="center">
+  <img src="docs/assets/banner.png" alt="EduEdu+ Escola Admin" width="100%" />
+</p>
+
 <h1 align="center">EduEdu+ Escola Admin</h1>
 
 <p align="center">
-  Interface administrativa da plataforma EduEdu+, um sistema de avaliação e acompanhamento de alfabetização para escolas brasileiras.
+  Interface administrativa da plataforma EduEdu+, um sistema de avaliação, monitoramento e acompanhamento da alfabetização para escolas brasileiras.
 </p>
 
 <p align="center">
+  <a href="#-demonstração">Demonstração</a> &bull;
   <a href="#sobre-o-projeto">Sobre</a> &bull;
   <a href="#tecnologias">Tecnologias</a> &bull;
   <a href="#pré-requisitos">Pré-requisitos</a> &bull;
   <a href="#instalação">Instalação</a> &bull;
   <a href="#estrutura-do-projeto">Estrutura</a> &bull;
+  <a href="#rotas-da-aplicação">Rotas</a> &bull;
+  <a href="#conceitos-de-domínio">Domínio</a> &bull;
   <a href="#scripts-disponíveis">Scripts</a> &bull;
   <a href="#variáveis-de-ambiente">Ambiente</a> &bull;
   <a href="#deploy">Deploy</a> &bull;
@@ -17,23 +24,33 @@
   <a href="#licença">Licença</a>
 </p>
 
+## 🎬 Demonstração
+
+<p align="center">
+  <img src="docs/assets/videos/demo-painel-adm.gif" alt="Demonstração do painel administrativo EduEdu+" width="800" />
+</p>
+
 ---
 
 ## Sobre o Projeto
 
-O **EduEdu+ Escola Admin** é o painel administrativo da plataforma educacional EduEdu+, destinado a diretores, coordenadores e professores. Através dele é possível gerenciar turmas, acompanhar o desempenho dos alunos em eixos de alfabetização, aplicar avaliações diagnósticas, gerar relatórios em PDF e configurar a escola.
+O **EduEdu+ Escola Admin** é o painel administrativo da plataforma educacional EduEdu+, destinado a diretores, coordenadores pedagógicos e professores.
+
+Por meio dele, é possível gerenciar turmas, acompanhar o desempenho dos estudantes nos diferentes eixos da alfabetização, aplicar avaliações diagnósticas, gerar relatórios em PDF e configurar parâmetros da escola.
+
+A plataforma foi desenvolvida para apoiar o monitoramento da aprendizagem e a tomada de decisão pedagógica baseada em dados, contribuindo para a personalização do ensino e para o acompanhamento do progresso dos estudantes ao longo do ano letivo.
 
 ### Funcionalidades Principais
 
-- **Dashboard** &mdash; Visão geral do desempenho da escola por série, turma e eixo de aprendizagem
-- **Gestão de turmas** &mdash; Criação, edição e acompanhamento de turmas com desempenho em provas e planetas
-- **Gestão de alunos** &mdash; Cadastro individual ou em lote (planilha), acompanhamento detalhado de desempenho e autorização de provas
-- **Gestão de usuários** &mdash; Cadastro de diretores e professores com controle de perfil e status
-- **Ano letivo** &mdash; Criação de anos letivos e promoção de alunos entre séries
-- **Relatórios** &mdash; Relatórios detalhados por aluno e turma com exportação em PDF (por área, por prova, por planeta)
-- **Sincronização** &mdash; Sincronização de planetas e provas com o backend via filas assíncronas, com notificações de progresso em tempo real
-- **Configurações** &mdash; Configuração da escola, status de sincronização e log de auditoria
-- **Setup inicial** &mdash; Assistente de configuração para primeira utilização da escola
+- **Dashboard** &mdash; Visão geral do desempenho da escola por série, turma e eixo de aprendizagem, com indicadores educacionais e acompanhamento da evolução dos estudantes
+- **Gestão de turmas** &mdash; Criação, edição e acompanhamento de turmas, incluindo desempenho em provas e atividades (planetas)
+- **Gestão de estudantes** &mdash; Cadastro individual ou em massa (via planilha), acompanhamento detalhado do desempenho e liberação para realização de provas e mais atividades (planetas)
+- **Gestão de usuários** &mdash; Cadastro e gerenciamento de diretores, coordenadores e professores, com controle de perfis e status de acesso
+- **Ano letivo** &mdash; Criação de anos letivos e promoção de estudantes entre séries
+- **Relatórios** &mdash; Geração de relatórios detalhados por estudante e por turma, com exportação em PDF (por área, prova ou planeta)
+- **Sincronização** &mdash; Sincronização de planetas e provas com o backend por meio de filas assíncronas, com notificações de progresso em tempo real
+- **Configurações** &mdash; Configuração da escola, acompanhamento do status de sincronização e acesso ao log de auditoria
+- **Configuração inicial** &mdash; Assistente de configuração para apoiar a implantação e a primeira utilização da plataforma na escola
 
 ### Repositórios Relacionados
 
@@ -97,7 +114,7 @@ O projeto usa um arquivo `public/config.js` para configuração em runtime. Para
 ```javascript
 window.config = {
   API_URL: "http://localhost:3000",
-  APP_VERSION: "1.21.0",
+  APP_VERSION: "<versão do package.json>",
 };
 ```
 
@@ -316,7 +333,7 @@ export const useUserStore = create<UserStore>()(
 | Variável      | Descrição              | Exemplo                 |
 | ------------- | ---------------------- | ----------------------- |
 | `API_URL`     | URL do backend EduEdu+ | `http://localhost:3000` |
-| `APP_VERSION` | Versão da aplicação    | `1.21.0`                |
+| `APP_VERSION` | Versão da aplicação (deve refletir `package.json`) | `1.21.0` |
 
 A aplicação **não** utiliza variáveis de ambiente do Vite (`VITE_*`) para a URL da API. Em vez disso, usa o objeto `window.config` carregado do script `public/config.js`, permitindo configuração em runtime sem rebuild da imagem Docker.
 

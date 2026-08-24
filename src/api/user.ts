@@ -74,6 +74,7 @@ const ROUTE = {
 	ACTIVATE: (id: string) => `/user/${id}`,
 	INACTIVATE: "/user/inactivate",
 	UPDATE_PASSWORD: "/user/password",
+	RESET_PASSWORD_BY_DIRECTOR: (id: string) => `/user/${id}/password/reset`,
 	SHEET: "/user/spreadsheet-template",
 	UPLOAD_SHEET: "/user/spreadsheet",
 } as const;
@@ -147,6 +148,14 @@ class UserAPI extends API {
 		const { data } = await this.api.put<LoginResponse>(
 			ROUTE.UPDATE_PASSWORD,
 			input,
+		);
+		return data;
+	}
+
+	static async resetPasswordByDirector(userId: string, newPassword: string) {
+		const { data } = await this.api.put<{ success: boolean }>(
+			ROUTE.RESET_PASSWORD_BY_DIRECTOR(userId),
+			{ newPassword },
 		);
 		return data;
 	}
@@ -342,6 +351,22 @@ export function useUserUpdatePassword(
 			options?.onSuccess?.(data, vars, ctx);
 		},
 	});
+}
+
+export function useUserResetPasswordByDirector(
+	options?: MutationOptions<
+		{ userId: string; newPassword: string },
+		{ success: boolean }
+	>,
+) {
+	const handler = useCallback(function (vars: {
+		userId: string;
+		newPassword: string;
+	}) {
+		return UserAPI.resetPasswordByDirector(vars.userId, vars.newPassword);
+	}, []);
+
+	return useMutation(handler, options);
 }
 
 export function useUserSheetUpload(

@@ -306,11 +306,19 @@ export function useSchoolClassGetAll(
 export function useSchoolClassCreate(
 	options?: MutationOptions<SchoolClassInput, SchoolClass>,
 ) {
+	const queryClient = useQueryClient();
+
 	const handler = useCallback(function (input: SchoolClassInput) {
 		return SchoolClassAPI.create(input);
 	}, []);
 
-	return useMutation(handler, options);
+	return useMutation(handler, {
+		...options,
+		onSuccess: async (data, vars, ctx) => {
+			await queryClient.invalidateQueries([KEY.ALL]);
+			options?.onSuccess?.(data, vars, ctx);
+		},
+	});
 }
 
 export function useSchoolClassDelete(
@@ -351,6 +359,8 @@ export function useSchoolClassUpdate(
 		SchoolClass
 	>,
 ) {
+	const queryClient = useQueryClient();
+
 	const handler = useCallback(function (data: {
 		schoolClassId: string;
 		input: SchoolClassInput;
@@ -358,7 +368,14 @@ export function useSchoolClassUpdate(
 		return SchoolClassAPI.update(data.schoolClassId, data.input);
 	}, []);
 
-	return useMutation(handler, options);
+	return useMutation(handler, {
+		...options,
+		onSuccess: async (data, vars, ctx) => {
+			await queryClient.invalidateQueries([KEY.ALL]);
+			await queryClient.invalidateQueries([KEY.BY_ID, vars.schoolClassId]);
+			options?.onSuccess?.(data, vars, ctx);
+		},
+	});
 }
 
 export function sheetDownloadUrl() {
@@ -423,7 +440,10 @@ export function useGetPlanetsCharts(
 		},
 		[id],
 	);
-	return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, options);
+	return useQuery([KEY.PLANETS_CHART_BY_ID, id], handler, {
+		...options,
+		enabled: !!id && (options?.enabled ?? true),
+	});
 }
 
 export function useGetExamsCharts(
@@ -436,7 +456,10 @@ export function useGetExamsCharts(
 		},
 		[id],
 	);
-	return useQuery([KEY.EXAMS_CHART_BY_ID, id], handler, options);
+	return useQuery([KEY.EXAMS_CHART_BY_ID, id], handler, {
+		...options,
+		enabled: !!id && (options?.enabled ?? true),
+	});
 }
 
 export function useGetExamsPerformance(
