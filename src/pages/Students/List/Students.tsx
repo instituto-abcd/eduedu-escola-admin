@@ -13,7 +13,11 @@ import { modals } from "@mantine/modals";
 import { IconEdit, IconEye } from "@tabler/icons-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuthorizeNewExam, useStudentGetAll } from "~/api/student";
+import {
+	useAuthorizeNewExam,
+	usePutReleasePlanetsBulk,
+	useStudentGetAll,
+} from "~/api/student";
 import { PageHeader } from "~/components/PageHeader";
 import { Pagination } from "~/components/Pagination";
 import { TableLoader } from "~/components/TableLoader";
@@ -61,6 +65,19 @@ export function StudentsListPage() {
 		},
 	});
 
+	const { mutate: releasePlanets } = usePutReleasePlanetsBulk({
+		onSuccess: () => {
+			successNotification(
+				"Operação realizada com sucesso",
+				"Planetas liberados para os alunos selecionados!",
+			);
+			setSelected([]);
+		},
+		onError: (error) => {
+			errorNotification("Erro durante a operação", `${error.message}`);
+		},
+	});
+
 	const { data, isLoading } = useStudentGetAll({
 		search: {
 			...search,
@@ -88,6 +105,24 @@ export function StudentsListPage() {
 			labels: { confirm: "Sim", cancel: "Não" },
 			onConfirm: () => {
 				authorizeNewExam(selected);
+			},
+		});
+	};
+
+	const openModalReleasePlanets = () => {
+		modals.openConfirmModal({
+			title: "Liberar Mais Planetas",
+			children: (
+				<>
+					<Text size="sm">
+						Deseja liberar mais planetas para o(s) aluno(s) selecionado(s)?
+					</Text>
+					<Divider mt={20} />
+				</>
+			),
+			labels: { confirm: "Sim", cancel: "Não" },
+			onConfirm: () => {
+				releasePlanets(selected);
 			},
 		});
 	};
@@ -130,6 +165,14 @@ export function StudentsListPage() {
 						onClick={openModalAuthorizeNewExam}
 					>
 						Autorizar Nova Prova
+					</Button>
+					<Button
+						size="xs"
+						color="blue.0"
+						style={{ color: theme.colors.blue[6] }}
+						onClick={openModalReleasePlanets}
+					>
+						Liberar Mais Planetas
 					</Button>
 				</Group>
 			) : (
