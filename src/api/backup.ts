@@ -40,16 +40,48 @@ const URL = {
   BASE: "backup",
   RESTORE: "backup/restore",
   SCHEDULE: "backup/schedule",
+  FILES: "backup/files",
 };
 
 const KEY = {
   SCHEDULE: "BACKUP_SCHEDULE",
+  FILES: "BACKUP_FILES",
 };
 
 class BackupAPI extends API {
   static async create() {
     const { data } = await this.api.get<string>(URL.BASE);
     return data;
+  }
+
+  static async listFiles() {
+    const { data } = await this.api.get<string[]>(URL.FILES);
+    return data;
+  }
+
+  // O arquivo vem como blob e é salvo pelo navegador. É o único caminho
+  // para o backup sair da máquina: ele é gravado dentro do container do
+  // backend, e quem opera o computador da escola não vai usar `docker cp`.
+  static async download(fileName: string) {
+    const { data } = await this.api.get<Blob>(
+      `${URL.FILES}/${encodeURIComponent(fileName)}`,
+      { responseType: "blob" }
+    );
+
+    const url = window.URL.createObjectURL(data);
+
+    try {
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      link.click();
+    } finally {
+      // Sem o revoke o blob fica retido na memória da aba até o reload —
+      // e um backup pode ter centenas de MB.
+      window.URL.revokeObjectURL(url);
+    }
+
+    return fileName;
   }
 
   static async restoreByFile(file: File) {
@@ -80,12 +112,38 @@ class BackupAPI extends API {
   }
 }
 
+export function useBackupFiles(
+  options?: QueryOptions<string[], [typeof KEY.FILES]>
+) {
+  const handler = useCallback(function () {
+    return BackupAPI.listFiles();
+  }, []);
+
+  return useQuery([KEY.FILES], handler, options);
+}
+
+export function useBackupDownload(options?: MutationOptions<string, string>) {
+  const handler = useCallback(function (fileName: string) {
+    return BackupAPI.download(fileName);
+  }, []);
+
+  return useMutation(handler, options);
+}
+
 export function useBackupCreate(options?: MutationOptions<void, string>) {
+  const queryClient = useQueryClient();
+
   const handler = useCallback(function () {
     return BackupAPI.create();
   }, []);
 
-  return useMutation(handler, options);
+  return useMutation(handler, {
+    ...options,
+    onSuccess: (data, vars, ctx) => {
+      queryClient.invalidateQueries([KEY.FILES]);
+      options?.onSuccess?.(data, vars, ctx);
+    },
+  });
 }
 
 export function useBackupRestoreByFile(

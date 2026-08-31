@@ -3,6 +3,7 @@ import {
   Button,
   Divider,
   FileInput,
+  Group,
   Stack,
   Text,
   Title,
@@ -10,7 +11,12 @@ import {
 import { modals } from "@mantine/modals";
 import { useState } from "react";
 import { useUserStore } from "~/stores/user";
-import { useBackupCreate, useBackupRestoreByFile } from "~/api/backup";
+import {
+  useBackupCreate,
+  useBackupDownload,
+  useBackupFiles,
+  useBackupRestoreByFile,
+} from "~/api/backup";
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
 import { BackupScheduleForm } from "./BackupScheduleForm";
@@ -31,6 +37,14 @@ export function BackupSection() {
         errorNotification("Erro ao criar backup", error.message),
     }
   );
+
+  const { data: backupFiles } = useBackupFiles();
+
+  const { mutate: downloadBackup, isLoading: isDownloading } =
+    useBackupDownload({
+      onError: (error) =>
+        errorNotification("Erro ao baixar backup", error.message),
+    });
 
   const { mutate: restoreByFile, isLoading: isRestoringByFile } =
     useBackupRestoreByFile({
@@ -104,6 +118,37 @@ export function BackupSection() {
           ? "Criando backup..."
           : "Criar backup do aplicativo atual"}
       </Anchor>
+
+      {backupFiles && backupFiles.length > 0 && (
+        <Stack spacing={4} mt="md">
+          <Text size="sm" weight={500}>
+            Backups guardados neste computador
+          </Text>
+          <Text size="xs" color="dimmed">
+            Baixe e guarde em outro lugar (pen drive, nuvem): estes arquivos
+            ficam nesta máquina e os mais antigos são apagados
+            automaticamente.
+          </Text>
+          {backupFiles.map((fileName) => (
+            <Group key={fileName} position="apart" spacing="xs" noWrap>
+              <Text size="xs" sx={{ wordBreak: "break-all" }}>
+                {fileName}
+              </Text>
+              <Anchor
+                size="xs"
+                onClick={() => downloadBackup(fileName)}
+                sx={{
+                  whiteSpace: "nowrap",
+                  pointerEvents: isDownloading ? "none" : undefined,
+                  opacity: isDownloading ? 0.6 : 1,
+                }}
+              >
+                Baixar
+              </Anchor>
+            </Group>
+          ))}
+        </Stack>
+      )}
 
       <Divider mt="md" />
 
