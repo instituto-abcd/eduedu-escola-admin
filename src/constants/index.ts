@@ -132,3 +132,31 @@ export const AXIS_ENUM = {
   LC_ABREV: "Leitura e Comp. de Texto",
   LS_ABREV: "Leitura e Comp. de Texto",
 } as const;
+
+// Dias da semana no formato que o backend usa no agendamento do backup
+// automático: 0 = domingo ... 6 = sábado.
+export const WEEK_DAY: Record<number, string> = {
+  0: "Domingo",
+  1: "Segunda-feira",
+  2: "Terça-feira",
+  3: "Quarta-feira",
+  4: "Quinta-feira",
+  5: "Sexta-feira",
+  6: "Sábado",
+} as const;
+
+export const WEEK_DAY_SELECT: {
+  value: string;
+  label: string;
+}[] = Object.entries(WEEK_DAY).map(([value, label]) => ({ value, label }));
+
+// Horários de hora em hora; um backup semanal não precisa de precisão de
+// minutos, e o backend continua aceitando o minuto pela API se algum dia
+// precisar.
+export const HOUR_SELECT: {
+  value: string;
+  label: string;
+}[] = Array.from({ length: 24 }, (_, hour) => ({
+  value: String(hour),
+  label: `${String(hour).padStart(2, "0")}:00`,
+}));
