@@ -21,6 +21,7 @@ import { PageHeader } from "~/components/PageHeader";
 import { errorNotification } from "~/utils/errorNotification";
 import { successNotification } from "~/utils/successNotification";
 import { AuditModal } from "./components/AuditModal";
+import { BackupSection } from "./components/BackupSection";
 import { z } from "zod";
 import { useSyncPlanets, useSyncExams } from "~/api/sync";
 import { SyncNotification } from "./components/SyncNotification";
@@ -82,149 +83,161 @@ export function SettingsPage() {
   };
 
   return (
-    <form onSubmit={form.onSubmit((v) => mutate(v))}>
-      <Stack>
-        <PageHeader title="Configurações">
-          <Group noWrap>
-            <Button
-              variant="outline"
-              onClick={onClickSyncPlanetsButton}
-              loading={planetSyncState}
-            >
-              Sincronizar Planetas
+    <Stack>
+      <form onSubmit={form.onSubmit((v) => mutate(v))}>
+        <Stack>
+          <PageHeader title="Configurações">
+            <Group noWrap>
+              <Button
+                variant="outline"
+                onClick={onClickSyncPlanetsButton}
+                loading={planetSyncState}
+              >
+                Sincronizar Planetas
+              </Button>
+              <Button
+                variant="outline"
+                onClick={onClickSyncExamsButton}
+                loading={examSyncState}
+              >
+                Sincronizar Provas
+              </Button>
+              <Button variant="outline" onClick={auditModalHandlers.open}>
+                Gestão de Auditoria
+              </Button>
+            </Group>
+          </PageHeader>
+
+          <Stack align="start">
+            <SyncNotification />
+          </Stack>
+
+          <Grid columns={8}>
+            <Grid.Col span={2}>
+              <TextInput
+                label="Nome da escola"
+                placeholder={isLoading ? "Carregando..." : "Escola XYZ"}
+                {...form.getInputProps("schoolName")}
+                disabled={isLoading || isMutating}
+              />
+            </Grid.Col>
+            <Grid.Col span={2}>
+              <Select
+                withinPortal
+                label="Sincronização de planetas"
+                placeholder={isLoading ? "Carregando..." : "Escolha um"}
+                data={[
+                  { value: "Ativo", label: "Ativo" },
+                  { value: "Inativo", label: "Inativo" },
+                ]}
+                {...form.getInputProps("synchronizationPlanets")}
+                onChange={(v) =>
+                  form.setFieldValue(
+                    "synchronizationPlanets",
+                    v === "Ativo" ? true : false
+                  )
+                }
+                value={form.values.synchronizationPlanets ? "Ativo" : "Inativo"}
+                disabled={isLoading || isMutating}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={2}>
+              <TextInput
+                label="Chave de acesso"
+                placeholder={
+                  isLoading ? "Carregando..." : "XXXX-XXXX-XXXX-XXXX"
+                }
+                {...form.getInputProps("accessKey")}
+                value={form.values.accessKey || ""}
+                onChange={(e) => {
+                  let value = e.currentTarget.value.toUpperCase();
+                  value = value.replace(/[^A-Z0-9]/g, "");
+                  value =
+                    value
+                      .match(/.{1,4}/g)
+                      ?.join("-")
+                      .slice(0, 19) || "";
+                  form.setFieldValue("accessKey", value);
+                }}
+                maxLength={19}
+                disabled={isLoading || isMutating}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={2} />
+
+            <Grid.Col span={2}>
+              <TextInput
+                label="Nome do Host de SMTP"
+                placeholder={isLoading ? "Carregando..." : "smtp.office365.com"}
+                {...form.getInputProps("smtpHostName")}
+                disabled={isLoading || isMutating}
+              />
+            </Grid.Col>
+            <Grid.Col span={2}>
+              <TextInput
+                label="Nome do Usuário de SMTP"
+                placeholder={
+                  isLoading ? "Carregando..." : "suporte@eduedu.com.br"
+                }
+                {...form.getInputProps("smtpUserName")}
+                disabled={isLoading || isMutating}
+              />
+            </Grid.Col>
+            <Grid.Col span={2}>
+              <PasswordInput
+                label="Senha de SMTP"
+                {...form.getInputProps("smtpPassword")}
+                disabled={isLoading || isMutating}
+              />
+            </Grid.Col>
+            <Grid.Col span={1}>
+              <Select
+                withinPortal
+                label="SSL"
+                placeholder="Escolha um"
+                data={[
+                  { value: "Ativo", label: "Ativo" },
+                  { value: "Inativo", label: "Inativo" },
+                ]}
+                onChange={(v) =>
+                  form.setFieldValue(
+                    "sslIsActive",
+                    v === "Ativo" ? true : false
+                  )
+                }
+                value={form.values.sslIsActive ? "Ativo" : "Inativo"}
+                disabled={isLoading || isMutating}
+              />
+            </Grid.Col>
+            <Grid.Col span={1}>
+              <NumberInput
+                label="Porta"
+                hideControls
+                {...form.getInputProps("smtpPort")}
+                placeholder={isLoading ? "Carregando..." : "Porta SMTP"}
+                disabled={isLoading || isMutating}
+              />
+            </Grid.Col>
+          </Grid>
+          <Divider my="xl" />
+          <Group position="right">
+            <Button variant="outline" component={Link} to="..">
+              Cancelar
             </Button>
             <Button
-              variant="outline"
-              onClick={onClickSyncExamsButton}
-              loading={examSyncState}
+              disabled={!form.isDirty()}
+              loading={isMutating}
+              type="submit"
             >
-              Sincronizar Provas
-            </Button>
-            <Button variant="outline" onClick={auditModalHandlers.open}>
-              Gestão de Auditoria
+              Salvar
             </Button>
           </Group>
-        </PageHeader>
-
-        <Stack align="start">
-          <SyncNotification />
         </Stack>
-
-        <Grid columns={8}>
-          <Grid.Col span={2}>
-            <TextInput
-              label="Nome da escola"
-              placeholder={isLoading ? "Carregando..." : "Escola XYZ"}
-              {...form.getInputProps("schoolName")}
-              disabled={isLoading || isMutating}
-            />
-          </Grid.Col>
-          <Grid.Col span={2}>
-            <Select
-              withinPortal
-              label="Sincronização de planetas"
-              placeholder={isLoading ? "Carregando..." : "Escolha um"}
-              data={[
-                { value: "Ativo", label: "Ativo" },
-                { value: "Inativo", label: "Inativo" },
-              ]}
-              {...form.getInputProps("synchronizationPlanets")}
-              onChange={(v) =>
-                form.setFieldValue(
-                  "synchronizationPlanets",
-                  v === "Ativo" ? true : false
-                )
-              }
-              value={form.values.synchronizationPlanets ? "Ativo" : "Inativo"}
-              disabled={isLoading || isMutating}
-            />
-          </Grid.Col>
-
-          <Grid.Col span={2}>
-            <TextInput
-              label="Chave de acesso"
-              placeholder={isLoading ? "Carregando..." : "XXXX-XXXX-XXXX-XXXX"}
-              {...form.getInputProps("accessKey")}
-              value={form.values.accessKey || ""}
-              onChange={(e) => {
-                let value = e.currentTarget.value.toUpperCase();
-                value = value.replace(/[^A-Z0-9]/g, "");
-                value =
-                  value
-                    .match(/.{1,4}/g)
-                    ?.join("-")
-                    .slice(0, 19) || "";
-                form.setFieldValue("accessKey", value);
-              }}
-              maxLength={19}
-              disabled={isLoading || isMutating}
-            />
-          </Grid.Col>
-
-          <Grid.Col span={2} />
-
-          <Grid.Col span={2}>
-            <TextInput
-              label="Nome do Host de SMTP"
-              placeholder={isLoading ? "Carregando..." : "smtp.office365.com"}
-              {...form.getInputProps("smtpHostName")}
-              disabled={isLoading || isMutating}
-            />
-          </Grid.Col>
-          <Grid.Col span={2}>
-            <TextInput
-              label="Nome do Usuário de SMTP"
-              placeholder={
-                isLoading ? "Carregando..." : "suporte@eduedu.com.br"
-              }
-              {...form.getInputProps("smtpUserName")}
-              disabled={isLoading || isMutating}
-            />
-          </Grid.Col>
-          <Grid.Col span={2}>
-            <PasswordInput
-              label="Senha de SMTP"
-              {...form.getInputProps("smtpPassword")}
-              disabled={isLoading || isMutating}
-            />
-          </Grid.Col>
-          <Grid.Col span={1}>
-            <Select
-              withinPortal
-              label="SSL"
-              placeholder="Escolha um"
-              data={[
-                { value: "Ativo", label: "Ativo" },
-                { value: "Inativo", label: "Inativo" },
-              ]}
-              onChange={(v) =>
-                form.setFieldValue("sslIsActive", v === "Ativo" ? true : false)
-              }
-              value={form.values.sslIsActive ? "Ativo" : "Inativo"}
-              disabled={isLoading || isMutating}
-            />
-          </Grid.Col>
-          <Grid.Col span={1}>
-            <NumberInput
-              label="Porta"
-              hideControls
-              {...form.getInputProps("smtpPort")}
-              placeholder={isLoading ? "Carregando..." : "Porta SMTP"}
-              disabled={isLoading || isMutating}
-            />
-          </Grid.Col>
-        </Grid>
-        <Divider my="xl" />
-        <Group position="right">
-          <Button variant="outline" component={Link} to="..">
-            Cancelar
-          </Button>
-          <Button disabled={!form.isDirty()} loading={isMutating} type="submit">
-            Salvar
-          </Button>
-        </Group>
-      </Stack>
+      </form>
+      <BackupSection />
       <AuditModal opened={auditModalOpen} onClose={auditModalHandlers.close} />
-    </form>
+    </Stack>
   );
 }
