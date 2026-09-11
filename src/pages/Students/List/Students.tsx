@@ -148,36 +148,36 @@ export function StudentsListPage() {
 				</Group>
 			</PageHeader>
 
-			{selected.length > 0 ? (
-				<Group>
-					<Button
-						size="xs"
-						variant="outline"
-						color="red"
-						onClick={deleteModalHandlers.open}
-					>
-						Excluir
-					</Button>
-					<Button
-						size="xs"
-						color="blue.0"
-						style={{ color: theme.colors.blue[6] }}
-						onClick={openModalAuthorizeNewExam}
-					>
-						Autorizar Nova Prova
-					</Button>
-					<Button
-						size="xs"
-						color="blue.0"
-						style={{ color: theme.colors.blue[6] }}
-						onClick={openModalReleasePlanets}
-					>
-						Liberar Mais Planetas
-					</Button>
-				</Group>
-			) : (
-				<Space h="xs" />
-			)}
+			<Group>
+				<Button
+					size="xs"
+					variant="outline"
+					color="red"
+					disabled={selected.length === 0}
+					onClick={deleteModalHandlers.open}
+				>
+					Excluir
+				</Button>
+				<Button
+					size="xs"
+					color="blue.0"
+					style={{ color: theme.colors.blue[6] }}
+					disabled={selected.length === 0}
+					onClick={openModalAuthorizeNewExam}
+				>
+					Autorizar Nova Prova
+				</Button>
+				<Button
+					size="xs"
+					color="blue.0"
+					style={{ color: theme.colors.blue[6] }}
+					disabled={selected.length === 0}
+					onClick={openModalReleasePlanets}
+				>
+					Liberar Mais Planetas
+				</Button>
+			</Group>
+			<Space h="xs" />
 
 			<Table horizontalSpacing="sm" verticalSpacing="md">
 				<thead>
