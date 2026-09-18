@@ -12,7 +12,13 @@ import { ReportRoutes } from "./Report";
 import { SetupRoutes } from "./Setup";
 import { Fragment, useRef, useEffect } from "react";
 import { Notification, Stack, Text } from "@mantine/core";
-import { usePlanetSyncStatus, useExamSyncStatus, SyncStatus } from "~/api/sync";
+import {
+  usePlanetSyncStatus,
+  useExamSyncStatus,
+  useInvalidatePlanetLastSync,
+  useInvalidateExamLastSync,
+  SyncStatus,
+} from "~/api/sync";
 import { successNotification } from "~/utils/successNotification";
 import { CustomProgress } from "~/components/CustomProgress/CustomProgress";
 import { usePlanetSync, useExamSync } from "~/stores/filter";
@@ -34,6 +40,11 @@ export function AppRoutes() {
 
   const { data: planetSyncState, update: updatePlanetSync } = usePlanetSync();
   const { data: examSyncState, update: updateExamSync } = useExamSync();
+
+  // Recarrega o "ultima sincronizacao" quando a sync termina, para que os
+  // avisos de sincronizacao pendente sumam sem precisar recarregar a pagina.
+  const invalidatePlanetLastSync = useInvalidatePlanetLastSync();
+  const invalidateExamLastSync = useInvalidateExamLastSync();
 
   // Refs para rastrear se a sync realmente iniciou (vimos running: true)
   const planetSyncStarted = useRef(false);
@@ -66,6 +77,8 @@ export function AppRoutes() {
 
         // Só processa resultados se a sync realmente iniciou
         if (planetSyncStarted.current && !data.running) {
+          invalidatePlanetLastSync();
+
           if (data.currentOperation === "Erro na sincronizacao") {
             errorNotification(
               "Erro na sincronização de planetas",
@@ -104,6 +117,8 @@ export function AppRoutes() {
 
         // Só processa resultados se a sync realmente iniciou
         if (examSyncStarted.current && !data.running) {
+          invalidateExamLastSync();
+
           if (data.currentOperation === "Erro na sincronizacao") {
             errorNotification(
               "Erro na sincronização de provas",

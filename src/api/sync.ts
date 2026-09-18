@@ -4,6 +4,7 @@ import {
   useMutation,
   UseMutationOptions,
   useQuery,
+  useQueryClient,
 } from "@tanstack/react-query";
 import { QueryOptions } from "./api-types";
 import { errorNotification } from "~/utils/errorNotification";
@@ -176,6 +177,26 @@ export function useExamLastSync(
   }, []);
 
   return useQuery([KEY.EXAM_LAST_SYNC], handler, options);
+}
+
+// Invalida o cache do "ultima sincronizacao" para que os avisos de
+// sincronizacao pendente sumam assim que a sync termina, sem recarregar a pagina.
+export function useInvalidatePlanetLastSync() {
+  const queryClient = useQueryClient();
+
+  return useCallback(
+    () => queryClient.invalidateQueries([KEY.PLANET_LAST_SYNC]),
+    [queryClient]
+  );
+}
+
+export function useInvalidateExamLastSync() {
+  const queryClient = useQueryClient();
+
+  return useCallback(
+    () => queryClient.invalidateQueries([KEY.EXAM_LAST_SYNC]),
+    [queryClient]
+  );
 }
 
 // Legacy aliases for backward compatibility (deprecated)
