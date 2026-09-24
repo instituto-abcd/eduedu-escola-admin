@@ -1,8 +1,6 @@
 import { Button, Grid, Group, Title, Text, Flex } from "@mantine/core";
 import { SCHOOL_GRADE, SCHOOL_PERIOD } from "~/constants";
 
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import PDFFile from "./PDFFile";
 import { Link } from "react-router-dom";
 import { PATH } from "~/constants/path";
 
