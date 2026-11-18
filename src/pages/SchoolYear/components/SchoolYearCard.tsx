@@ -63,7 +63,7 @@ export function SchoolYearCard({ data }: SchoolYearCardProps) {
     });
 
   const navigate = useNavigate();
-  function seeDetails(year) {
+  function seeDetails(year: number) {
     navigate(`${PATH.DASHBOARD}/${year}`);
   }
 
@@ -142,7 +142,7 @@ export function SchoolYearCard({ data }: SchoolYearCardProps) {
 
         {/* Action */}
         {data.status === "INACTIVE" && (
-          <Button fullWidth size="sm" compact variant="light" radius="sm">
+          <Button fullWidth size="sm" compact variant="light" radius="sm" onClick={() => { seeDetails(data.name) }}>
             Ver Histórico
           </Button>
         )}
