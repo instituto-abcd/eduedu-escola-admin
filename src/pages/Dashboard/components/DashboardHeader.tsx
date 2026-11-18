@@ -8,48 +8,57 @@ import {
   Text,
   Stack,
 } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { SchoolYear, useSchoolYearGetAll } from "~/api/school-year";
 import { PATH } from "~/constants/path";
 import { useSchoolClassFilterStore } from "~/stores/filter";
 
 type Props = {
+  /** Ano letivo pedido na URL (`/dashboard/:year`), ex.: "2025". */
+  year?: string;
   onYearChanged: (y: SchoolYear) => void;
 };
 
-export function DashboardHeader({ onYearChanged }: Props) {
-  const [activeYear, setActiveYear] = useState<SchoolYear>();
+// Ano aberto quando o usuário ainda não escolheu nenhum: o da URL, se existir;
+// senão o ativo mais recente; senão o mais recente.
+function getDefaultYear(years: SchoolYear[], year?: string) {
+  const fromUrl = years.find((item) => item.name.toString() === year);
+  if (fromUrl) return fromUrl;
 
-  const { data: schoolClassFilter, update: updateSchoolClassFilter } =
-    useSchoolClassFilterStore();
+  const activeYears = years.filter((item) => item.status === "ACTIVE");
+  return [...(activeYears.length ? activeYears : years)].sort(
+    (a, b) => b.name - a.name,
+  )[0];
+}
+
+export function DashboardHeader({ year, onYearChanged }: Props) {
+  const [selectedYearId, setSelectedYearId] = useState<string>();
+
   const { data: years, isLoading } = useSchoolYearGetAll({
     pageSize: 999,
     initialData: [],
-    onSuccess(data) {
-      const sortYears = (d: SchoolYear[]) =>
-        d.sort((a, b) => (a.name < b.name ? 1 : -1));
-
-      const activeYears = data.filter((item) => item.status === "ACTIVE");
-      if (activeYears.length) {
-        const sorted = sortYears(activeYears);
-        setActiveYear(sorted[0]);
-        onYearChanged(sorted[0]);
-        updateSchoolClassFilter({
-          ...schoolClassFilter,
-          schoolYearName: sorted[0].name.toString(),
-        });
-      } else {
-        const sorted = sortYears(data);
-        setActiveYear(sorted[0]);
-        onYearChanged(sorted[0]);
-        updateSchoolClassFilter({
-          ...schoolClassFilter,
-          schoolYearName: sorted[0].name.toString(),
-        });
-      }
-    },
   });
+
+  const activeYear = useMemo(
+    () =>
+      years?.find((item) => item.id === selectedYearId) ??
+      getDefaultYear(years ?? [], year),
+    [years, selectedYearId, year],
+  );
+
+  // Cards de séries e filtro da listagem de turmas acompanham o ano exibido.
+  useEffect(() => {
+    if (!activeYear) return;
+
+    onYearChanged(activeYear);
+    const { data: schoolClassFilter, update } =
+      useSchoolClassFilterStore.getState();
+    update({
+      ...schoolClassFilter,
+      schoolYearName: activeYear.name.toString(),
+    });
+  }, [activeYear, onYearChanged]);
 
   return (
     <Card mb={20} withBorder>
@@ -89,7 +98,7 @@ export function DashboardHeader({ onYearChanged }: Props) {
                       value: id,
                     })) ?? []
                 }
-                onChange={(v) => setActiveYear(years!.find((y) => y.id === v))}
+                onChange={(v) => setSelectedYearId(v ?? undefined)}
                 value={activeYear?.id ?? ""}
               />
             </Group>
@@ -102,7 +111,7 @@ export function DashboardHeader({ onYearChanged }: Props) {
                 maw={60}
                 placeholder="-"
                 disabled
-                value={activeYear?.summary.totalStudents}
+                value={activeYear?.summary.totalTeachers}
               />
             </Group>
           </Grid.Col>
